@@ -643,7 +643,8 @@ main {
   text-transform: uppercase;
 }
 
-.product-visual button {
+.product-visual button,
+.product-visual > a {
   position: absolute;
   left: 12px;
   right: 12px;
@@ -660,11 +661,14 @@ main {
 }
 
 .product-card:hover .product-visual button,
-.product-visual button:focus-visible {
+.product-card:hover .product-visual > a,
+.product-visual button:focus-visible,
+.product-visual > a:focus-visible {
   transform: translateY(0);
 }
 
-.product-visual button:hover {
+.product-visual button:hover,
+.product-visual > a:hover {
   background: #d9bc88;
 }
 
@@ -1044,7 +1048,8 @@ footer {
     row-gap: 54px;
   }
 
-  .product-visual button {
+  .product-visual button,
+  .product-visual > a {
     transform: translateY(0);
   }
 
@@ -1271,7 +1276,8 @@ footer {
     margin-top: 6px;
   }
 
-  .product-visual button {
+  .product-visual button,
+  .product-visual > a {
     left: 7px;
     right: 7px;
     bottom: 7px;

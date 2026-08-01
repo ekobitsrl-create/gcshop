@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 const collections = [
   {
@@ -64,14 +64,14 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [cartCount, setCartCount] = useState(0);
-  const [notice, setNotice] = useState("");
   const [newsletterSent, setNewsletterSent] = useState(false);
 
-  const addToCart = (productName: string) => {
-    setCartCount((count) => count + 1);
-    setNotice(`${productName} è nel tuo carrello.`);
-    window.setTimeout(() => setNotice(""), 2400);
-  };
+  useEffect(() => {
+    void fetch("/api/cart", { cache: "no-store" })
+      .then((response) => response.json())
+      .then((cart) => setCartCount(cart.itemCount ?? 0))
+      .catch(() => setCartCount(0));
+  }, []);
 
   const submitNewsletter = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -111,7 +111,7 @@ export default function Home() {
 
         <nav className="desktop-nav" aria-label="Navigazione principale">
           {navItems.map((item) => (
-            <a href="#shop" key={item}>
+            <a href="/shop" key={item}>
               {item}
             </a>
           ))}
@@ -126,14 +126,14 @@ export default function Home() {
           >
             Cerca
           </button>
-          <button type="button" className="bag-action" aria-label={`Carrello, ${cartCount} articoli`}>
+          <a href="/checkout" className="bag-action" aria-label={`Carrello, ${cartCount} articoli`}>
             Bag <span>{cartCount}</span>
-          </button>
+          </a>
         </div>
 
         <nav className={`mobile-nav ${menuOpen ? "is-open" : ""}`} aria-label="Menu mobile">
           {navItems.map((item, index) => (
-            <a href="#shop" key={item} onClick={() => setMenuOpen(false)}>
+            <a href="/shop" key={item} onClick={() => setMenuOpen(false)}>
               <span>0{index + 1}</span>
               {item}
             </a>
@@ -172,7 +172,7 @@ export default function Home() {
             Una selezione indipendente di moda e accessori per chi sceglie qualità,
             carattere e bellezza senza tempo.
           </p>
-          <a className="button button-light" href="#shop">
+          <a className="button button-light" href="/shop">
             Scopri la collezione <span aria-hidden="true">↗</span>
           </a>
         </div>
@@ -213,7 +213,7 @@ export default function Home() {
 
         <div className="collection-grid">
           {collections.map((collection, index) => (
-            <a className="collection-card" href="#shop" key={collection.title}>
+            <a className="collection-card" href="/shop" key={collection.title}>
               <img src={collection.image} alt={collection.alt} loading="lazy" />
               <div className="collection-overlay" />
               <span className="collection-number">0{index + 1}</span>
@@ -233,7 +233,7 @@ export default function Home() {
             <p className="kicker">Appena arrivati</p>
             <h2 id="products-title">The new edit</h2>
           </div>
-          <a href="#shop">Vedi tutto <span aria-hidden="true">→</span></a>
+          <a href="/shop">Vedi tutto <span aria-hidden="true">→</span></a>
         </div>
 
         <div className="product-grid">
@@ -242,9 +242,7 @@ export default function Home() {
               <div className="product-visual">
                 <img src={product.image} alt={product.alt} loading="lazy" />
                 <span className="product-badge">{product.badge}</span>
-                <button type="button" onClick={() => addToCart(product.name)}>
-                  Aggiungi al carrello
-                </button>
+                <a href="/shop">Scopri nel catalogo</a>
               </div>
               <div className="product-info">
                 <p>{product.category}</p>
@@ -324,10 +322,10 @@ export default function Home() {
 
           <div className="footer-column">
             <h3>Shop</h3>
-            <a href="#shop">New in</a>
-            <a href="#shop">Donna</a>
-            <a href="#shop">Uomo</a>
-            <a href="#shop">Accessori</a>
+            <a href="/shop">New in</a>
+            <a href="/shop">Donna</a>
+            <a href="/shop">Uomo</a>
+            <a href="/shop">Accessori</a>
           </div>
 
           <div className="footer-column">
@@ -360,9 +358,6 @@ export default function Home() {
         </div>
       </footer>
 
-      <div className={`toast ${notice ? "is-visible" : ""}`} role="status" aria-live="polite">
-        {notice}
-      </div>
     </main>
   );
 }

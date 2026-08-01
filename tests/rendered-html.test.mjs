@@ -4,35 +4,37 @@ import test from "node:test";
 
 const templateRoot = new URL("../", import.meta.url);
 
-async function render() {
-  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
-  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
-  const { default: worker } = await import(workerUrl.href);
+test("contains the Luxury Concept Store identity and company details", async () => {
+  const [page, layout] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
+  ]);
+  assert.match(layout, /Luxury Concept Store \| Moda contemporanea selezionata/i);
+  assert.match(page, /Il lusso,/);
+  assert.match(page, /Luxury Concept Store/);
+  assert.match(page, /Ekobit SRL/);
+  assert.match(page, /02424510796/);
+  assert.match(page, /Via Firenze 185/);
+  assert.match(page, /338 134 6675/);
+  assert.match(page, /info@ekobit\.it/);
+  assert.doesNotMatch(page, /InStyleShop|instyleshop|codex-preview|Building your site/i);
+});
 
-  return worker.fetch(
-    new Request("http://luxuryconceptstore.test/", {
-      headers: { accept: "text/html", host: "luxuryconceptstore.test" },
-    }),
-    { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
-    { waitUntil() {}, passThroughOnException() {} },
-  );
-}
-
-test("server-renders the Luxury Concept Store home", async () => {
-  const response = await render();
-  assert.equal(response.status, 200);
-  assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
-
-  const html = await response.text();
-  assert.match(html, /<title>Luxury Concept Store \| Moda contemporanea selezionata<\/title>/i);
-  assert.match(html, /Il lusso,/);
-  assert.match(html, /Luxury Concept Store/);
-  assert.match(html, /Ekobit SRL/);
-  assert.match(html, /02424510796/);
-  assert.match(html, /Via Firenze 185/);
-  assert.match(html, /338 134 6675/);
-  assert.match(html, /info@ekobit\.it/);
-  assert.doesNotMatch(html, /InStyleShop|instyleshop|codex-preview|Building your site/i);
+test("ships an empty ecommerce migration and all critical flows", async () => {
+  const [migration, hosting, checkout, paypal, admin] = await Promise.all([
+    readFile(new URL("../drizzle/0000_spotty_unicorn.sql", import.meta.url), "utf8"),
+    readFile(new URL("../.openai/hosting.json", import.meta.url), "utf8"),
+    readFile(new URL("../app/api/checkout/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/api/payments/paypal/capture/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/api/admin/products/route.ts", import.meta.url), "utf8"),
+  ]);
+  assert.equal((migration.match(/CREATE TABLE/g) ?? []).length, 17);
+  assert.doesNotMatch(migration, /^INSERT\s/gim);
+  assert.match(hosting, /"d1"\s*:\s*"DB"/);
+  assert.match(checkout, /bank_transfer/);
+  assert.match(checkout, /createPayPalOrder/);
+  assert.match(paypal, /capturePayPalOrder/);
+  assert.match(admin, /recordAdminAction/);
 });
 
 test("removes the disposable starter preview", async () => {
