@@ -1,21 +1,32 @@
-import { sql } from "drizzle-orm";
-import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
+import {
+  type AnyPgColumn,
+  boolean,
+  index,
+  integer,
+  pgSchema,
+  text,
+  timestamp,
+  uniqueIndex,
+  uuid,
+} from "drizzle-orm/pg-core";
+
+const luxury = pgSchema("luxury");
 
 const timestamps = {
-  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "string" }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true, mode: "string" }).notNull().defaultNow(),
 };
 
-export const categories = sqliteTable(
+export const categories = luxury.table(
   "categories",
   {
-    id: text("id").primaryKey(),
+    id: uuid("id").primaryKey(),
     name: text("name").notNull(),
     slug: text("slug").notNull(),
     description: text("description"),
-    parentId: text("parent_id").references((): any => categories.id, { onDelete: "set null" }),
+    parentId: uuid("parent_id").references((): AnyPgColumn => categories.id, { onDelete: "set null" }),
     sortOrder: integer("sort_order").notNull().default(0),
-    isActive: integer("is_active", { mode: "boolean" }).notNull().default(true),
+    isActive: boolean("is_active").notNull().default(true),
     ...timestamps,
   },
   (table) => [
@@ -25,11 +36,11 @@ export const categories = sqliteTable(
   ],
 );
 
-export const products = sqliteTable(
+export const products = luxury.table(
   "products",
   {
-    id: text("id").primaryKey(),
-    categoryId: text("category_id").references(() => categories.id, { onDelete: "set null" }),
+    id: uuid("id").primaryKey(),
+    categoryId: uuid("category_id").references(() => categories.id, { onDelete: "set null" }),
     name: text("name").notNull(),
     slug: text("slug").notNull(),
     sku: text("sku").notNull(),
@@ -42,7 +53,7 @@ export const products = sqliteTable(
     compareAtPriceCents: integer("compare_at_price_cents"),
     currency: text("currency").notNull().default("EUR"),
     taxRateBps: integer("tax_rate_bps").notNull().default(2200),
-    isFeatured: integer("is_featured", { mode: "boolean" }).notNull().default(false),
+    isFeatured: boolean("is_featured").notNull().default(false),
     metadataJson: text("metadata_json"),
     ...timestamps,
   },
@@ -55,11 +66,11 @@ export const products = sqliteTable(
   ],
 );
 
-export const productImages = sqliteTable(
+export const productImages = luxury.table(
   "product_images",
   {
-    id: text("id").primaryKey(),
-    productId: text("product_id").notNull().references(() => products.id, { onDelete: "cascade" }),
+    id: uuid("id").primaryKey(),
+    productId: uuid("product_id").notNull().references(() => products.id, { onDelete: "cascade" }),
     url: text("url").notNull(),
     altText: text("alt_text"),
     sortOrder: integer("sort_order").notNull().default(0),
@@ -68,11 +79,11 @@ export const productImages = sqliteTable(
   (table) => [index("idx_product_images_product_sort").on(table.productId, table.sortOrder)],
 );
 
-export const productVariants = sqliteTable(
+export const productVariants = luxury.table(
   "product_variants",
   {
-    id: text("id").primaryKey(),
-    productId: text("product_id").notNull().references(() => products.id, { onDelete: "cascade" }),
+    id: uuid("id").primaryKey(),
+    productId: uuid("product_id").notNull().references(() => products.id, { onDelete: "cascade" }),
     sku: text("sku").notNull(),
     title: text("title").notNull().default("Standard"),
     color: text("color"),
@@ -82,7 +93,7 @@ export const productVariants = sqliteTable(
     stockQuantity: integer("stock_quantity").notNull().default(0),
     lowStockThreshold: integer("low_stock_threshold").notNull().default(2),
     weightGrams: integer("weight_grams"),
-    isActive: integer("is_active", { mode: "boolean" }).notNull().default(true),
+    isActive: boolean("is_active").notNull().default(true),
     ...timestamps,
   },
   (table) => [
@@ -92,18 +103,18 @@ export const productVariants = sqliteTable(
   ],
 );
 
-export const inventoryMovements = sqliteTable(
+export const inventoryMovements = luxury.table(
   "inventory_movements",
   {
-    id: text("id").primaryKey(),
-    variantId: text("variant_id").notNull().references(() => productVariants.id, { onDelete: "cascade" }),
+    id: uuid("id").primaryKey(),
+    variantId: uuid("variant_id").notNull().references(() => productVariants.id, { onDelete: "cascade" }),
     quantityDelta: integer("quantity_delta").notNull(),
     reason: text("reason").notNull(),
     referenceType: text("reference_type"),
-    referenceId: text("reference_id"),
+    referenceId: uuid("reference_id"),
     note: text("note"),
     actorId: text("actor_id"),
-    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    createdAt: timestamp("created_at", { withTimezone: true, mode: "string" }).notNull().defaultNow(),
   },
   (table) => [
     index("idx_inventory_movements_variant_created").on(table.variantId, table.createdAt),
@@ -111,25 +122,25 @@ export const inventoryMovements = sqliteTable(
   ],
 );
 
-export const customers = sqliteTable(
+export const customers = luxury.table(
   "customers",
   {
-    id: text("id").primaryKey(),
+    id: uuid("id").primaryKey(),
     email: text("email").notNull(),
     firstName: text("first_name"),
     lastName: text("last_name"),
     phone: text("phone"),
-    acceptsMarketing: integer("accepts_marketing", { mode: "boolean" }).notNull().default(false),
+    acceptsMarketing: boolean("accepts_marketing").notNull().default(false),
     ...timestamps,
   },
   (table) => [uniqueIndex("idx_customers_email").on(table.email)],
 );
 
-export const customerAddresses = sqliteTable(
+export const customerAddresses = luxury.table(
   "customer_addresses",
   {
-    id: text("id").primaryKey(),
-    customerId: text("customer_id").notNull().references(() => customers.id, { onDelete: "cascade" }),
+    id: uuid("id").primaryKey(),
+    customerId: uuid("customer_id").notNull().references(() => customers.id, { onDelete: "cascade" }),
     type: text("type").notNull().default("shipping"),
     recipientName: text("recipient_name").notNull(),
     company: text("company"),
@@ -139,21 +150,21 @@ export const customerAddresses = sqliteTable(
     city: text("city").notNull(),
     province: text("province"),
     countryCode: text("country_code").notNull().default("IT"),
-    isDefault: integer("is_default", { mode: "boolean" }).notNull().default(false),
+    isDefault: boolean("is_default").notNull().default(false),
     ...timestamps,
   },
   (table) => [index("idx_customer_addresses_customer_type").on(table.customerId, table.type)],
 );
 
-export const carts = sqliteTable(
+export const carts = luxury.table(
   "carts",
   {
-    id: text("id").primaryKey(),
-    token: text("token").notNull(),
-    customerId: text("customer_id").references(() => customers.id, { onDelete: "set null" }),
+    id: uuid("id").primaryKey(),
+    token: uuid("token").notNull(),
+    customerId: uuid("customer_id").references(() => customers.id, { onDelete: "set null" }),
     status: text("status").notNull().default("active"),
     currency: text("currency").notNull().default("EUR"),
-    expiresAt: text("expires_at"),
+    expiresAt: timestamp("expires_at", { withTimezone: true, mode: "string" }),
     ...timestamps,
   },
   (table) => [
@@ -162,13 +173,13 @@ export const carts = sqliteTable(
   ],
 );
 
-export const cartItems = sqliteTable(
+export const cartItems = luxury.table(
   "cart_items",
   {
-    id: text("id").primaryKey(),
-    cartId: text("cart_id").notNull().references(() => carts.id, { onDelete: "cascade" }),
-    productId: text("product_id").notNull().references(() => products.id, { onDelete: "cascade" }),
-    variantId: text("variant_id").notNull().references(() => productVariants.id, { onDelete: "cascade" }),
+    id: uuid("id").primaryKey(),
+    cartId: uuid("cart_id").notNull().references(() => carts.id, { onDelete: "cascade" }),
+    productId: uuid("product_id").notNull().references(() => products.id, { onDelete: "cascade" }),
+    variantId: uuid("variant_id").notNull().references(() => productVariants.id, { onDelete: "cascade" }),
     quantity: integer("quantity").notNull().default(1),
     unitPriceCents: integer("unit_price_cents").notNull(),
     ...timestamps,
@@ -179,13 +190,13 @@ export const cartItems = sqliteTable(
   ],
 );
 
-export const orders = sqliteTable(
+export const orders = luxury.table(
   "orders",
   {
-    id: text("id").primaryKey(),
+    id: uuid("id").primaryKey(),
     orderNumber: text("order_number").notNull(),
-    customerId: text("customer_id").references(() => customers.id, { onDelete: "set null" }),
-    cartId: text("cart_id").references(() => carts.id, { onDelete: "set null" }),
+    customerId: uuid("customer_id").references(() => customers.id, { onDelete: "set null" }),
+    cartId: uuid("cart_id").references(() => carts.id, { onDelete: "set null" }),
     status: text("status").notNull().default("pending"),
     paymentStatus: text("payment_status").notNull().default("pending"),
     fulfillmentStatus: text("fulfillment_status").notNull().default("unfulfilled"),
@@ -202,8 +213,8 @@ export const orders = sqliteTable(
     billingAddressJson: text("billing_address_json").notNull(),
     customerNote: text("customer_note"),
     internalNote: text("internal_note"),
-    paidAt: text("paid_at"),
-    cancelledAt: text("cancelled_at"),
+    paidAt: timestamp("paid_at", { withTimezone: true, mode: "string" }),
+    cancelledAt: timestamp("cancelled_at", { withTimezone: true, mode: "string" }),
     ...timestamps,
   },
   (table) => [
@@ -214,13 +225,13 @@ export const orders = sqliteTable(
   ],
 );
 
-export const orderItems = sqliteTable(
+export const orderItems = luxury.table(
   "order_items",
   {
-    id: text("id").primaryKey(),
-    orderId: text("order_id").notNull().references(() => orders.id, { onDelete: "cascade" }),
-    productId: text("product_id").references(() => products.id, { onDelete: "set null" }),
-    variantId: text("variant_id").references(() => productVariants.id, { onDelete: "set null" }),
+    id: uuid("id").primaryKey(),
+    orderId: uuid("order_id").notNull().references(() => orders.id, { onDelete: "cascade" }),
+    productId: uuid("product_id").references(() => products.id, { onDelete: "set null" }),
+    variantId: uuid("variant_id").references(() => productVariants.id, { onDelete: "set null" }),
     productName: text("product_name").notNull(),
     variantName: text("variant_name"),
     sku: text("sku").notNull(),
@@ -228,19 +239,19 @@ export const orderItems = sqliteTable(
     unitPriceCents: integer("unit_price_cents").notNull(),
     totalCents: integer("total_cents").notNull(),
     taxRateBps: integer("tax_rate_bps").notNull().default(2200),
-    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    createdAt: timestamp("created_at", { withTimezone: true, mode: "string" }).notNull().defaultNow(),
   },
   (table) => [index("idx_order_items_order_id").on(table.orderId)],
 );
 
-export const paymentMethods = sqliteTable(
+export const paymentMethods = luxury.table(
   "payment_methods",
   {
-    id: text("id").primaryKey(),
+    id: uuid("id").primaryKey(),
     code: text("code").notNull(),
     name: text("name").notNull(),
     provider: text("provider").notNull(),
-    isEnabled: integer("is_enabled", { mode: "boolean" }).notNull().default(false),
+    isEnabled: boolean("is_enabled").notNull().default(false),
     sortOrder: integer("sort_order").notNull().default(0),
     publicConfigJson: text("public_config_json"),
     instructions: text("instructions"),
@@ -252,11 +263,11 @@ export const paymentMethods = sqliteTable(
   ],
 );
 
-export const paymentTransactions = sqliteTable(
+export const paymentTransactions = luxury.table(
   "payment_transactions",
   {
-    id: text("id").primaryKey(),
-    orderId: text("order_id").notNull().references(() => orders.id, { onDelete: "cascade" }),
+    id: uuid("id").primaryKey(),
+    orderId: uuid("order_id").notNull().references(() => orders.id, { onDelete: "cascade" }),
     paymentMethodCode: text("payment_method_code").notNull(),
     providerReference: text("provider_reference"),
     type: text("type").notNull().default("authorization"),
@@ -264,8 +275,8 @@ export const paymentTransactions = sqliteTable(
     amountCents: integer("amount_cents").notNull(),
     currency: text("currency").notNull().default("EUR"),
     responseJson: text("response_json"),
-    processedAt: text("processed_at"),
-    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    processedAt: timestamp("processed_at", { withTimezone: true, mode: "string" }),
+    createdAt: timestamp("created_at", { withTimezone: true, mode: "string" }).notNull().defaultNow(),
   },
   (table) => [
     index("idx_payment_transactions_order_id").on(table.orderId),
@@ -274,10 +285,10 @@ export const paymentTransactions = sqliteTable(
   ],
 );
 
-export const coupons = sqliteTable(
+export const coupons = luxury.table(
   "coupons",
   {
-    id: text("id").primaryKey(),
+    id: uuid("id").primaryKey(),
     code: text("code").notNull(),
     type: text("type").notNull().default("percentage"),
     value: integer("value").notNull(),
@@ -285,9 +296,9 @@ export const coupons = sqliteTable(
     maximumDiscountCents: integer("maximum_discount_cents"),
     usageLimit: integer("usage_limit"),
     usageCount: integer("usage_count").notNull().default(0),
-    startsAt: text("starts_at"),
-    endsAt: text("ends_at"),
-    isActive: integer("is_active", { mode: "boolean" }).notNull().default(true),
+    startsAt: timestamp("starts_at", { withTimezone: true, mode: "string" }),
+    endsAt: timestamp("ends_at", { withTimezone: true, mode: "string" }),
+    isActive: boolean("is_active").notNull().default(true),
     ...timestamps,
   },
   (table) => [
@@ -296,15 +307,15 @@ export const coupons = sqliteTable(
   ],
 );
 
-export const couponUses = sqliteTable(
+export const couponUses = luxury.table(
   "coupon_uses",
   {
-    id: text("id").primaryKey(),
-    couponId: text("coupon_id").notNull().references(() => coupons.id, { onDelete: "cascade" }),
-    orderId: text("order_id").notNull().references(() => orders.id, { onDelete: "cascade" }),
-    customerId: text("customer_id").references(() => customers.id, { onDelete: "set null" }),
+    id: uuid("id").primaryKey(),
+    couponId: uuid("coupon_id").notNull().references(() => coupons.id, { onDelete: "cascade" }),
+    orderId: uuid("order_id").notNull().references(() => orders.id, { onDelete: "cascade" }),
+    customerId: uuid("customer_id").references(() => customers.id, { onDelete: "set null" }),
     discountCents: integer("discount_cents").notNull(),
-    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    createdAt: timestamp("created_at", { withTimezone: true, mode: "string" }).notNull().defaultNow(),
   },
   (table) => [
     uniqueIndex("idx_coupon_uses_coupon_order").on(table.couponId, table.orderId),
@@ -312,24 +323,24 @@ export const couponUses = sqliteTable(
   ],
 );
 
-export const siteSettings = sqliteTable("site_settings", {
+export const siteSettings = luxury.table("site_settings", {
   key: text("key").primaryKey(),
   valueJson: text("value_json").notNull(),
   updatedBy: text("updated_by"),
-  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: timestamp("updated_at", { withTimezone: true, mode: "string" }).notNull().defaultNow(),
 });
 
-export const adminAuditLogs = sqliteTable(
+export const adminAuditLogs = luxury.table(
   "admin_audit_logs",
   {
-    id: text("id").primaryKey(),
+    id: uuid("id").primaryKey(),
     actorUserId: text("actor_user_id").notNull(),
     actorEmail: text("actor_email").notNull(),
     action: text("action").notNull(),
     entityType: text("entity_type").notNull(),
-    entityId: text("entity_id"),
+    entityId: uuid("entity_id"),
     metadataJson: text("metadata_json"),
-    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    createdAt: timestamp("created_at", { withTimezone: true, mode: "string" }).notNull().defaultNow(),
   },
   (table) => [
     index("idx_admin_audit_actor_created").on(table.actorUserId, table.createdAt),

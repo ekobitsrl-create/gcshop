@@ -1,5 +1,3 @@
-import { env } from "cloudflare:workers";
-
 export type StoreRuntimeEnv = {
   ADMIN_EMAILS?: string;
   PAYPAL_MODE?: "sandbox" | "live";
@@ -11,5 +9,5 @@ export type StoreRuntimeEnv = {
 };
 
 export function getRuntimeEnv(): StoreRuntimeEnv {
-  return env as unknown as StoreRuntimeEnv;
+  return process.env as StoreRuntimeEnv;
 }

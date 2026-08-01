@@ -30,7 +30,13 @@ export async function POST(request: Request) {
   if (!cart.length) {
     token = crypto.randomUUID(); const id = crypto.randomUUID();
     await db.insert(carts).values({ id, token }); cart = [{ id }];
-    cookieStore.set(COOKIE, token, { httpOnly: true, sameSite: "lax", secure: true, path: "/", maxAge: 60 * 60 * 24 * 30 });
+    cookieStore.set(COOKIE, token, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 30,
+    });
   }
   const existing = await db.select().from(cartItems).where(and(eq(cartItems.cartId, cart[0].id), eq(cartItems.variantId, body.variantId))).limit(1);
   const nextQuantity = Math.min(variant[0].stock, quantity + (existing[0]?.quantity ?? 0));

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { access, readFile } from "node:fs/promises";
+import { access, readFile, readdir } from "node:fs/promises";
 import test from "node:test";
 
 const templateRoot = new URL("../", import.meta.url);
@@ -21,16 +21,19 @@ test("contains the Luxury Concept Store identity and company details", async () 
 });
 
 test("ships an empty ecommerce migration and all critical flows", async () => {
-  const [migration, hosting, checkout, paypal, admin] = await Promise.all([
-    readFile(new URL("../drizzle/0000_spotty_unicorn.sql", import.meta.url), "utf8"),
-    readFile(new URL("../.openai/hosting.json", import.meta.url), "utf8"),
+  const migrationFiles = (await readdir(new URL("../drizzle/", import.meta.url))).filter((file) => file.endsWith(".sql"));
+  assert.equal(migrationFiles.length, 1);
+  const [migration, schema, checkout, paypal, admin] = await Promise.all([
+    readFile(new URL(`../drizzle/${migrationFiles[0]}`, import.meta.url), "utf8"),
+    readFile(new URL("../db/schema.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/api/checkout/route.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/api/payments/paypal/capture/route.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/api/admin/products/route.ts", import.meta.url), "utf8"),
   ]);
   assert.equal((migration.match(/CREATE TABLE/g) ?? []).length, 17);
+  assert.match(migration, /CREATE SCHEMA IF NOT EXISTS "luxury"/);
   assert.doesNotMatch(migration, /^INSERT\s/gim);
-  assert.match(hosting, /"d1"\s*:\s*"DB"/);
+  assert.match(schema, /pgSchema\("luxury"\)/);
   assert.match(checkout, /bank_transfer/);
   assert.match(checkout, /createPayPalOrder/);
   assert.match(paypal, /capturePayPalOrder/);

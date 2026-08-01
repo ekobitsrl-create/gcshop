@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { chatGPTSignOutPath } from "@/app/chatgpt-auth";
 import { isAdminEmail, requireAdminPage } from "@/lib/admin-auth";
 import "./admin.css";
 
@@ -19,7 +18,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
             L’account <strong>{user.email}</strong> non è presente nell’elenco amministratori.
             Contatta Ekobit SRL per richiedere l’accesso.
           </p>
-          <a href={chatGPTSignOutPath("/admin")}>Accedi con un altro account</a>
+          <a href="/auth/logout?return_to=/accesso-admin">Accedi con un altro account</a>
         </div>
       </main>
     );
@@ -47,7 +46,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
       <div className="admin-main">
         <header className="admin-topbar">
           <div><span className="admin-status-dot" /> Sistema operativo</div>
-          <a href={chatGPTSignOutPath("/")}>Esci</a>
+          <a href="/auth/logout?return_to=/">Esci</a>
         </header>
         {children}
       </div>

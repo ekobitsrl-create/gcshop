@@ -1,9 +1,9 @@
 import { adminAuditLogs } from "@/db/schema";
 import { getDb } from "@/db";
-import type { ChatGPTUser } from "@/app/chatgpt-auth";
+import type { AdminUser } from "@/lib/admin-auth";
 
 export async function recordAdminAction(
-  user: ChatGPTUser,
+  user: AdminUser,
   action: string,
   entityType: string,
   entityId?: string,

@@ -1,13 +1,25 @@
-import { env } from "cloudflare:workers";
-import { drizzle } from "drizzle-orm/d1";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import * as schema from "./schema";
 
-export function getDb() {
-  if (!env.DB) {
-    throw new Error(
-      "Cloudflare D1 binding `DB` is unavailable. Set the `d1` field in .openai/hosting.json to `DB` or let your control plane inject the real binding values before using the database."
-    );
+function createDb() {
+  const connectionString = process.env.POSTGRES_URL ?? process.env.DATABASE_URL;
+  if (!connectionString) {
+    throw new Error("POSTGRES_URL non configurato. Collega Supabase al progetto Vercel e sincronizza le variabili d'ambiente.");
   }
 
-  return drizzle(env.DB, { schema });
+  const client = postgres(connectionString, {
+    max: 1,
+    prepare: false,
+    idle_timeout: 20,
+    connect_timeout: 15,
+  });
+  return drizzle(client, { schema });
+}
+
+let database: ReturnType<typeof createDb> | null = null;
+
+export function getDb() {
+  database ??= createDb();
+  return database;
 }
