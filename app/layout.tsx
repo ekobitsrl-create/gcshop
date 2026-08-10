@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 import "./globals.css";
 
 export const viewport: Viewport = {
-  themeColor: "#17140f",
+  themeColor: "#111210",
   colorScheme: "light",
 };
 
@@ -12,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host") ?? "localhost:3000";
   const protocol = requestHeaders.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
   const base = new URL(`${protocol}://${host}`);
-  const socialImage = new URL("/og.png", base).toString();
+  const socialImage = new URL("/og-v2.png", base).toString();
 
   return {
     metadataBase: base,
@@ -35,7 +35,7 @@ export async function generateMetadata(): Promise<Metadata> {
           url: socialImage,
           width: 1740,
           height: 900,
-          alt: "Luxury Concept Store — campagna editoriale",
+          alt: "Luxury Concept Store — Il lusso è un punto di vista",
         },
       ],
     },

@@ -1,14 +1,103 @@
 import { asc, eq } from "drizzle-orm";
+import Image from "next/image";
 import { getDb } from "@/db";
-import { productImages, products } from "@/db/schema";
+import { categories, productImages, products } from "@/db/schema";
 import { CommerceHeader } from "@/components/commerce-header";
+import { StoreFooter } from "@/components/store-footer";
 import { formatMoney } from "@/lib/store-utils";
 import "../commerce.css";
 
 export const dynamic = "force-dynamic";
-export default async function ShopPage() {
+
+const filters = ["Tutto", "Donna", "Uomo", "Accessori"];
+type ProductRow = { id: string; name: string; slug: string; price: number; currency: string; categoryName: string | null };
+
+export default async function ShopPage({ searchParams }: { searchParams: Promise<{ categoria?: string }> }) {
+  const { categoria } = await searchParams;
+  const activeFilter = categoria?.toLowerCase() ?? "tutto";
   const db = getDb();
-  const baseRows = await db.select({ id:products.id,name:products.name,slug:products.slug,price:products.basePriceCents,currency:products.currency }).from(products).where(eq(products.status,"active")).orderBy(asc(products.name));
-  const rows = await Promise.all(baseRows.map(async (product) => ({ ...product, imageUrl: (await db.select({ url: productImages.url }).from(productImages).where(eq(productImages.productId, product.id)).orderBy(asc(productImages.sortOrder)).limit(1))[0]?.url ?? null })));
-  return <div className="commerce-shell"><CommerceHeader/><main className="commerce-main"><p className="commerce-kicker">La selezione</p><h1 className="commerce-title">Shop</h1>{rows.length?<div className="product-grid">{rows.map((p)=><a className="product-card" href={`/prodotto/${p.slug}`} key={p.id}><div className="product-card-media">{p.imageUrl?<img src={p.imageUrl} alt={p.name}/>:<span>LC</span>}</div><h2>{p.name}</h2><p>{formatMoney(p.price,p.currency)}</p></a>)}</div>:<div className="commerce-empty"><span className="commerce-kicker">Catalogo pronto</span><h2>Nessun prodotto pubblicato.</h2><p>Il nuovo database è vuoto. I prodotti aggiunti dal pannello admin compariranno qui.</p><a href="/admin/prodotti">Apri il pannello admin →</a></div>}</main></div>;
+  let baseRows: ProductRow[] = [];
+  try {
+    baseRows = await db
+      .select({
+        id: products.id,
+        name: products.name,
+        slug: products.slug,
+        price: products.basePriceCents,
+        currency: products.currency,
+        categoryName: categories.name,
+      })
+      .from(products)
+      .leftJoin(categories, eq(products.categoryId, categories.id))
+      .where(eq(products.status, "active"))
+      .orderBy(asc(products.name));
+  } catch {
+    // Il catalogo pubblico resta presentabile anche durante una sospensione temporanea del database.
+  }
+
+  const filteredRows = activeFilter === "tutto"
+    ? baseRows
+    : baseRows.filter((product) => product.categoryName?.toLowerCase().includes(activeFilter));
+  const rows = await Promise.all(filteredRows.map(async (product) => ({
+    ...product,
+    imageUrl: (await db
+      .select({ url: productImages.url })
+      .from(productImages)
+      .where(eq(productImages.productId, product.id))
+      .orderBy(asc(productImages.sortOrder))
+      .limit(1))[0]?.url ?? null,
+  })));
+
+  return (
+    <div className="commerce-shell">
+      <CommerceHeader />
+      <main>
+        <header className="commerce-hero">
+          <p className="commerce-kicker">Collection / 2026</p>
+          <h1>Shop<br /><em>the edit.</em></h1>
+          <p className="commerce-hero-copy">Una selezione in continua evoluzione. Pochi pezzi, scelti con intenzione.</p>
+        </header>
+
+        <nav className="shop-filters" aria-label="Filtra il catalogo">
+          {filters.map((filter) => {
+            const value = filter.toLowerCase();
+            const href = value === "tutto" ? "/shop" : `/shop?categoria=${value}`;
+            return <a className={activeFilter === value ? "is-active" : ""} href={href} key={filter}>{filter}</a>;
+          })}
+          <span>{String(rows.length).padStart(2, "0")} pezzi</span>
+        </nav>
+
+        <section className="commerce-main shop-content">
+          {rows.length ? (
+            <div className="commerce-product-grid">
+              {rows.map((product, index) => (
+                <a className="commerce-product-card" href={`/prodotto/${product.slug}`} key={product.id}>
+                  <div className="product-card-media">
+                    {product.imageUrl ? <Image src={product.imageUrl} alt={product.name} fill unoptimized sizes="(max-width: 430px) 100vw, (max-width: 760px) 50vw, 25vw" /> : <span>LCS</span>}
+                    <small>{String(index + 1).padStart(2, "0")}</small>
+                  </div>
+                  <div className="product-card-copy">
+                    <p>{product.categoryName ?? "Luxury Concept Store"}</p>
+                    <h2>{product.name}</h2>
+                    <strong>{formatMoney(product.price, product.currency)}</strong>
+                  </div>
+                </a>
+              ))}
+            </div>
+          ) : (
+            <div className="commerce-empty">
+              <div className="empty-number">00</div>
+              <div>
+                <p className="commerce-kicker">La selezione sta arrivando</p>
+                <h2>Il catalogo è pronto.<br /><em>Ora servono le cose giuste.</em></h2>
+                <p>Nessun riempitivo. I prodotti appariranno qui solo quando saranno stati scelti e pubblicati dal pannello amministrativo.</p>
+                <a href="/admin/prodotti">Gestisci il catalogo <span>↗</span></a>
+              </div>
+            </div>
+          )}
+        </section>
+      </main>
+      <StoreFooter />
+    </div>
+  );
 }
