@@ -78,8 +78,8 @@ test("ships the webcam-first Virtual Try-On project without photo uploads", asyn
   ]);
 
   assert.match(page, /Virtual Try-On/i);
-  assert.match(page, /webcam live/i);
-  assert.match(page, /senza caricare foto|zero upload/i);
+  assert.match(page, /Non immaginarlo|specchio AR/i);
+  assert.match(page, /niente foto da caricare|nessuna foto da caricare/i);
   assert.doesNotMatch(page, /type="file"|readAsDataURL|Carica la tua foto/i);
   assert.match(shop, /product-card-tryon/);
   assert.match(product, /product-tryon-cta/);

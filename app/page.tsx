@@ -19,8 +19,8 @@ export default function Home() {
           <p className="micro-label">Virtual Try-On / Beta 01</p>
           <h1>Provalo.<br /><em>Prima che<br />diventi tuo.</em></h1>
           <div className="hero-copy-bottom">
-            <p>QR sul prodotto, webcam live e tracking del corpo. Stiamo costruendo un vero camerino AR, senza caricamento di foto.</p>
-            <a className="circle-link" href="/try-on" aria-label="Scopri il progetto Virtual Try-On AR"><span>AR Lab</span><b>↗</b></a>
+            <p>Inquadra. Entra nel look. Muoviti. Il prossimo camerino sarà uno specchio AR che reagisce insieme a te.</p>
+            <a className="circle-link" href="/try-on" aria-label="Scopri l'esperienza Virtual Try-On AR"><span>Entra</span><b>↗</b></a>
           </div>
         </div>
 
@@ -28,14 +28,14 @@ export default function Home() {
           <Image src="/images/editorial.jpg" alt="Editoriale Luxury Concept Store a Milano" fill priority sizes="(max-width: 820px) 100vw, 58vw" />
           <div className="hero-scan-frame" aria-hidden="true"><span>Body map / active</span><i /></div>
           <div className="hero-visual-tag"><span>Try-on</span><strong>01</strong></div>
-          <p>Live camera / No photo upload</p>
+          <p>Your body / Your angle / Your look</p>
         </div>
 
         <div className="hero-side-note" aria-hidden="true">LCS Vision System · Personal fitting interface · Beta 01</div>
       </section>
 
       <section className="ticker" aria-label="Valori del negozio">
-        <div>Virtual try-on AR <span>✦</span> QR sul prodotto <span>✦</span> Webcam live <span>✦</span> In sviluppo <span>✦</span></div>
+        <div>Scan <span>✦</span> Step in <span>✦</span> Move <span>✦</span> Switch look <span>✦</span> Own it <span>✦</span></div>
       </section>
 
       <section className="tryon-home" aria-labelledby="tryon-home-title">
@@ -46,14 +46,14 @@ export default function Home() {
         <div className="tryon-home-grid" aria-hidden="true" />
         <div className="tryon-home-copy">
           <p className="micro-label">LCS Vision / 01</p>
-          <h2 id="tryon-home-title">Il camerino<br /><em>diventa digitale.</em></h2>
-          <p>Niente foto da caricare e niente simulazioni statiche. Il prossimo step sarà un vero camerino live con tracking del corpo e capi digitalizzati.</p>
-          <a href="/try-on">Scopri il progetto AR <span>↗</span></a>
+          <h2 id="tryon-home-title">Non guardare il look.<br /><em>Entraci dentro.</em></h2>
+          <p>Un accesso, un gesto, il tuo riflesso. Stiamo trasformando ogni pagina prodotto in una porta verso un'esperienza AR personale.</p>
+          <a href="/try-on">Entra nella visione <span>↗</span></a>
         </div>
         <ol className="tryon-home-steps">
-          <li><span>01</span><strong>Inquadra il QR</strong><small>Dalla pagina prodotto</small></li>
-          <li><span>02</span><strong>Attiva la webcam</strong><small>Nessun file da caricare</small></li>
-          <li><span>03</span><strong>Prova in diretta</strong><small>Tracking in tempo reale</small></li>
+          <li><span>01</span><strong>Scan</strong><small>Un gesto dal prodotto</small></li>
+          <li><span>02</span><strong>Step in</strong><small>Entra nello specchio AR</small></li>
+          <li><span>03</span><strong>Own it</strong><small>Muoviti dentro il look</small></li>
         </ol>
       </section>
 

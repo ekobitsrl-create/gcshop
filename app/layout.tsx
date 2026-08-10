@@ -21,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
       template: "%s | Luxury Concept Store",
     },
     description:
-      "Luxury Concept Store: moda contemporanea e un nuovo Virtual Try-On AR con QR sul prodotto e webcam live.",
+      "Luxury Concept Store: moda contemporanea e una nuova esperienza Virtual Try-On AR pensata per entrare nel look.",
     applicationName: "Luxury Concept Store",
     openGraph: {
       type: "website",
