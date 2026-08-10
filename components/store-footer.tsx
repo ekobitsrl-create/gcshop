@@ -6,7 +6,7 @@ export function StoreFooter() {
       <div className="footer-statement">
         <p>LCS Vision / Virtual Try-On</p>
         <h2>See the look.<br /><em>Make it yours.</em></h2>
-        <Link href="/try-on">Apri il try-on <span>↗</span></Link>
+        <Link href="/try-on">Scopri il progetto AR <span>↗</span></Link>
       </div>
 
       <div className="footer-grid">

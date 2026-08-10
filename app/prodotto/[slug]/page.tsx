@@ -92,7 +92,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           <p className="product-price">{formatMoney(product.basePriceCents, product.currency)}</p>
           <p className="product-copy">{product.description || product.shortDescription || "Una selezione contemporanea, scelta per la qualità dei materiali e il carattere delle forme."}</p>
           <a className="product-tryon-cta" href={`/try-on?prodotto=${slug}`}>
-            <span><small>New / Virtual fitting</small><strong>Provalo su di te</strong></span>
+            <span><small>AR fitting / In sviluppo</small><strong>Scopri il Try-On live</strong></span>
             <b>↗</b>
           </a>
           {isPlaceholder ? (

@@ -66,23 +66,21 @@ test("removes the disposable starter preview", async () => {
   assert.match(layout, /og-v3\.png/);
   await access(new URL("../public/og-v3.png", import.meta.url));
   await access(new URL("../app/try-on/page.tsx", import.meta.url));
-  await access(new URL("../components/try-on-studio.tsx", import.meta.url));
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
   await assert.rejects(access(new URL("app\/_sites-preview", templateRoot)));
 });
 
-test("ships the interactive Virtual Try-On experience", async () => {
-  const [page, studio, shop, product] = await Promise.all([
+test("ships the webcam-first Virtual Try-On project without photo uploads", async () => {
+  const [page, shop, product] = await Promise.all([
     readFile(new URL("../app/try-on/page.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../components/try-on-studio.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/shop/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/prodotto/[slug]/page.tsx", import.meta.url), "utf8"),
   ]);
 
   assert.match(page, /Virtual Try-On/i);
-  assert.match(studio, /readAsDataURL/);
-  assert.match(studio, /type="range"/);
-  assert.match(studio, /non viene salvata/i);
+  assert.match(page, /webcam live/i);
+  assert.match(page, /senza caricare foto|zero upload/i);
+  assert.doesNotMatch(page, /type="file"|readAsDataURL|Carica la tua foto/i);
   assert.match(shop, /product-card-tryon/);
   assert.match(product, /product-tryon-cta/);
 });
