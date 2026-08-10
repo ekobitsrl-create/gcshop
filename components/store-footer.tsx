@@ -31,7 +31,7 @@ export function StoreFooter() {
           <p>Ekobit SRL</p>
           <span>P. IVA 02424510796</span>
           <span>Via Firenze 185</span>
-          <span>88900 Crotone (KR)</span>
+          <span>88900 KR</span>
           <a href="tel:+393381346675">+39 338 134 6675</a>
           <a href="mailto:info@ekobit.it">info@ekobit.it</a>
         </address>

@@ -18,6 +18,7 @@ test("contains the Luxury Concept Store identity and company details", async () 
   assert.match(footer, /Via Firenze 185/);
   assert.match(footer, /338 134 6675/);
   assert.match(footer, /info@ekobit\.it/);
+  assert.doesNotMatch(`${page}\n${footer}`, /Crotone/i);
   assert.doesNotMatch(page, /InStyleShop|instyleshop|codex-preview|Building your site/i);
 });
 
