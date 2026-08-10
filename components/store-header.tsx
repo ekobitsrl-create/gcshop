@@ -10,6 +10,11 @@ const links = [
   { label: "Accessori", href: "/shop?categoria=accessori" },
 ];
 
+const announcements = [
+  "Spedizione gratuita su tutti gli ordini",
+  "10% sul primo ordine — codice WELCOME10",
+];
+
 export function StoreHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [cartCount, setCartCount] = useState(0);
@@ -23,10 +28,16 @@ export function StoreHeader() {
 
   return (
     <>
-      <div className="store-announcement">
-        <span>Spedizione gratuita</span>
-        <span className="announcement-center">Crotone · Italia</span>
-        <a href="mailto:info@ekobit.it">Client service</a>
+      <div className="store-announcement" aria-label="Promozioni in corso">
+        <div className="announcement-track">
+          {[false, true].map((duplicate) => (
+            <div className="announcement-sequence" aria-hidden={duplicate || undefined} key={String(duplicate)}>
+              {announcements.map((announcement) => (
+                <span key={announcement}>{announcement}<b aria-hidden="true">✦</b></span>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
       <header className="store-header">
         <button

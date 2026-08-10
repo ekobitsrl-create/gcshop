@@ -94,6 +94,9 @@
 .purchase-box > button:disabled, .checkout-submit:disabled { background: #8f8d87; cursor: not-allowed; }
 .purchase-box > p { margin: 14px 0 0; color: var(--accent); font-family: var(--serif); font-size: 14px; }
 .purchase-box > p a { text-decoration: underline; }
+.placeholder-purchase { margin-top: 38px; padding: 25px 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); }
+.placeholder-purchase span { color: var(--accent); font-size: 8px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+.placeholder-purchase p { max-width: 470px; margin: 12px 0 0; color: rgba(17,18,16,.58); font-family: var(--serif); font-size: 16px; line-height: 1.45; }
 .product-services { display: grid; margin-top: 45px; border-top: 1px solid var(--line); }
 .product-services p { display: grid; grid-template-columns: 35px 1fr; margin: 0; padding: 15px 0; border-bottom: 1px solid var(--line); font-size: 9px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
 .product-services span { color: var(--accent); }
@@ -111,6 +114,18 @@
 .field-row-three { grid-template-columns: .55fr 1fr .7fr; }
 .country-field { max-width: 180px; }
 .checkout-form textarea { resize: vertical; min-height: 100px; }
+.discount-panel { display: grid; grid-template-columns: minmax(0, .8fr) minmax(280px, 1fr); gap: 35px; margin-top: 22px; padding: 30px; border: 1px solid var(--ink); background: var(--paper); }
+.discount-panel h3 { margin: 9px 0 10px; font-family: var(--serif); font-size: 29px; font-weight: 400; }
+.discount-panel > div:first-child > p:last-child { max-width: 320px; margin: 0; color: rgba(17,18,16,.58); font-family: var(--serif); font-size: 15px; line-height: 1.45; }
+.discount-panel > div:first-child strong { color: var(--accent); font-family: var(--sans); font-size: 11px; letter-spacing: .08em; }
+.discount-entry { align-self: center; }
+.discount-entry > div { display: grid; grid-template-columns: 1fr auto; margin-top: 8px; }
+.discount-entry input { min-width: 0; border-color: var(--ink); background: var(--chalk); font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.discount-entry button { min-width: 105px; padding: 0 18px; background: var(--ink); color: #fff; font-size: 8px; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; transition: background 180ms ease; }
+.discount-entry button:hover { background: var(--accent); }
+.discount-entry button:disabled { background: #8f8d87; cursor: wait; }
+.discount-entry > p { margin: 10px 0 0; color: #822c28; font-family: var(--serif); font-size: 13px; line-height: 1.35; }
+.discount-entry > p.is-success { color: #466341; }
 .payment-methods { display: grid; gap: 8px; margin: 25px 0 0; padding: 0; border: 0; }
 .payment-methods legend { width: 100%; margin-bottom: 18px; padding-top: 28px; border-top: 1px solid var(--ink); font-family: var(--serif); font-size: 28px; }
 .payment-choice { min-height: 105px; display: grid !important; grid-template-columns: auto 1fr auto; align-items: center; gap: 17px !important; padding: 20px; border: 1px solid var(--line); background: var(--paper); cursor: pointer; }
@@ -130,6 +145,7 @@
 .order-line { display: grid; grid-template-columns: 1fr auto; gap: 18px; padding: 18px 0; border-bottom: 1px solid rgba(255,255,255,.15); font-family: var(--serif); font-size: 16px; }
 .order-line small { color: rgba(255,255,255,.48); }
 .order-line strong { font-weight: 400; }
+.order-discount { color: var(--accent-soft); }
 .order-total { margin-top: 18px; border-bottom: 0; font-size: 26px; }
 .order-total strong { color: var(--accent-soft); }
 .summary-note { margin: 30px 0 0; color: rgba(255,255,255,.45); font-size: 9px; line-height: 1.5; }
@@ -169,6 +185,7 @@
   .purchase-fields { grid-template-columns: 1fr 100px; }
   .checkout-layout { grid-template-columns: 1fr; gap: 65px; }
   .field-row, .field-row-three { grid-template-columns: 1fr; }
+  .discount-panel { grid-template-columns: 1fr; padding: 25px 20px; }
   .country-field { max-width: none; }
   .order-summary { position: static; }
 }

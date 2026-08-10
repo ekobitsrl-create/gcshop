@@ -4,13 +4,14 @@ import { getDb } from "@/db";
 import { categories, productImages, products } from "@/db/schema";
 import { CommerceHeader } from "@/components/commerce-header";
 import { StoreFooter } from "@/components/store-footer";
+import { placeholderProducts } from "@/lib/placeholder-products";
 import { formatMoney } from "@/lib/store-utils";
 import "../commerce.css";
 
 export const dynamic = "force-dynamic";
 
 const filters = ["Tutto", "Donna", "Uomo", "Accessori"];
-type ProductRow = { id: string; name: string; slug: string; price: number; currency: string; categoryName: string | null };
+type ProductRow = { id: string; name: string; slug: string; price: number; currency: string; categoryName: string | null; imageUrl: string | null };
 
 export default async function ShopPage({ searchParams }: { searchParams: Promise<{ categoria?: string }> }) {
   const { categoria } = await searchParams;
@@ -18,7 +19,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
   const db = getDb();
   let baseRows: ProductRow[] = [];
   try {
-    baseRows = await db
+    const productsFromDatabase = await db
       .select({
         id: products.id,
         name: products.name,
@@ -31,22 +32,35 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
       .leftJoin(categories, eq(products.categoryId, categories.id))
       .where(eq(products.status, "active"))
       .orderBy(asc(products.name));
+    baseRows = await Promise.all(productsFromDatabase.map(async (product) => ({
+      ...product,
+      imageUrl: (await db
+        .select({ url: productImages.url })
+        .from(productImages)
+        .where(eq(productImages.productId, product.id))
+        .orderBy(asc(productImages.sortOrder))
+        .limit(1))[0]?.url ?? null,
+    })));
   } catch {
     // Il catalogo pubblico resta presentabile anche durante una sospensione temporanea del database.
+  }
+
+  if (!baseRows.length) {
+    baseRows = placeholderProducts.map((product) => ({
+      id: product.id,
+      name: product.name,
+      slug: product.slug,
+      price: product.price,
+      currency: product.currency,
+      categoryName: product.categoryName,
+      imageUrl: product.imageUrl,
+    }));
   }
 
   const filteredRows = activeFilter === "tutto"
     ? baseRows
     : baseRows.filter((product) => product.categoryName?.toLowerCase().includes(activeFilter));
-  const rows = await Promise.all(filteredRows.map(async (product) => ({
-    ...product,
-    imageUrl: (await db
-      .select({ url: productImages.url })
-      .from(productImages)
-      .where(eq(productImages.productId, product.id))
-      .orderBy(asc(productImages.sortOrder))
-      .limit(1))[0]?.url ?? null,
-  })));
+  const rows = filteredRows;
 
   return (
     <div className="commerce-shell">

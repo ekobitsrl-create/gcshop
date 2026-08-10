@@ -39,10 +39,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 
 .store-announcement {
   min-height: 28px;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  display: flex;
   align-items: center;
-  padding: 0 28px;
+  overflow: hidden;
   background: var(--accent);
   color: #fff;
   font-size: 8px;
@@ -51,8 +50,14 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   text-transform: uppercase;
 }
 
-.store-announcement .announcement-center { justify-self: center; }
-.store-announcement a { justify-self: end; }
+.announcement-track { width: max-content; display: flex; flex: none; animation: announcement-scroll 22s linear infinite; }
+.announcement-sequence { display: flex; align-items: center; flex: none; }
+.announcement-sequence > span { display: flex; align-items: center; gap: clamp(38px, 5vw, 82px); padding-left: clamp(38px, 5vw, 82px); white-space: nowrap; }
+.announcement-sequence b { color: var(--accent-soft); font-size: 7px; }
+
+@keyframes announcement-scroll {
+  to { transform: translateX(-50%); }
+}
 
 .store-header {
   position: relative;
@@ -402,8 +407,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 }
 
 @media (max-width: 760px) {
-  .store-announcement { grid-template-columns: 1fr auto; padding: 0 16px; }
-  .announcement-center { display: none; }
+  .announcement-track { animation-duration: 16s; }
   .store-header { height: 72px; padding: 0 15px; gap: 8px; }
   .store-wordmark strong { font-size: 19px; }
   .store-wordmark span { font-size: 5px; }

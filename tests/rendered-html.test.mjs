@@ -21,24 +21,36 @@ test("contains the Luxury Concept Store identity and company details", async () 
   assert.doesNotMatch(page, /InStyleShop|instyleshop|codex-preview|Building your site/i);
 });
 
-test("ships an empty ecommerce migration and all critical flows", async () => {
+test("ships the ecommerce schema, placeholder catalog and all critical flows", async () => {
   const migrationFiles = (await readdir(new URL("../drizzle/", import.meta.url))).filter((file) => file.endsWith(".sql"));
-  assert.equal(migrationFiles.length, 1);
-  const [migration, schema, checkout, paypal, admin] = await Promise.all([
+  assert.equal(migrationFiles.length, 2);
+  const [schemaMigration, catalogMigration, schema, checkout, coupon, paypal, admin, header] = await Promise.all([
     readFile(new URL(`../drizzle/${migrationFiles[0]}`, import.meta.url), "utf8"),
+    readFile(new URL(`../drizzle/${migrationFiles[1]}`, import.meta.url), "utf8"),
     readFile(new URL("../db/schema.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/api/checkout/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/api/checkout/coupon/route.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/api/payments/paypal/capture/route.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/api/admin/products/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../components/store-header.tsx", import.meta.url), "utf8"),
   ]);
-  assert.equal((migration.match(/CREATE TABLE/g) ?? []).length, 17);
-  assert.match(migration, /CREATE SCHEMA IF NOT EXISTS "luxury"/);
-  assert.doesNotMatch(migration, /^INSERT\s/gim);
+  assert.equal((schemaMigration.match(/CREATE TABLE/g) ?? []).length, 17);
+  assert.match(schemaMigration, /CREATE SCHEMA IF NOT EXISTS "luxury"/);
+  assert.doesNotMatch(schemaMigration, /^INSERT\s/gim);
+  assert.match(catalogMigration, /first_order_only/);
+  assert.match(catalogMigration, /WELCOME10/);
+  assert.equal((catalogMigration.match(/"placeholder":true/g) ?? []).length, 6);
   assert.match(schema, /pgSchema\("luxury"\)/);
+  assert.match(schema, /firstOrderOnly/);
   assert.match(checkout, /bank_transfer/);
   assert.match(checkout, /createPayPalOrder/);
+  assert.match(checkout, /discountCents/);
+  assert.match(coupon, /evaluateCoupon/);
   assert.match(paypal, /capturePayPalOrder/);
   assert.match(admin, /recordAdminAction/);
+  assert.match(header, /Spedizione gratuita su tutti gli ordini/);
+  assert.match(header, /WELCOME10/);
+  assert.doesNotMatch(header, /Crotone|Client service/i);
 });
 
 test("removes the disposable starter preview", async () => {

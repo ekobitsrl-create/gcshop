@@ -1,0 +1,42 @@
+ALTER TABLE "luxury"."coupons" ADD COLUMN "first_order_only" boolean DEFAULT false NOT NULL;--> statement-breakpoint
+CREATE UNIQUE INDEX "idx_coupon_uses_coupon_customer" ON "luxury"."coupon_uses" USING btree ("coupon_id","customer_id");--> statement-breakpoint
+INSERT INTO "luxury"."categories" ("id", "name", "slug", "description", "sort_order", "is_active") VALUES
+  ('10000000-0000-4000-8000-000000000001', 'Donna', 'donna', 'Forme decise e proporzioni contemporanee.', 10, true),
+  ('10000000-0000-4000-8000-000000000002', 'Uomo', 'uomo', 'Sartorialità quotidiana senza rigidità.', 20, true),
+  ('10000000-0000-4000-8000-000000000003', 'Accessori', 'accessori', 'Oggetti essenziali dal carattere netto.', 30, true)
+ON CONFLICT ("slug") DO UPDATE SET "name" = EXCLUDED."name", "description" = EXCLUDED."description", "sort_order" = EXCLUDED."sort_order", "is_active" = true, "updated_at" = CURRENT_TIMESTAMP;--> statement-breakpoint
+INSERT INTO "luxury"."products" ("id", "category_id", "name", "slug", "sku", "short_description", "description", "brand", "gender", "status", "base_price_cents", "currency", "is_featured", "metadata_json") VALUES
+  ('20000000-0000-4000-8000-000000000001', (SELECT "id" FROM "luxury"."categories" WHERE "slug" = 'donna'), 'Blazer Seta Notturna', 'blazer-seta-notturna', 'LCS-DON-001', 'Blazer fluido dalla costruzione essenziale.', 'Una silhouette precisa e leggera, pensata per accompagnare il movimento. Finiture pulite, spalla definita e proporzioni contemporanee.', 'Luxury Concept Store', 'donna', 'active', 14900, 'EUR', true, '{"placeholder":true}'),
+  ('20000000-0000-4000-8000-000000000002', (SELECT "id" FROM "luxury"."categories" WHERE "slug" = 'donna'), 'Abito Sculpted Bordeaux', 'abito-sculpted-bordeaux', 'LCS-DON-002', 'Abito midi dalle linee scultoree.', 'Volumi calibrati e tono bordeaux profondo. Un abito dalla presenza netta, costruito per essere indossato con naturalezza.', 'Luxury Concept Store', 'donna', 'active', 18900, 'EUR', false, '{"placeholder":true}'),
+  ('20000000-0000-4000-8000-000000000003', (SELECT "id" FROM "luxury"."categories" WHERE "slug" = 'uomo'), 'Overshirt Lana Grafite', 'overshirt-lana-grafite', 'LCS-UOM-001', 'La giacca quotidiana in lana compatta.', 'Taglio rilassato, superficie materica e costruzione essenziale. Una sovraccamicia pensata per attraversare le stagioni.', 'Luxury Concept Store', 'uomo', 'active', 15900, 'EUR', true, '{"placeholder":true}'),
+  ('20000000-0000-4000-8000-000000000004', (SELECT "id" FROM "luxury"."categories" WHERE "slug" = 'uomo'), 'Pantalone Sartoriale Sabbia', 'pantalone-sartoriale-sabbia', 'LCS-UOM-002', 'Pantalone ampio, costruzione sartoriale.', 'Vita pulita, gamba morbida e una tonalità sabbia facile da combinare. La sartorialità interpretata senza rigidità.', 'Luxury Concept Store', 'uomo', 'active', 11900, 'EUR', false, '{"placeholder":true}'),
+  ('20000000-0000-4000-8000-000000000005', (SELECT "id" FROM "luxury"."categories" WHERE "slug" = 'accessori'), 'Borsa Atelier 01', 'borsa-atelier-01', 'LCS-ACC-001', 'Borsa strutturata dalle proporzioni compatte.', 'Geometrie nette, manico corto e dettagli ridotti all’essenziale. Un oggetto quotidiano con carattere da collezione.', 'Luxury Concept Store', 'unisex', 'active', 17900, 'EUR', true, '{"placeholder":true}'),
+  ('20000000-0000-4000-8000-000000000006', (SELECT "id" FROM "luxury"."categories" WHERE "slug" = 'accessori'), 'Frame 02', 'occhiali-frame-02', 'LCS-ACC-002', 'Occhiale deciso dalla montatura grafica.', 'Una montatura dal profilo deciso e dalle proporzioni misurate, costruita per definire il volto senza sovrastarlo.', 'Luxury Concept Store', 'unisex', 'active', 9900, 'EUR', false, '{"placeholder":true}')
+ON CONFLICT ("slug") DO UPDATE SET "category_id" = EXCLUDED."category_id", "name" = EXCLUDED."name", "short_description" = EXCLUDED."short_description", "description" = EXCLUDED."description", "status" = 'active', "base_price_cents" = EXCLUDED."base_price_cents", "metadata_json" = EXCLUDED."metadata_json", "updated_at" = CURRENT_TIMESTAMP;--> statement-breakpoint
+INSERT INTO "luxury"."product_variants" ("id", "product_id", "sku", "title", "size", "stock_quantity", "is_active") VALUES
+  ('30000000-0000-4000-8000-000000000001', (SELECT "id" FROM "luxury"."products" WHERE "slug" = 'blazer-seta-notturna'), 'LCS-DON-001-S', 'Taglia S', 'S', 5, true),
+  ('30000000-0000-4000-8000-000000000002', (SELECT "id" FROM "luxury"."products" WHERE "slug" = 'blazer-seta-notturna'), 'LCS-DON-001-M', 'Taglia M', 'M', 5, true),
+  ('30000000-0000-4000-8000-000000000003', (SELECT "id" FROM "luxury"."products" WHERE "slug" = 'blazer-seta-notturna'), 'LCS-DON-001-L', 'Taglia L', 'L', 5, true),
+  ('30000000-0000-4000-8000-000000000004', (SELECT "id" FROM "luxury"."products" WHERE "slug" = 'abito-sculpted-bordeaux'), 'LCS-DON-002-S', 'Taglia S', 'S', 5, true),
+  ('30000000-0000-4000-8000-000000000005', (SELECT "id" FROM "luxury"."products" WHERE "slug" = 'abito-sculpted-bordeaux'), 'LCS-DON-002-M', 'Taglia M', 'M', 5, true),
+  ('30000000-0000-4000-8000-000000000006', (SELECT "id" FROM "luxury"."products" WHERE "slug" = 'abito-sculpted-bordeaux'), 'LCS-DON-002-L', 'Taglia L', 'L', 5, true),
+  ('30000000-0000-4000-8000-000000000007', (SELECT "id" FROM "luxury"."products" WHERE "slug" = 'overshirt-lana-grafite'), 'LCS-UOM-001-S', 'Taglia S', 'S', 5, true),
+  ('30000000-0000-4000-8000-000000000008', (SELECT "id" FROM "luxury"."products" WHERE "slug" = 'overshirt-lana-grafite'), 'LCS-UOM-001-M', 'Taglia M', 'M', 5, true),
+  ('30000000-0000-4000-8000-000000000009', (SELECT "id" FROM "luxury"."products" WHERE "slug" = 'overshirt-lana-grafite'), 'LCS-UOM-001-L', 'Taglia L', 'L', 5, true),
+  ('30000000-0000-4000-8000-000000000010', (SELECT "id" FROM "luxury"."products" WHERE "slug" = 'pantalone-sartoriale-sabbia'), 'LCS-UOM-002-S', 'Taglia S', 'S', 5, true),
+  ('30000000-0000-4000-8000-000000000011', (SELECT "id" FROM "luxury"."products" WHERE "slug" = 'pantalone-sartoriale-sabbia'), 'LCS-UOM-002-M', 'Taglia M', 'M', 5, true),
+  ('30000000-0000-4000-8000-000000000012', (SELECT "id" FROM "luxury"."products" WHERE "slug" = 'pantalone-sartoriale-sabbia'), 'LCS-UOM-002-L', 'Taglia L', 'L', 5, true),
+  ('30000000-0000-4000-8000-000000000013', (SELECT "id" FROM "luxury"."products" WHERE "slug" = 'borsa-atelier-01'), 'LCS-ACC-001-OS', 'Taglia unica', 'OS', 8, true),
+  ('30000000-0000-4000-8000-000000000014', (SELECT "id" FROM "luxury"."products" WHERE "slug" = 'occhiali-frame-02'), 'LCS-ACC-002-OS', 'Taglia unica', 'OS', 8, true)
+ON CONFLICT ("sku") DO UPDATE SET "title" = EXCLUDED."title", "size" = EXCLUDED."size", "stock_quantity" = EXCLUDED."stock_quantity", "is_active" = true, "updated_at" = CURRENT_TIMESTAMP;--> statement-breakpoint
+INSERT INTO "luxury"."product_images" ("id", "product_id", "url", "alt_text", "sort_order") VALUES
+  ('50000000-0000-4000-8000-000000000001', (SELECT "id" FROM "luxury"."products" WHERE "slug" = 'blazer-seta-notturna'), '/images/category-woman.jpg', 'Blazer Seta Notturna', 0),
+  ('50000000-0000-4000-8000-000000000002', (SELECT "id" FROM "luxury"."products" WHERE "slug" = 'abito-sculpted-bordeaux'), '/images/product-2.jpg', 'Abito Sculpted Bordeaux', 0),
+  ('50000000-0000-4000-8000-000000000003', (SELECT "id" FROM "luxury"."products" WHERE "slug" = 'overshirt-lana-grafite'), '/images/category-man.jpg', 'Overshirt Lana Grafite', 0),
+  ('50000000-0000-4000-8000-000000000004', (SELECT "id" FROM "luxury"."products" WHERE "slug" = 'pantalone-sartoriale-sabbia'), '/images/product-3.jpg', 'Pantalone Sartoriale Sabbia', 0),
+  ('50000000-0000-4000-8000-000000000005', (SELECT "id" FROM "luxury"."products" WHERE "slug" = 'borsa-atelier-01'), '/images/category-accessories.jpg', 'Borsa Atelier 01', 0),
+  ('50000000-0000-4000-8000-000000000006', (SELECT "id" FROM "luxury"."products" WHERE "slug" = 'occhiali-frame-02'), '/images/product-4.jpg', 'Frame 02', 0)
+ON CONFLICT ("id") DO UPDATE SET "url" = EXCLUDED."url", "alt_text" = EXCLUDED."alt_text", "updated_at" = CURRENT_TIMESTAMP;--> statement-breakpoint
+INSERT INTO "luxury"."coupons" ("id", "code", "type", "value", "first_order_only", "is_active") VALUES
+  ('40000000-0000-4000-8000-000000000001', 'WELCOME10', 'percentage', 10, true, true)
+ON CONFLICT ("code") DO UPDATE SET "type" = 'percentage', "value" = 10, "first_order_only" = true, "is_active" = true, "updated_at" = CURRENT_TIMESTAMP;

@@ -294,6 +294,7 @@ export const coupons = luxury.table(
     value: integer("value").notNull(),
     minimumOrderCents: integer("minimum_order_cents"),
     maximumDiscountCents: integer("maximum_discount_cents"),
+    firstOrderOnly: boolean("first_order_only").notNull().default(false),
     usageLimit: integer("usage_limit"),
     usageCount: integer("usage_count").notNull().default(0),
     startsAt: timestamp("starts_at", { withTimezone: true, mode: "string" }),
@@ -319,6 +320,7 @@ export const couponUses = luxury.table(
   },
   (table) => [
     uniqueIndex("idx_coupon_uses_coupon_order").on(table.couponId, table.orderId),
+    uniqueIndex("idx_coupon_uses_coupon_customer").on(table.couponId, table.customerId),
     index("idx_coupon_uses_customer").on(table.customerId),
   ],
 );
