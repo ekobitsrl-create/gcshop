@@ -30,7 +30,7 @@ export default function Home() {
           <p>Milano / Collezione 2026</p>
         </div>
 
-        <div className="hero-side-note" aria-hidden="true">Independent fashion selection · Crotone, Italy</div>
+        <div className="hero-side-note" aria-hidden="true">Independent fashion selection · Curated in Italy</div>
       </section>
 
       <section className="ticker" aria-label="Valori del negozio">
