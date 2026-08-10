@@ -91,6 +91,10 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           <h1>{product.name}</h1>
           <p className="product-price">{formatMoney(product.basePriceCents, product.currency)}</p>
           <p className="product-copy">{product.description || product.shortDescription || "Una selezione contemporanea, scelta per la qualità dei materiali e il carattere delle forme."}</p>
+          <a className="product-tryon-cta" href={`/try-on?prodotto=${slug}`}>
+            <span><small>New / Virtual fitting</small><strong>Provalo su di te</strong></span>
+            <b>↗</b>
+          </a>
           {isPlaceholder ? (
             <div className="placeholder-purchase"><span>Anteprima catalogo</span><p>Questo articolo dimostrativo sarà acquistabile appena il catalogo definitivo verrà pubblicato.</p></div>
           ) : <ProductPurchase variants={variants} />}

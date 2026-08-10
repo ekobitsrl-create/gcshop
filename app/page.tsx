@@ -16,36 +16,56 @@ export default function Home() {
 
       <section className="new-hero">
         <div className="hero-copy-panel">
-          <p className="micro-label">Luxury Concept Store / Est. 2026</p>
-          <h1>Il lusso<br />è un <em>punto<br />di vista.</em></h1>
+          <p className="micro-label">Virtual Try-On / Beta 01</p>
+          <h1>Provalo.<br /><em>Prima che<br />diventi tuo.</em></h1>
           <div className="hero-copy-bottom">
-            <p>Una selezione indipendente di moda e accessori, curata in Italia per chi sceglie prima di seguire.</p>
-            <a className="circle-link" href="/shop" aria-label="Scopri la selezione"><span>Scopri</span><b>↗</b></a>
+            <p>Carica una foto, scegli il look e vedilo su di te. Una nuova esperienza per decidere con più istinto e meno distanza.</p>
+            <a className="circle-link" href="/try-on" aria-label="Apri il Virtual Try-On"><span>Try-on</span><b>↗</b></a>
           </div>
         </div>
 
         <div className="hero-visual">
           <Image src="/images/editorial.jpg" alt="Editoriale Luxury Concept Store a Milano" fill priority sizes="(max-width: 820px) 100vw, 58vw" />
-          <div className="hero-visual-tag"><span>Issue</span><strong>01</strong></div>
-          <p>Milano / Collezione 2026</p>
+          <div className="hero-scan-frame" aria-hidden="true"><span>Body map / active</span><i /></div>
+          <div className="hero-visual-tag"><span>Try-on</span><strong>01</strong></div>
+          <p>Private preview / Image stays on your device</p>
         </div>
 
-        <div className="hero-side-note" aria-hidden="true">Independent fashion selection · Curated in Italy</div>
+        <div className="hero-side-note" aria-hidden="true">LCS Vision System · Personal fitting interface · Beta 01</div>
       </section>
 
       <section className="ticker" aria-label="Valori del negozio">
-        <div>Nuovi codici <span>✦</span> Selezione indipendente <span>✦</span> Dettagli che restano <span>✦</span> Nuovi codici <span>✦</span></div>
+        <div>Virtual try-on live <span>✦</span> Il tuo look, prima dell'ordine <span>✦</span> Privacy by design <span>✦</span> Virtual try-on live <span>✦</span></div>
+      </section>
+
+      <section className="tryon-home" aria-labelledby="tryon-home-title">
+        <div className="tryon-home-visual">
+          <Image src="/images/try-on-campaign.png" alt="Campagna Virtual Try-On di Luxury Concept Store" fill sizes="100vw" />
+        </div>
+        <div className="tryon-home-overlay" />
+        <div className="tryon-home-grid" aria-hidden="true" />
+        <div className="tryon-home-copy">
+          <p className="micro-label">LCS Vision / 01</p>
+          <h2 id="tryon-home-title">Il camerino<br /><em>diventa digitale.</em></h2>
+          <p>Prova una nuova silhouette sulla tua foto, confronta i capi e regola il look in tempo reale. Nessun account, nessuna immagine salvata.</p>
+          <a href="/try-on">Entra nello studio <span>↗</span></a>
+        </div>
+        <ol className="tryon-home-steps">
+          <li><span>01</span><strong>La tua foto</strong><small>Caricata solo nel browser</small></li>
+          <li><span>02</span><strong>Il tuo pezzo</strong><small>Scegli dalla selezione</small></li>
+          <li><span>03</span><strong>La tua visione</strong><small>Regola e confronta</small></li>
+        </ol>
       </section>
 
       <section className="manifesto" id="manifesto">
         <div className="manifesto-label"><span>01</span><p>Manifesto</p></div>
         <div className="manifesto-copy">
-          <p className="micro-label">No trends. Just instinct.</p>
-          <h2>Non cerchiamo<br />quello che piace a tutti.</h2>
-          <p className="manifesto-lead">Cerchiamo quello che lascia il segno.</p>
+          <p className="micro-label">Fashion, augmented by instinct.</p>
+          <h2>La tecnologia sparisce.<br />Resta solo la scelta.</h2>
+          <p className="manifesto-lead">Il futuro del lusso è personale.</p>
           <div className="manifesto-detail">
-            <p>Il nostro lusso non è distanza, è precisione. È materia, carattere, proporzione. Una selezione costruita pezzo dopo pezzo, senza rumore.</p>
-            <span>LCS / 2026</span>
+            <p>Il nostro lusso non è distanza, è precisione. Materia, carattere e proporzione incontrano strumenti più intuitivi per scegliere ciò che ti rappresenta davvero.</p>
+            <span>LCS / VISION 01</span>
           </div>
         </div>
       </section>

@@ -8,6 +8,7 @@ const links = [
   { label: "Donna", href: "/shop?categoria=donna" },
   { label: "Uomo", href: "/shop?categoria=uomo" },
   { label: "Accessori", href: "/shop?categoria=accessori" },
+  { label: "Try-on", href: "/try-on" },
 ];
 
 const announcements = [
@@ -58,7 +59,7 @@ export function StoreHeader() {
 
         <nav className="store-nav" aria-label="Navigazione principale">
           {links.map((link) => (
-            <Link href={link.href} key={link.label}>{link.label}</Link>
+            <Link className={link.label === "Try-on" ? "tryon-nav-link" : undefined} href={link.href} key={link.label}>{link.label}</Link>
           ))}
           <Link href="/#manifesto">The edit</Link>
         </nav>
@@ -71,13 +72,13 @@ export function StoreHeader() {
         </div>
 
         <nav className={`store-mobile-nav ${menuOpen ? "is-open" : ""}`} aria-label="Menu mobile">
-          <div className="mobile-nav-index">Menu / 01—05</div>
+          <div className="mobile-nav-index">Menu / 01—06</div>
           {links.map((link, index) => (
             <Link href={link.href} key={link.label} onClick={() => setMenuOpen(false)}>
               <span>0{index + 1}</span>{link.label}
             </Link>
           ))}
-          <Link href="/#manifesto" onClick={() => setMenuOpen(false)}><span>05</span>The edit</Link>
+          <Link href="/#manifesto" onClick={() => setMenuOpen(false)}><span>06</span>The edit</Link>
           <div className="mobile-nav-footer">
             <a href="mailto:info@ekobit.it">info@ekobit.it</a>
             <a href="tel:+393381346675">+39 338 134 6675</a>

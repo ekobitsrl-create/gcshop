@@ -11,7 +11,7 @@ test("contains the Luxury Concept Store identity and company details", async () 
     readFile(new URL("../components/store-footer.tsx", import.meta.url), "utf8"),
   ]);
   assert.match(layout, /Luxury Concept Store \| Moda contemporanea selezionata/i);
-  assert.match(page, /Il lusso/);
+  assert.match(page, /Virtual Try-On/i);
   assert.match(page, /Luxury Concept Store/);
   assert.match(footer, /Ekobit SRL/);
   assert.match(footer, /02424510796/);
@@ -62,8 +62,27 @@ test("removes the disposable starter preview", async () => {
   ]);
 
   assert.match(page, /Luxury Concept Store/);
-  assert.match(layout, /og-v2\.png/);
-  await access(new URL("../public/og-v2.png", import.meta.url));
+  assert.match(page, /Virtual Try-On/i);
+  assert.match(layout, /og-v3\.png/);
+  await access(new URL("../public/og-v3.png", import.meta.url));
+  await access(new URL("../app/try-on/page.tsx", import.meta.url));
+  await access(new URL("../components/try-on-studio.tsx", import.meta.url));
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
   await assert.rejects(access(new URL("app\/_sites-preview", templateRoot)));
+});
+
+test("ships the interactive Virtual Try-On experience", async () => {
+  const [page, studio, shop, product] = await Promise.all([
+    readFile(new URL("../app/try-on/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/try-on-studio.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/shop/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/prodotto/[slug]/page.tsx", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(page, /Virtual Try-On/i);
+  assert.match(studio, /readAsDataURL/);
+  assert.match(studio, /type="range"/);
+  assert.match(studio, /non viene salvata/i);
+  assert.match(shop, /product-card-tryon/);
+  assert.match(product, /product-tryon-cta/);
 });

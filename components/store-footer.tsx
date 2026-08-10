@@ -4,9 +4,9 @@ export function StoreFooter() {
   return (
     <footer className="store-footer">
       <div className="footer-statement">
-        <p>Curated in Italy</p>
-        <h2>Luxury is<br /><em>a point of view.</em></h2>
-        <Link href="/shop">Esplora la selezione <span>↗</span></Link>
+        <p>LCS Vision / Virtual Try-On</p>
+        <h2>See the look.<br /><em>Make it yours.</em></h2>
+        <Link href="/try-on">Apri il try-on <span>↗</span></Link>
       </div>
 
       <div className="footer-grid">
@@ -19,6 +19,7 @@ export function StoreFooter() {
           <Link href="/shop?categoria=donna">Donna</Link>
           <Link href="/shop?categoria=uomo">Uomo</Link>
           <Link href="/shop?categoria=accessori">Accessori</Link>
+          <Link href="/try-on">Virtual Try-On</Link>
         </div>
         <div className="footer-links">
           <p>Assistenza</p>

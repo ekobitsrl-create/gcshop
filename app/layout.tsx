@@ -12,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host") ?? "localhost:3000";
   const protocol = requestHeaders.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
   const base = new URL(`${protocol}://${host}`);
-  const socialImage = new URL("/og-v2.png", base).toString();
+  const socialImage = new URL("/og-v3.png", base).toString();
 
   return {
     metadataBase: base,
@@ -21,28 +21,28 @@ export async function generateMetadata(): Promise<Metadata> {
       template: "%s | Luxury Concept Store",
     },
     description:
-      "Luxury Concept Store: moda e accessori selezionati in Italia. Nuovi arrivi, stile contemporaneo e dettagli senza tempo.",
+      "Luxury Concept Store: moda contemporanea e Virtual Try-On per provare il look sulla tua foto, direttamente nel browser.",
     applicationName: "Luxury Concept Store",
     openGraph: {
       type: "website",
       locale: "it_IT",
       siteName: "Luxury Concept Store",
-      title: "Luxury Concept Store | Il lusso, nel tuo stile",
-      description: "Una selezione indipendente di moda e accessori, curata in Italia.",
+      title: "Luxury Concept Store | Virtual Try-On",
+      description: "Provalo. Prima che diventi tuo. Scopri la nuova esperienza di prova virtuale.",
       url: base,
       images: [
         {
           url: socialImage,
           width: 1740,
           height: 900,
-          alt: "Luxury Concept Store — Il lusso è un punto di vista",
+          alt: "Luxury Concept Store — Virtual Try-On",
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: "Luxury Concept Store | Il lusso, nel tuo stile",
-      description: "Moda contemporanea e accessori selezionati in Italia.",
+      title: "Luxury Concept Store | Virtual Try-On",
+      description: "Provalo. Prima che diventi tuo. La nuova prova virtuale di Luxury Concept Store.",
       images: [socialImage],
     },
   };

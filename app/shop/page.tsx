@@ -85,17 +85,20 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
           {rows.length ? (
             <div className="commerce-product-grid">
               {rows.map((product, index) => (
-                <a className="commerce-product-card" href={`/prodotto/${product.slug}`} key={product.id}>
-                  <div className="product-card-media">
-                    {product.imageUrl ? <Image src={product.imageUrl} alt={product.name} fill unoptimized sizes="(max-width: 430px) 100vw, (max-width: 760px) 50vw, 25vw" /> : <span>LCS</span>}
-                    <small>{String(index + 1).padStart(2, "0")}</small>
-                  </div>
-                  <div className="product-card-copy">
-                    <p>{product.categoryName ?? "Luxury Concept Store"}</p>
-                    <h2>{product.name}</h2>
-                    <strong>{formatMoney(product.price, product.currency)}</strong>
-                  </div>
-                </a>
+                <article className="commerce-product-card" key={product.id}>
+                  <a className="product-card-link" href={`/prodotto/${product.slug}`}>
+                    <div className="product-card-media">
+                      {product.imageUrl ? <Image src={product.imageUrl} alt={product.name} fill unoptimized sizes="(max-width: 430px) 100vw, (max-width: 760px) 50vw, 25vw" /> : <span>LCS</span>}
+                      <small>{String(index + 1).padStart(2, "0")}</small>
+                    </div>
+                    <div className="product-card-copy">
+                      <p>{product.categoryName ?? "Luxury Concept Store"}</p>
+                      <h2>{product.name}</h2>
+                      <strong>{formatMoney(product.price, product.currency)}</strong>
+                    </div>
+                  </a>
+                  <a className="product-card-tryon" href={`/try-on?prodotto=${product.slug}`} aria-label={`Prova virtualmente ${product.name}`}>Try-on <span>↗</span></a>
+                </article>
               ))}
             </div>
           ) : (
