@@ -145,7 +145,7 @@ export default function Home() {
           <h2>Prima degli altri.<br /><em>Solo quando conta.</em></h2>
         </div>
         <div className="newsletter-copy">
-          <p>Nuovi arrivi, storie e selezioni private. Niente rumore, solo cose scelte bene.</p>
+          <p>Nuovi arrivi, storie e selezioni private. Niente rumore, solo capi scelti bene.</p>
           <NewsletterForm />
         </div>
       </section>
