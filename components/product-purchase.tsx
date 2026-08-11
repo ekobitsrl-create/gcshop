@@ -8,11 +8,11 @@ export function ProductPurchase({ variants }: { variants: Variant[] }) {
   const [variantId, setVariantId] = useState(variants[0]?.id ?? "");
   const [quantity, setQuantity] = useState(1);
   const [message, setMessage] = useState("");
-  const [busy, setBusy] = useState(false);
+  const [busyAction, setBusyAction] = useState<"bag" | "checkout" | null>(null);
   const selected = variants.find((variant) => variant.id === variantId);
 
-  async function add() {
-    setBusy(true);
+  async function add(redirectToCheckout = false) {
+    setBusyAction(redirectToCheckout ? "checkout" : "bag");
     setMessage("");
     try {
       const response = await fetch("/api/cart", {
@@ -21,9 +21,21 @@ export function ProductPurchase({ variants }: { variants: Variant[] }) {
         body: JSON.stringify({ variantId, quantity }),
       });
       const payload = await response.json();
-      setMessage(response.ok ? `${payload.itemCount} articoli nella borsa.` : payload.error);
+      if (!response.ok) {
+        setMessage(payload.error ?? "Non è stato possibile aggiornare la borsa.");
+        return;
+      }
+
+      if (redirectToCheckout) {
+        window.location.assign("/checkout");
+        return;
+      }
+
+      setMessage(`${payload.itemCount} articoli nella borsa.`);
+    } catch {
+      setMessage("Connessione non disponibile. Riprova tra poco.");
     } finally {
-      setBusy(false);
+      setBusyAction(null);
     }
   }
 
@@ -41,9 +53,14 @@ export function ProductPurchase({ variants }: { variants: Variant[] }) {
           <input id="product-quantity" type="number" min="1" max={Math.max(1, selected?.stockQuantity ?? 1)} value={quantity} onChange={(event) => setQuantity(Math.max(1, Number(event.target.value)))} />
         </label>
       </div>
-      <button type="button" disabled={busy || !selected?.stockQuantity} onClick={() => void add()}>
-        {busy ? "Aggiunta…" : selected?.stockQuantity ? "Aggiungi alla borsa" : "Non disponibile"}<span>↗</span>
-      </button>
+      <div className="purchase-actions">
+        <button className="purchase-buy-now" type="button" disabled={busyAction !== null || !selected?.stockQuantity} onClick={() => void add(true)}>
+          {busyAction === "checkout" ? "Verso il checkout…" : selected?.stockQuantity ? "Acquista ora" : "Non disponibile"}<span>↗</span>
+        </button>
+        <button className="purchase-add-bag" type="button" disabled={busyAction !== null || !selected?.stockQuantity} onClick={() => void add()}>
+          {busyAction === "bag" ? "Aggiunta…" : selected?.stockQuantity ? "Aggiungi alla borsa" : "Non disponibile"}<span>+</span>
+        </button>
+      </div>
       {message ? <p role="status">{message} <a href="/checkout">Vai al checkout ↗</a></p> : null}
     </div>
   );

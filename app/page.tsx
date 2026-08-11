@@ -16,26 +16,29 @@ export default function Home() {
 
       <section className="new-hero">
         <div className="hero-copy-panel">
-          <p className="micro-label">Virtual Try-On / Beta 01</p>
-          <h1>Provalo.<br /><em>Prima che<br />diventi tuo.</em></h1>
+          <p className="micro-label">New edit / 2026</p>
+          <h1>Non seguire<br />il look.<br /><em>Fallo tuo.</em></h1>
           <div className="hero-copy-bottom">
-            <p>Inquadra. Entra nel look. Muoviti. Il prossimo camerino sarà uno specchio AR che reagisce insieme a te.</p>
-            <a className="circle-link" href="/try-on" aria-label="Scopri l'esperienza Virtual Try-On AR"><span>Entra</span><b>↗</b></a>
+            <p>Una selezione netta di moda e accessori, scelta per chi non ha bisogno di seguire il rumore.</p>
+            <div className="hero-commerce-actions">
+              <a className="hero-shop-link" href="/shop?categoria=donna">Shop donna <span>↗</span></a>
+              <a className="hero-shop-link" href="/shop?categoria=uomo">Shop uomo <span>↗</span></a>
+              <a className="hero-ar-link" href="/try-on">Scopri il Try-On AR <span>→</span></a>
+            </div>
           </div>
         </div>
 
         <div className="hero-visual">
           <Image src="/images/editorial.jpg" alt="Editoriale Luxury Concept Store a Milano" fill priority sizes="(max-width: 820px) 100vw, 58vw" />
-          <div className="hero-scan-frame" aria-hidden="true"><span>Body map / active</span><i /></div>
-          <div className="hero-visual-tag"><span>Try-on</span><strong>01</strong></div>
-          <p>Your body / Your angle / Your look</p>
+          <div className="hero-visual-tag"><span>New edit</span><strong>01</strong></div>
+          <p>Selected forms / Singular attitude</p>
         </div>
 
-        <div className="hero-side-note" aria-hidden="true">LCS Vision System · Personal fitting interface · Beta 01</div>
+        <div className="hero-side-note" aria-hidden="true">Luxury Concept Store · Selected fashion and objects · Edit 01</div>
       </section>
 
       <section className="ticker" aria-label="Valori del negozio">
-        <div>Scan <span>✦</span> Step in <span>✦</span> Move <span>✦</span> Switch look <span>✦</span> Own it <span>✦</span></div>
+        <div>New in <span>✦</span> Spedizione gratuita <span>✦</span> WELCOME10 <span>✦</span> Try-On AR / Coming soon <span>✦</span></div>
       </section>
 
       <section className="tryon-home" aria-labelledby="tryon-home-title">
@@ -47,8 +50,8 @@ export default function Home() {
         <div className="tryon-home-copy">
           <p className="micro-label">LCS Vision / 01</p>
           <h2 id="tryon-home-title">Non guardare il look.<br /><em>Entraci dentro.</em></h2>
-          <p>Un accesso, un gesto, il tuo riflesso. Stiamo trasformando ogni pagina prodotto in una porta verso un'esperienza AR personale.</p>
-          <a href="/try-on">Entra nella visione <span>↗</span></a>
+          <p>Un vantaggio in più quando vuoi decidere. Stiamo trasformando ogni pagina prodotto in una porta verso un'esperienza AR personale.</p>
+          <a href="/try-on">Scopri il progetto <span>↗</span></a>
         </div>
         <ol className="tryon-home-steps">
           <li><span>01</span><strong>Scan</strong><small>Un gesto dal prodotto</small></li>

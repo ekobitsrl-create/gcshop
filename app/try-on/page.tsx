@@ -10,9 +10,9 @@ export const metadata: Metadata = {
 };
 
 const previewLooks = [
-  { index: "01", name: "Sculpted", category: "Donna", image: "/images/product-2.jpg" },
-  { index: "02", name: "Graphite", category: "Uomo", image: "/images/category-man.jpg" },
-  { index: "03", name: "Atelier", category: "Accessori", image: "/images/category-accessories.jpg" },
+  { index: "01", name: "Sculpted", category: "Donna", image: "/images/product-2.jpg", slug: "abito-sculpted-bordeaux" },
+  { index: "02", name: "Graphite", category: "Uomo", image: "/images/category-man.jpg", slug: "overshirt-lana-grafite" },
+  { index: "03", name: "Atelier", category: "Accessori", image: "/images/category-accessories.jpg", slug: "borsa-atelier-01" },
 ];
 
 export default function TryOnPage() {
@@ -42,12 +42,12 @@ export default function TryOnPage() {
 
           <div className="tryon-look-rail" aria-label="Look che supporteranno il Try-On AR">
             {previewLooks.map((look) => (
-              <article key={look.index}>
+              <a href={`/prodotto/${look.slug}`} key={look.index}>
                 <div><Image src={look.image} alt="" fill sizes="120px" /></div>
                 <span>{look.index}</span>
                 <p><small>{look.category}</small><strong>{look.name}</strong></p>
-                <b>AR</b>
-              </article>
+                <b>Shop</b>
+              </a>
             ))}
           </div>
 

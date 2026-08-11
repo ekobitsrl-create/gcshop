@@ -84,3 +84,19 @@ test("ships the webcam-first Virtual Try-On project without photo uploads", asyn
   assert.match(shop, /product-card-tryon/);
   assert.match(product, /product-tryon-cta/);
 });
+
+test("keeps purchase actions ahead of the AR story", async () => {
+  const [home, purchase, product, tryOn] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/product-purchase.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/prodotto/[slug]/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/try-on/page.tsx", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(home, /\/shop\?categoria=donna/);
+  assert.match(home, /\/shop\?categoria=uomo/);
+  assert.match(purchase, /Acquista ora/);
+  assert.match(purchase, /window\.location\.assign\("\/checkout"\)/);
+  assert.ok(product.indexOf("<ProductPurchase") < product.indexOf("product-tryon-cta"));
+  assert.match(tryOn, /\/prodotto\/\$\{look\.slug\}/);
+});
