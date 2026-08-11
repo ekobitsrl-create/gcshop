@@ -13,7 +13,7 @@ const links = [
 
 const announcements = [
   "Spedizione gratuita su tutti gli ordini",
-  "10% sul primo ordine — codice WELCOME10",
+  "Accesso alla selezione privata",
 ];
 
 export function StoreHeader() {
@@ -29,7 +29,7 @@ export function StoreHeader() {
 
   return (
     <>
-      <div className="store-announcement" aria-label="Promozioni in corso">
+      <div className="store-announcement" aria-label="Comunicazioni del negozio">
         <div className="announcement-track">
           {[false, true].map((duplicate) => (
             <div className="announcement-sequence" aria-hidden={duplicate || undefined} key={String(duplicate)}>
@@ -52,9 +52,9 @@ export function StoreHeader() {
           <span />
         </button>
 
-        <Link className="store-wordmark" href="/" aria-label="Luxury Concept Store, home">
-          <strong>Luxury</strong>
-          <span>Concept Store</span>
+        <Link className="store-wordmark" href="/" aria-label="LCS, home">
+          <strong>LCS</strong>
+          <span>Selected edit</span>
         </Link>
 
         <nav className="store-nav" aria-label="Navigazione principale">

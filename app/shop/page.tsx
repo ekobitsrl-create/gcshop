@@ -1,4 +1,5 @@
 import { asc, eq } from "drizzle-orm";
+import type { Metadata } from "next";
 import Image from "next/image";
 import { getDb } from "@/db";
 import { categories, productImages, products } from "@/db/schema";
@@ -9,6 +10,12 @@ import { formatMoney } from "@/lib/store-utils";
 import "../commerce.css";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Shop — Donna, Uomo e Accessori",
+  description: "Esplora la selezione LCS: moda donna, uomo e accessori scelti per forma, materia e carattere.",
+  alternates: { canonical: "/shop" },
+};
 
 const filters = ["Tutto", "Donna", "Uomo", "Accessori"];
 type ProductRow = { id: string; name: string; slug: string; price: number; currency: string; categoryName: string | null; imageUrl: string | null };
@@ -92,7 +99,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
                       <small>{String(index + 1).padStart(2, "0")}</small>
                     </div>
                     <div className="product-card-copy">
-                      <p>{product.categoryName ?? "Luxury Concept Store"}</p>
+                      <p>{product.categoryName ?? "LCS selection"}</p>
                       <h2>{product.name}</h2>
                       <strong>{formatMoney(product.price, product.currency)}</strong>
                     </div>

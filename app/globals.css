@@ -96,15 +96,15 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 
 .store-wordmark strong {
   font-family: var(--serif);
-  font-size: 25px;
+  font-size: 29px;
   font-weight: 400;
-  letter-spacing: .065em;
+  letter-spacing: .2em;
 }
 
 .store-wordmark span {
   font-size: 7px;
   font-weight: 700;
-  letter-spacing: .47em;
+  letter-spacing: .28em;
 }
 
 .store-nav { display: flex; justify-content: center; align-items: center; gap: clamp(20px, 2.7vw, 48px); }
@@ -400,6 +400,30 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .manifesto-detail p { margin: 0; font-size: clamp(17px, 1.4vw, 22px); line-height: 1.55; }
 .manifesto-detail span { justify-self: end; font-size: 8px; font-weight: 700; letter-spacing: .18em; }
 
+.trust-story {
+  display: grid;
+  grid-template-columns: 20% 1fr;
+  gap: 40px;
+  padding: clamp(105px, 13vw, 195px) clamp(24px, 5vw, 84px);
+  background: var(--ink);
+  color: #fff;
+}
+
+.trust-index { display: flex; align-items: flex-start; gap: 15px; padding-top: 9px; }
+.trust-index span { color: var(--accent); font-size: 10px; font-weight: 800; }
+.trust-index p { max-width: 145px; margin: 0; font-size: 9px; font-weight: 700; letter-spacing: .18em; line-height: 1.45; text-transform: uppercase; }
+.trust-content > .micro-label { color: var(--accent); }
+.trust-content h2 { max-width: 1120px; margin: 28px 0 25px; font-family: var(--serif); font-size: clamp(62px, 8.1vw, 138px); font-weight: 400; line-height: .82; letter-spacing: -.055em; }
+.trust-content h2 em { color: var(--accent); font-weight: 400; }
+.trust-lead { max-width: 720px; margin: 0 0 clamp(70px, 9vw, 125px); color: rgba(255,255,255,.63); font-family: var(--serif); font-size: clamp(22px, 2.3vw, 38px); line-height: 1.35; }
+.trust-principles { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid rgba(255,255,255,.35); }
+.trust-principles article { min-height: 285px; padding: 22px 28px 15px 0; border-right: 1px solid rgba(255,255,255,.16); }
+.trust-principles article + article { padding-left: 28px; }
+.trust-principles article:last-child { border-right: 0; }
+.trust-principles span { color: var(--accent); font-size: 8px; font-weight: 800; letter-spacing: .16em; }
+.trust-principles h3 { margin: 65px 0 18px; font-family: var(--serif); font-size: clamp(24px, 2.1vw, 34px); font-weight: 400; line-height: 1.05; }
+.trust-principles p { max-width: 355px; margin: 0; color: rgba(255,255,255,.55); font-family: var(--serif); font-size: 16px; line-height: 1.55; }
+
 .category-story { padding: 0 clamp(18px, 3vw, 48px) clamp(110px, 13vw, 190px); background: var(--paper); }
 .category-heading { display: grid; grid-template-columns: 28% 1fr; align-items: end; margin-bottom: 60px; }
 .category-heading > div { display: flex; gap: 14px; padding-bottom: 12px; }
@@ -544,6 +568,14 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   .manifesto-lead { margin-bottom: 70px; font-size: 33px; }
   .manifesto-detail { grid-template-columns: 1fr; gap: 30px; }
   .manifesto-detail span { justify-self: start; }
+
+  .trust-story { grid-template-columns: 1fr; gap: 48px; padding: 100px 20px; }
+  .trust-index { border-top: 1px solid rgba(255,255,255,.35); padding-top: 13px; }
+  .trust-content h2 { font-size: clamp(58px, 17vw, 80px); }
+  .trust-lead { margin-bottom: 70px; font-size: 25px; }
+  .trust-principles { grid-template-columns: 1fr; }
+  .trust-principles article, .trust-principles article + article { min-height: 245px; padding: 22px 0; border-right: 0; border-bottom: 1px solid rgba(255,255,255,.16); }
+  .trust-principles h3 { margin-top: 48px; font-size: 31px; }
 
   .category-story { padding: 0 12px 110px; }
   .category-heading { grid-template-columns: 1fr; gap: 35px; margin-bottom: 35px; padding: 0 8px; }

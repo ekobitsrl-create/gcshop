@@ -60,7 +60,7 @@ export async function createPayPalOrder(input: {
       payment_source: {
         paypal: {
           experience_context: {
-            brand_name: "Luxury Concept Store",
+            brand_name: "LCS",
             locale: "it-IT",
             user_action: "PAY_NOW",
             return_url: input.returnUrl,

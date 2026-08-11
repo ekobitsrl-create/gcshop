@@ -12,37 +12,41 @@ export async function generateMetadata(): Promise<Metadata> {
   const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host") ?? "localhost:3000";
   const protocol = requestHeaders.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
   const base = new URL(`${protocol}://${host}`);
-  const socialImage = new URL("/og-v3.png", base).toString();
+  const socialImage = new URL("/og-lcs.png", base).toString();
 
   return {
     metadataBase: base,
     title: {
-      default: "Luxury Concept Store | Moda contemporanea selezionata",
-      template: "%s | Luxury Concept Store",
+      default: "LCS | The Selected Edit",
+      template: "%s | LCS",
     },
     description:
-      "Luxury Concept Store: moda contemporanea e una nuova esperienza Virtual Try-On AR pensata per entrare nel look.",
-    applicationName: "Luxury Concept Store",
+      "Moda contemporanea, accessori e nuove prospettive sul fitting. Una selezione indipendente, curata da LCS.",
+    applicationName: "LCS",
+    creator: "Ekobit SRL",
+    publisher: "Ekobit SRL",
+    category: "fashion",
+    robots: { index: true, follow: true },
     openGraph: {
       type: "website",
       locale: "it_IT",
-      siteName: "Luxury Concept Store",
-      title: "Luxury Concept Store | Virtual Try-On",
-      description: "Provalo. Prima che diventi tuo. Scopri la nuova esperienza di prova virtuale.",
+      siteName: "LCS",
+      title: "LCS | The Selected Edit",
+      description: "Fashion, edited by instinct. Scopri la selezione LCS e il progetto Virtual Try-On.",
       url: base,
       images: [
         {
           url: socialImage,
-          width: 1740,
-          height: 900,
-          alt: "Luxury Concept Store — Virtual Try-On",
+          width: 1743,
+          height: 902,
+          alt: "LCS — The Selected Edit",
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: "Luxury Concept Store | Virtual Try-On",
-      description: "Provalo. Prima che diventi tuo. La nuova prova virtuale di Luxury Concept Store.",
+      title: "LCS | The Selected Edit",
+      description: "Fashion, edited by instinct. Moda e accessori selezionati da LCS.",
       images: [socialImage],
     },
   };

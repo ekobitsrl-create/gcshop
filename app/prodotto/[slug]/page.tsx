@@ -1,6 +1,8 @@
 import { and, asc, eq } from "drizzle-orm";
+import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 import { getDb } from "@/db";
 import { categories, productImages, products, productVariants } from "@/db/schema";
 import { CommerceHeader } from "@/components/commerce-header";
@@ -17,14 +19,21 @@ type ProductView = {
   name: string;
   basePriceCents: number;
   currency: string;
+  brand: string | null;
   description: string | null;
   shortDescription: string | null;
 };
 type ImageView = { id: string; url: string; altText: string | null };
 type VariantView = { id: string; title: string; stockQuantity: number };
+type ProductPageData = {
+  product: ProductView;
+  categoryName: string;
+  images: ImageView[];
+  variants: VariantView[];
+  isPlaceholder: boolean;
+};
 
-export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+const getProductPageData = cache(async (slug: string): Promise<ProductPageData | null> => {
   const db = getDb();
   let product: ProductView | null = null;
   let categoryName = "Selection";
@@ -59,12 +68,13 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
   if (!product) {
     const placeholder = findPlaceholderProduct(slug);
-    if (!placeholder) notFound();
+    if (!placeholder) return null;
     product = {
       id: placeholder.id,
       name: placeholder.name,
       basePriceCents: placeholder.price,
       currency: placeholder.currency,
+      brand: null,
       description: placeholder.description,
       shortDescription: placeholder.shortDescription,
     };
@@ -72,6 +82,45 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     images = [{ id: `${placeholder.id}-image`, url: placeholder.imageUrl, altText: placeholder.name }];
     isPlaceholder = true;
   }
+
+  return { product, categoryName, images, variants, isPlaceholder };
+});
+
+type ProductPageProps = { params: Promise<{ slug: string }> };
+
+export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const data = await getProductPageData(slug);
+  if (!data) return { title: "Prodotto non disponibile", robots: { index: false, follow: false } };
+
+  const { product, categoryName, images } = data;
+  const brandPrefix = product.brand && !product.name.toLowerCase().includes(product.brand.toLowerCase())
+    ? `${product.brand} `
+    : "";
+  const title = `${brandPrefix}${product.name}`;
+  const rawDescription = product.shortDescription || product.description || `${title}: scopri dettagli, disponibilità e varianti nella selezione LCS.`;
+  const description = rawDescription.replace(/\s+/g, " ").trim().slice(0, 160);
+  const primaryImage = images[0];
+
+  return {
+    title,
+    description,
+    alternates: { canonical: `/prodotto/${slug}` },
+    keywords: [product.brand, categoryName, product.name, "LCS"].filter((value): value is string => Boolean(value)),
+    openGraph: {
+      type: "website",
+      title,
+      description,
+      images: primaryImage ? [{ url: primaryImage.url, alt: primaryImage.altText ?? title }] : undefined,
+    },
+  };
+}
+
+export default async function ProductPage({ params }: ProductPageProps) {
+  const { slug } = await params;
+  const data = await getProductPageData(slug);
+  if (!data) notFound();
+  const { product, categoryName, images, variants, isPlaceholder } = data;
 
   return (
     <div className="commerce-shell">

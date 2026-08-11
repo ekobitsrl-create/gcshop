@@ -6,7 +6,8 @@ import "./try-on.css";
 
 export const metadata: Metadata = {
   title: "Virtual Try-On AR",
-  description: "Non immaginarlo. Indossalo. Scopri il futuro camerino AR di Luxury Concept Store.",
+  description: "Non immaginarlo. Indossalo. Scopri il futuro camerino AR di LCS.",
+  alternates: { canonical: "/try-on" },
 };
 
 const previewLooks = [
@@ -21,7 +22,7 @@ export default function TryOnPage() {
       <CommerceHeader />
       <main>
         <header className="tryon-heading">
-          <p>Luxury Concept Store / Vision 01</p>
+          <p>LCS / Vision 01</p>
           <div className="tryon-heading-status"><i />AR experience / In sviluppo</div>
           <h1>Non immaginarlo.<br /><em>Indossalo.</em></h1>
           <div className="tryon-heading-copy">
@@ -33,7 +34,7 @@ export default function TryOnPage() {
 
         <section className="tryon-experience" aria-labelledby="tryon-experience-title">
           <div className="tryon-campaign">
-            <Image src="/images/try-on-campaign.png" alt="Campagna Virtual Try-On di Luxury Concept Store" fill priority sizes="100vw" />
+            <Image src="/images/try-on-campaign.png" alt="Campagna Virtual Try-On di LCS" fill priority sizes="100vw" />
             <div className="tryon-campaign-shade" />
             <div className="tryon-orbit" aria-hidden="true"><i /><span>LCS</span></div>
             <div className="tryon-campaign-status"><span>AR / DROP 01</span><strong>REAL-TIME FITTING EXPERIENCE</strong></div>

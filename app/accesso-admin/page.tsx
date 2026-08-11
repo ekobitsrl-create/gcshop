@@ -2,7 +2,7 @@ import LoginForm from "./login-form";
 import "./login.css";
 
 export const metadata = {
-  title: "Accesso amministrazione | Luxury Concept Store",
+  title: "Accesso amministrazione | LCS",
 };
 
 export default async function AdminLoginPage({
@@ -18,9 +18,9 @@ export default async function AdminLoginPage({
   return (
     <main className="login-page">
       <section className="login-card">
-        <a className="login-brand" href="/" aria-label="Luxury Concept Store">
+        <a className="login-brand" href="/" aria-label="LCS">
           <span>LC</span>
-          <strong>Luxury Concept Store</strong>
+          <strong>LCS</strong>
         </a>
         <p className="login-kicker">Area riservata Ekobit SRL</p>
         <h1>Accedi al pannello amministrativo.</h1>

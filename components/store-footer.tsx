@@ -11,7 +11,7 @@ export function StoreFooter() {
 
       <div className="footer-grid">
         <Link className="store-wordmark store-wordmark-light" href="/">
-          <strong>Luxury</strong><span>Concept Store</span>
+          <strong>LCS</strong><span>Selected edit</span>
         </Link>
         <div className="footer-links">
           <p>Shop</p>
@@ -23,6 +23,7 @@ export function StoreFooter() {
         </div>
         <div className="footer-links">
           <p>Assistenza</p>
+          <Link href="/#provenienza">Provenienza e autenticità</Link>
           <a href="mailto:info@ekobit.it">Contattaci</a>
           <Link href="/checkout">Spedizioni e resi</Link>
           <Link href="/checkout">Pagamenti</Link>

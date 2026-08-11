@@ -27,7 +27,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   return (
     <div className="admin-shell">
       <aside className="admin-sidebar">
-        <a className="admin-logo" href="/admin" aria-label="Luxury Concept Store Admin">
+        <a className="admin-logo" href="/admin" aria-label="LCS Admin">
           <span>LC</span>
           <div><strong>Luxury</strong><small>Concept Store Admin</small></div>
         </a>
