@@ -51,11 +51,11 @@ export default function Home() {
       <section className="manifesto" id="manifesto">
         <div className="manifesto-label"><span>01</span><p>Manifesto</p></div>
         <div className="manifesto-copy">
-          <p className="micro-label">The art of selection.</p>
-          <h2>Non tutto merita<br />di entrare.</h2>
-          <p className="manifesto-lead">Scegliere è togliere.</p>
+          <p className="micro-label">Style, made personal.</p>
+          <h2>Il tuo stile.<br />La tua firma.</h2>
+          <p className="manifesto-lead">Scegli ciò che ti rappresenta.</p>
           <div className="manifesto-detail">
-            <p>Ogni edit nasce da una sottrazione. Meno rumore, meno compromessi, più attenzione a forma, materia e presenza.</p>
+            <p>Forme decise, materie da sentire e dettagli che fanno la differenza. Ogni edit LCS accompagna il tuo modo di essere.</p>
             <span>LCS / EDIT 01</span>
           </div>
         </div>
