@@ -21,10 +21,10 @@ export async function generateMetadata(): Promise<Metadata> {
       template: "%s | LCS",
     },
     description:
-      "Moda contemporanea, accessori e nuove prospettive sul fitting. Una selezione indipendente, curata da LCS.",
+      "Moda contemporanea e accessori selezionati per materia, proporzione e carattere. The Selected Edit by LCS.",
     applicationName: "LCS",
-    creator: "Ekobit SRL",
-    publisher: "Ekobit SRL",
+    creator: "LCS",
+    publisher: "LCS",
     category: "fashion",
     robots: { index: true, follow: true },
     openGraph: {
@@ -32,7 +32,7 @@ export async function generateMetadata(): Promise<Metadata> {
       locale: "it_IT",
       siteName: "LCS",
       title: "LCS | The Selected Edit",
-      description: "Fashion, edited by instinct. Scopri la selezione LCS e il progetto Virtual Try-On.",
+      description: "Fashion, edited by instinct. Moda e accessori selezionati da LCS.",
       url: base,
       images: [
         {

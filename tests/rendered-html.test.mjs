@@ -4,21 +4,22 @@ import test from "node:test";
 
 const templateRoot = new URL("../", import.meta.url);
 
-test("contains the LCS identity and company details", async () => {
-  const [page, layout, footer] = await Promise.all([
+test("keeps the LCS home editorial and moves company details to the legal page", async () => {
+  const [page, layout, footer, header, company] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/store-footer.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/store-header.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/informazioni-societarie/page.tsx", import.meta.url), "utf8"),
   ]);
   assert.match(layout, /LCS \| The Selected Edit/i);
-  assert.match(page, /Virtual Try-On/i);
   assert.match(page, /LCS/);
-  assert.match(footer, /Ekobit SRL/);
-  assert.match(footer, /02424510796/);
-  assert.match(footer, /Via Firenze 185/);
-  assert.match(footer, /338 134 6675/);
-  assert.match(footer, /info@ekobit\.it/);
-  assert.doesNotMatch(`${page}\n${footer}`, /Crotone/i);
+  assert.doesNotMatch(`${page}\n${header}\n${footer}\n${layout}`, /Ekobit|Virtual Try-On|Try-On|\bAR\b|tecnolog|fitting/i);
+  assert.match(company, /Ekobit SRL/);
+  assert.match(company, /02424510796/);
+  assert.match(company, /Via Firenze 185/);
+  assert.match(company, /338 134 6675/);
+  assert.match(company, /info@ekobit\.it/);
   assert.doesNotMatch(page, /InStyleShop|instyleshop|codex-preview|Building your site/i);
 });
 
@@ -65,7 +66,6 @@ test("removes the disposable starter preview", async () => {
   ]);
 
   assert.match(page, /LCS/);
-  assert.match(page, /Virtual Try-On/i);
   assert.match(layout, /og-lcs\.png/);
   await access(new URL("../public/og-lcs.png", import.meta.url));
   await access(new URL("../app/try-on/page.tsx", import.meta.url));
@@ -123,5 +123,6 @@ test("adds a restrained trust signal and catalog-driven SEO", async () => {
   assert.match(product, /generateMetadata/);
   assert.match(product, /product\.brand/);
   assert.match(sitemap, /products\.status/);
+  assert.match(sitemap, /informazioni-societarie/);
   assert.match(robots, /\/admin\//);
 });

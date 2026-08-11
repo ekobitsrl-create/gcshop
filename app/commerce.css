@@ -34,6 +34,15 @@
 .commerce-hero h1 em, .checkout-heading h1 em { color: var(--accent); font-weight: 400; }
 .commerce-hero-copy { align-self: end; margin: 0; padding-top: 22px; border-top: 1px solid rgba(255,255,255,.45); color: rgba(255,255,255,.66); font-family: var(--serif); font-size: 19px; line-height: 1.5; }
 
+.company-hero h1 { font-size: clamp(68px, 8vw, 132px); }
+.company-information { display: grid; grid-template-columns: minmax(260px, .75fr) 1.25fr; gap: clamp(60px, 10vw, 170px); background: var(--chalk); }
+.company-information h2 { margin: 22px 0 0; font-family: var(--serif); font-size: clamp(54px, 6vw, 96px); font-weight: 400; line-height: .88; }
+.company-information dl { margin: 0; border-top: 1px solid var(--ink); }
+.company-information dl > div { display: grid; grid-template-columns: 170px 1fr; gap: 30px; padding: 24px 0; border-bottom: 1px solid var(--line); }
+.company-information dt { color: var(--accent-strong); font-size: 8px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+.company-information dd { margin: 0; font-family: var(--serif); font-size: 21px; line-height: 1.45; }
+.company-information a { text-decoration: underline; text-underline-offset: 4px; }
+
 .shop-filters {
   min-height: 78px;
   display: flex;
@@ -198,6 +207,8 @@
   .product-breadcrumb { margin-bottom: 45px; }
   .product-info-panel h1 { font-size: 62px; }
   .purchase-fields { grid-template-columns: 1fr 100px; }
+  .company-information { grid-template-columns: 1fr; gap: 55px; }
+  .company-information dl > div { grid-template-columns: 110px 1fr; }
   .checkout-layout { grid-template-columns: 1fr; gap: 65px; }
   .field-row, .field-row-three { grid-template-columns: 1fr; }
   .discount-panel { grid-template-columns: 1fr; padding: 25px 20px; }

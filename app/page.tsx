@@ -6,7 +6,7 @@ import { StoreHeader } from "@/components/store-header";
 
 export const metadata: Metadata = {
   title: "LCS | The Selected Edit",
-  description: "Moda contemporanea e accessori selezionati con un approccio indipendente. Scopri l'edit LCS e il progetto Virtual Try-On.",
+  description: "Moda contemporanea e accessori selezionati per materia, proporzione e carattere. Scopri il nuovo edit LCS.",
   alternates: { canonical: "/" },
 };
 
@@ -23,92 +23,47 @@ export default function Home() {
 
       <section className="new-hero">
         <div className="hero-copy-panel">
-          <p className="micro-label">New edit / 2026</p>
-          <h1>Non seguire<br />il look.<br /><em>Fallo tuo.</em></h1>
+          <p className="micro-label">LCS / Edit 01</p>
+          <h1>Scelto.<br /><em>Non esibito.</em></h1>
           <div className="hero-copy-bottom">
-            <p>Una selezione netta di moda e accessori, scelta per chi non ha bisogno di seguire il rumore.</p>
+            <p>Moda e oggetti scelti per materia, proporzione e carattere. Il resto può rimanere fuori.</p>
             <div className="hero-commerce-actions">
               <a className="hero-shop-link" href="/shop?categoria=donna">Shop donna <span>↗</span></a>
               <a className="hero-shop-link" href="/shop?categoria=uomo">Shop uomo <span>↗</span></a>
-              <a className="hero-ar-link" href="/try-on">Scopri il Try-On AR <span>→</span></a>
+              <a className="hero-text-link" href="/shop">Esplora tutto l'edit <span>→</span></a>
             </div>
           </div>
         </div>
 
         <div className="hero-visual">
           <Image src="/images/editorial.jpg" alt="Editoriale moda della selezione LCS" fill priority sizes="(max-width: 820px) 100vw, 58vw" />
-          <div className="hero-visual-tag"><span>New edit</span><strong>01</strong></div>
-          <p>Selected forms / Singular attitude</p>
+          <div className="hero-visual-tag"><span>The edit</span><strong>01</strong></div>
+          <p>Form / Matter / Character</p>
         </div>
 
         <div className="hero-side-note" aria-hidden="true">LCS · Selected fashion and objects · Edit 01</div>
       </section>
 
       <section className="ticker" aria-label="Valori del negozio">
-        <div>New in <span>✦</span> Spedizione gratuita <span>✦</span> Private list / Accesso anticipato <span>✦</span> Try-On AR / Coming soon <span>✦</span></div>
-      </section>
-
-      <section className="tryon-home" aria-labelledby="tryon-home-title">
-        <div className="tryon-home-visual">
-          <Image src="/images/try-on-campaign.png" alt="Campagna Virtual Try-On di LCS" fill sizes="100vw" />
-        </div>
-        <div className="tryon-home-overlay" />
-        <div className="tryon-home-grid" aria-hidden="true" />
-        <div className="tryon-home-copy">
-          <p className="micro-label">LCS Vision / 01</p>
-          <h2 id="tryon-home-title">Non guardare il look.<br /><em>Entraci dentro.</em></h2>
-          <p>Un vantaggio in più quando vuoi decidere. Stiamo trasformando ogni pagina prodotto in una porta verso un'esperienza AR personale.</p>
-          <a href="/try-on">Scopri il progetto <span>↗</span></a>
-        </div>
-        <ol className="tryon-home-steps">
-          <li><span>01</span><strong>Scan</strong><small>Un gesto dal prodotto</small></li>
-          <li><span>02</span><strong>Step in</strong><small>Entra nello specchio AR</small></li>
-          <li><span>03</span><strong>Own it</strong><small>Muoviti dentro il look</small></li>
-        </ol>
+        <div>New in <span>✦</span> Donna <span>✦</span> Uomo <span>✦</span> Accessori <span>✦</span> Private list <span>✦</span></div>
       </section>
 
       <section className="manifesto" id="manifesto">
         <div className="manifesto-label"><span>01</span><p>Manifesto</p></div>
         <div className="manifesto-copy">
-          <p className="micro-label">Fashion, augmented by instinct.</p>
-          <h2>La tecnologia sparisce.<br />Resta solo la scelta.</h2>
-          <p className="manifesto-lead">Il futuro della scelta è personale.</p>
+          <p className="micro-label">The art of selection.</p>
+          <h2>Non tutto merita<br />di entrare.</h2>
+          <p className="manifesto-lead">Scegliere è togliere.</p>
           <div className="manifesto-detail">
-            <p>Il valore non è distanza, è precisione. Materia, carattere e proporzione incontrano strumenti più intuitivi per scegliere ciò che ti rappresenta davvero.</p>
-            <span>LCS / VISION 01</span>
-          </div>
-        </div>
-      </section>
-
-      <section className="trust-story" id="provenienza" aria-labelledby="trust-title">
-        <div className="trust-index"><span>02</span><p>Provenienza e autenticità</p></div>
-        <div className="trust-content">
-          <p className="micro-label">Trust is a method.</p>
-          <h2 id="trust-title">Prima il controllo.<br /><em>Poi la scelta.</em></h2>
-          <p className="trust-lead">Non promettiamo ciò che non possiamo documentare.</p>
-          <div className="trust-principles">
-            <article>
-              <span>01</span>
-              <h3>Informazioni verificabili</h3>
-              <p>Con il catalogo definitivo, ogni articolo sarà accompagnato dalle informazioni disponibili su provenienza commerciale, condizioni e composizione.</p>
-            </article>
-            <article>
-              <span>02</span>
-              <h3>Controllo prima della pubblicazione</h3>
-              <p>Descrizioni, immagini, varianti e disponibilità saranno controllate prima di entrare nella selezione online.</p>
-            </article>
-            <article>
-              <span>03</span>
-              <h3>Un referente reale</h3>
-              <p>Dietro LCS c’è Ekobit SRL: per ogni dubbio su un articolo puoi parlare direttamente con noi.</p>
-            </article>
+            <p>Ogni edit nasce da una sottrazione. Meno rumore, meno compromessi, più attenzione a forma, materia e presenza.</p>
+            <span>LCS / EDIT 01</span>
           </div>
         </div>
       </section>
 
       <section className="category-story" aria-labelledby="category-title">
         <div className="category-heading">
-          <div><span>03</span><p>Shop by attitude</p></div>
+          <div><span>02</span><p>Shop by attitude</p></div>
           <h2 id="category-title">Tre prospettive.<br /><em>Un solo istinto.</em></h2>
         </div>
         <div className="category-mosaic">
@@ -142,7 +97,7 @@ export default function Home() {
 
       <section className="objects-section">
         <div className="objects-intro">
-          <span>04</span>
+          <span>03</span>
           <div><p className="micro-label">Objects of desire</p><h2>Il dettaglio<br />fa il look.</h2></div>
           <p>Oggetti scelti per diventare firma, non complemento.</p>
         </div>
@@ -158,7 +113,33 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="newsletter-section">
+      <section className="trust-story" id="provenienza" aria-labelledby="trust-title">
+        <div className="trust-index"><span>04</span><p>Provenienza e autenticità</p></div>
+        <div className="trust-content">
+          <p className="micro-label">Trust is a method.</p>
+          <h2 id="trust-title">Prima il controllo.<br /><em>Poi la scelta.</em></h2>
+          <p className="trust-lead">Non promettiamo ciò che non possiamo documentare.</p>
+          <div className="trust-principles">
+            <article>
+              <span>01</span>
+              <h3>Informazioni verificabili</h3>
+              <p>Con il catalogo definitivo, ogni articolo sarà accompagnato dalle informazioni disponibili su provenienza commerciale, condizioni e composizione.</p>
+            </article>
+            <article>
+              <span>02</span>
+              <h3>Controllo prima della pubblicazione</h3>
+              <p>Descrizioni, immagini, varianti e disponibilità saranno controllate prima di entrare nella selezione online.</p>
+            </article>
+            <article>
+              <span>03</span>
+              <h3>Un referente reale</h3>
+              <p>Ogni dubbio può essere chiarito prima dell'acquisto: condizioni, composizione e disponibilità devono essere comprensibili.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section className="newsletter-section" id="private-list">
         <div>
           <p className="micro-label">Private list</p>
           <h2>Prima degli altri.<br /><em>Solo quando conta.</em></h2>

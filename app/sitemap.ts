@@ -28,6 +28,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteUrl}/shop?categoria=uomo`, changeFrequency: "daily", priority: 0.8 },
     { url: `${siteUrl}/shop?categoria=accessori`, changeFrequency: "daily", priority: 0.8 },
     { url: `${siteUrl}/try-on`, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${siteUrl}/informazioni-societarie`, changeFrequency: "yearly", priority: 0.2 },
     ...catalog.map((product) => ({
       url: `${siteUrl}/prodotto/${product.slug}`,
       lastModified: product.updatedAt ? new Date(product.updatedAt) : undefined,

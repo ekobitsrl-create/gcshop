@@ -4,9 +4,9 @@ export function StoreFooter() {
   return (
     <footer className="store-footer">
       <div className="footer-statement">
-        <p>LCS Vision / Virtual Try-On</p>
-        <h2>See the look.<br /><em>Make it yours.</em></h2>
-        <Link href="/try-on">Scopri il progetto AR <span>↗</span></Link>
+        <p>The next edit / Private access</p>
+        <h2>Arriva prima.<br /><em>Scegli meglio.</em></h2>
+        <Link href="/#private-list">Entra nella lista <span>↗</span></Link>
       </div>
 
       <div className="footer-grid">
@@ -19,29 +19,26 @@ export function StoreFooter() {
           <Link href="/shop?categoria=donna">Donna</Link>
           <Link href="/shop?categoria=uomo">Uomo</Link>
           <Link href="/shop?categoria=accessori">Accessori</Link>
-          <Link href="/try-on">Virtual Try-On</Link>
         </div>
         <div className="footer-links">
           <p>Assistenza</p>
           <Link href="/#provenienza">Provenienza e autenticità</Link>
-          <a href="mailto:info@ekobit.it">Contattaci</a>
+          <Link href="/informazioni-societarie">Contatti</Link>
           <Link href="/checkout">Spedizioni e resi</Link>
           <Link href="/checkout">Pagamenti</Link>
           <Link href="/admin">Area riservata</Link>
         </div>
-        <address className="footer-links footer-company">
-          <p>Ekobit SRL</p>
-          <span>P. IVA 02424510796</span>
-          <span>Via Firenze 185</span>
-          <span>88900 KR</span>
-          <a href="tel:+393381346675">+39 338 134 6675</a>
-          <a href="mailto:info@ekobit.it">info@ekobit.it</a>
-        </address>
+        <div className="footer-links footer-company">
+          <p>Private list</p>
+          <span>Nuovi arrivi e selezioni riservate, solo quando conta.</span>
+          <Link href="/#private-list">Richiedi accesso</Link>
+          <Link href="/informazioni-societarie">Informazioni societarie</Link>
+        </div>
       </div>
 
       <div className="footer-legal">
-        <span>© 2026 Ekobit SRL</span>
-        <div><Link href="/">Privacy</Link><Link href="/">Cookie</Link><Link href="/">Termini</Link></div>
+        <span>© 2026 LCS</span>
+        <div><Link href="/">Privacy</Link><Link href="/">Cookie</Link><Link href="/">Termini</Link><Link href="/informazioni-societarie">Società</Link></div>
         <a href="#top">Torna su ↑</a>
       </div>
     </footer>
