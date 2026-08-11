@@ -125,6 +125,6 @@ test("adds a restrained trust signal and catalog-driven SEO", async () => {
   assert.match(sitemap, /products\.status/);
   assert.match(sitemap, /informazioni-societarie/);
   assert.match(robots, /\/admin\//);
-  assert.match(sitemap, /https:\/\/lcs-edit\.vercel\.app/);
-  assert.match(robots, /https:\/\/lcs-edit\.vercel\.app/);
+  assert.match(sitemap, /https:\/\/lcsedit\.vercel\.app/);
+  assert.match(robots, /https:\/\/lcsedit\.vercel\.app/);
 });

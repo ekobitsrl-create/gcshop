@@ -4,7 +4,7 @@ import { getDb } from "@/db";
 import { products } from "@/db/schema";
 import { placeholderProducts } from "@/lib/placeholder-products";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://lcs-edit.vercel.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://lcsedit.vercel.app";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let catalog: Array<{ slug: string; updatedAt?: string }> = [];
