@@ -440,7 +440,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .newsletter-form input::placeholder { color: rgba(17,18,16,.5); }
 .newsletter-form button { padding: 0 0 0 24px; color: var(--ink); font-size: 9px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; }
 .newsletter-form button span { margin-left: 12px; font-size: 16px; }
-.newsletter-form small { display: block; margin-top: 12px; color: rgba(17,18,16,.5); font-size: 8px; }
+.newsletter-form small { display: block; margin-top: 12px; color: #666660; font-size: 8px; }
 .newsletter-confirmation { padding: 25px 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); font-family: var(--serif); font-size: 23px; line-height: 1.4; }
 
 .store-footer { background: var(--ink); color: #fff; }
@@ -587,7 +587,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .lusso-text-link:hover { border-color: #c8b99e; color: #fff; }
 .simple-hero { display: grid; grid-template-columns: .92fr 1.08fr; min-height: 680px; border-bottom: 1px solid var(--line); }
 .simple-hero-copy { display: flex; flex-direction: column; justify-content: center; padding: clamp(70px, 8vw, 130px) clamp(24px, 7vw, 110px); }
-.simple-eyebrow { margin: 0 0 18px; color: var(--accent-strong); font-size: 9px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
+.simple-eyebrow { margin: 0 0 18px; color: #6f5d44; font-size: 9px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
 .simple-hero h1 { max-width: 720px; margin: 0; font-family: var(--serif); font-size: clamp(58px, 6.8vw, 108px); font-weight: 300; line-height: .92; letter-spacing: -.045em; }
 .simple-hero-copy > p:not(.simple-eyebrow) { max-width: 560px; margin: 32px 0 0; color: #5f5f5a; font-size: 17px; line-height: 1.65; }
 .simple-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 38px; }
