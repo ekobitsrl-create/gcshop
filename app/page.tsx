@@ -5,6 +5,7 @@ import { NewsletterForm } from "@/components/newsletter-form";
 import { StoreFooter } from "@/components/store-footer";
 import { StoreHeader } from "@/components/store-header";
 import { placeholderProducts } from "@/lib/placeholder-products";
+import { formatProductPrice } from "@/lib/store-utils";
 
 export const metadata: Metadata = {
   title: "Lusso Concept Store | Nuovi arrivi",
@@ -130,7 +131,7 @@ export default function Home() {
                 <div className="simple-product-copy">
                   <p>{product.brand}</p>
                   <h3>{product.name}</h3>
-                  <span>Prezzo da definire</span>
+                  <span>{formatProductPrice(product.price, product.currency)}</span>
                 </div>
               </Link>
             </article>
@@ -141,7 +142,7 @@ export default function Home() {
       <section className="simple-note" id="provenienza">
         <p className="simple-eyebrow">Informazioni sui prodotti</p>
         <h2>Schede chiare, prima dell’acquisto.</h2>
-        <p>Nomi e descrizioni sono stati ricostruiti confrontando i modelli presenti nei cataloghi dei marchi. Prezzi, taglie, composizione, condizioni e autenticità verranno verificati e completati prima della vendita.</p>
+        <p>Nomi e descrizioni sono stati ricostruiti confrontando i modelli presenti nei cataloghi dei marchi. I prezzi non ancora indicati, le taglie, la composizione, le condizioni e l’autenticità verranno verificati prima della vendita.</p>
       </section>
 
       <section className="simple-newsletter" id="private-list">
@@ -150,7 +151,7 @@ export default function Home() {
           <h2>Nuovi arrivi, senza rumore.</h2>
         </div>
         <div>
-          <p>Lascia la tua email per sapere quando aggiungiamo nuovi prodotti e quando saranno disponibili i prezzi.</p>
+          <p>Lascia la tua email per sapere quando aggiungiamo nuovi prodotti e completiamo le disponibilità.</p>
           <NewsletterForm />
         </div>
       </section>

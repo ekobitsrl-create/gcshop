@@ -97,7 +97,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
         <header className="commerce-hero simple-commerce-hero">
           <p className="commerce-kicker">Catalogo</p>
           <h1>Tutti i prodotti</h1>
-          <p className="commerce-hero-copy">Una selezione essenziale di abbigliamento e accessori. Prezzi e disponibilità saranno aggiunti appena verificati.</p>
+          <p className="commerce-hero-copy">Una selezione essenziale di abbigliamento e accessori. I prezzi mancanti e le disponibilità saranno aggiunti appena verificati.</p>
         </header>
 
         <nav className="shop-filters" aria-label="Filtra il catalogo">

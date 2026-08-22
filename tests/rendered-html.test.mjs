@@ -16,7 +16,7 @@ test("ships a restrained ecommerce home and keeps company details on the legal p
 
   assert.match(page, /Lusso,/);
   assert.match(page, /Trova subito quello che cerchi/);
-  assert.match(page, /Prezzo da definire/);
+  assert.match(page, /formatProductPrice/);
   assert.match(header, /catalogCategories/);
   assert.match(header, /Spedizione gratuita/);
   assert.match(header, /Pagamenti sicuri/);
@@ -34,19 +34,20 @@ test("ships a restrained ecommerce home and keeps company details on the legal p
   assert.doesNotMatch(company, /Ekobit|02424510796|Via Firenze 185|info@ekobit/);
 });
 
-test("keeps the full commerce schema and expands the pending-price catalog to nineteen items", async () => {
+test("keeps the full commerce schema and applies category prices to the nineteen-item catalog", async () => {
   const migrationFiles = (await readdir(new URL("../drizzle/", import.meta.url)))
     .filter((file) => file.endsWith(".sql"))
     .sort();
-  assert.equal(migrationFiles.length, 6);
+  assert.equal(migrationFiles.length, 7);
 
-  const [schemaMigration, originalCatalog, refreshedCatalog, expandedCatalog, pradaCatalog, stripeCheckout, placeholderCatalog, schema, journal] = await Promise.all([
+  const [schemaMigration, originalCatalog, refreshedCatalog, expandedCatalog, pradaCatalog, stripeCheckout, categoryPrices, placeholderCatalog, schema, journal] = await Promise.all([
     readFile(new URL(`../drizzle/${migrationFiles[0]}`, import.meta.url), "utf8"),
     readFile(new URL(`../drizzle/${migrationFiles[1]}`, import.meta.url), "utf8"),
     readFile(new URL(`../drizzle/${migrationFiles[2]}`, import.meta.url), "utf8"),
     readFile(new URL(`../drizzle/${migrationFiles[3]}`, import.meta.url), "utf8"),
     readFile(new URL(`../drizzle/${migrationFiles[4]}`, import.meta.url), "utf8"),
     readFile(new URL(`../drizzle/${migrationFiles[5]}`, import.meta.url), "utf8"),
+    readFile(new URL(`../drizzle/${migrationFiles[6]}`, import.meta.url), "utf8"),
     readFile(new URL("../lib/placeholder-products.ts", import.meta.url), "utf8"),
     readFile(new URL("../db/schema.ts", import.meta.url), "utf8"),
     readFile(new URL("../drizzle/meta/_journal.json", import.meta.url), "utf8"),
@@ -75,10 +76,16 @@ test("keeps the full commerce schema and expands the pending-price catalog to ni
   assert.match(pradaCatalog, /Jeans Prada a gamba ampia con effetto vernice/);
   assert.match(pradaCatalog, /Cintura Prada in pelle con fibbia ovale incisa/);
   assert.match(stripeCheckout, /'stripe'/);
+  assert.match(categoryPrices, /WHEN 'cinture' THEN 12000/);
+  assert.match(categoryPrices, /WHEN 't-shirt' THEN 8000/);
+  assert.match(categoryPrices, /WHEN 'pantaloni' THEN 14000/);
   assert.equal((refreshedCatalog.match(/"pricePending":true/g) ?? []).length, 3);
   assert.equal((expandedCatalog.match(/"pricePending":true/g) ?? []).length, 11);
   assert.equal((pradaCatalog.match(/"pricePending":true/g) ?? []).length, 5);
-  assert.equal((placeholderCatalog.match(/price: 0/g) ?? []).length, 19);
+  assert.equal((placeholderCatalog.match(/price: 0/g) ?? []).length, 9);
+  assert.equal((placeholderCatalog.match(/price: 8000/g) ?? []).length, 3);
+  assert.equal((placeholderCatalog.match(/price: 12000/g) ?? []).length, 4);
+  assert.equal((placeholderCatalog.match(/price: 14000/g) ?? []).length, 3);
   assert.equal((refreshedCatalog.match(/"stock_quantity" = 0/g) ?? []).length, 1);
   assert.equal((expandedCatalog.match(/"stock_quantity" = 0/g) ?? []).length, 1);
   assert.match(refreshedCatalog, /"base_price_cents" = 0/);
@@ -89,6 +96,7 @@ test("keeps the full commerce schema and expands the pending-price catalog to ni
   assert.match(journal, /0003_catalog_expansion/);
   assert.match(journal, /0004_prada_catalog/);
   assert.match(journal, /0005_stripe_checkout/);
+  assert.match(journal, /0006_category_prices/);
 });
 
 test("includes the supplied product images and refreshed social card", async () => {

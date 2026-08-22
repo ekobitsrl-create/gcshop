@@ -157,8 +157,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <p className="product-copy">{product.description || product.shortDescription || "Una selezione contemporanea, scelta per la qualità dei materiali e il carattere delle forme."}</p>
           {product.basePriceCents > 0 && !isPlaceholder ? <ProductPurchase variants={variants} /> : (
             <div className="placeholder-purchase">
-              <span>Prezzo in aggiornamento</span>
-              <p>Stiamo completando prezzo, taglie e disponibilità. Il prodotto non può essere aggiunto alla borsa finché la scheda non sarà completa.</p>
+              <span>{product.basePriceCents > 0 ? "Disponibilità in aggiornamento" : "Prezzo in aggiornamento"}</span>
+              <p>{product.basePriceCents > 0 ? "Il prezzo è definito. Stiamo completando taglie e disponibilità prima di rendere acquistabile il prodotto." : "Stiamo completando prezzo, taglie e disponibilità. Il prodotto non può essere aggiunto alla borsa finché la scheda non sarà completa."}</p>
             </div>
           )}
           <div className="product-services">
