@@ -195,12 +195,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 <figcaption>{String(index + 1).padStart(2, "0")} / {String(images.length).padStart(2, "0")}</figcaption>
               </figure>
             )) : <div className="product-placeholder"><span>Lusso</span><small>Immagine in arrivo</small></div>}
-            {images.length === 1 && primaryImage ? (
-              <figure className="product-gallery-detail">
-                <Image src={primaryImage.url} alt={`Dettaglio di ${product.name}`} fill unoptimized sizes="(max-width: 900px) 100vw, 55vw" />
-                <figcaption>Dettaglio immagine</figcaption>
-              </figure>
-            ) : null}
           </div>
           <div className="product-info-column">
             <section className="product-info-panel">
