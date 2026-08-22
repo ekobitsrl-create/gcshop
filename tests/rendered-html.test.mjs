@@ -38,9 +38,9 @@ test("keeps the full commerce schema and applies category prices to the nineteen
   const migrationFiles = (await readdir(new URL("../drizzle/", import.meta.url)))
     .filter((file) => file.endsWith(".sql"))
     .sort();
-  assert.equal(migrationFiles.length, 8);
+  assert.equal(migrationFiles.length, 9);
 
-  const [schemaMigration, originalCatalog, refreshedCatalog, expandedCatalog, pradaCatalog, stripeCheckout, categoryPrices, outerwearShirtPrices, placeholderCatalog, schema, journal] = await Promise.all([
+  const [schemaMigration, originalCatalog, refreshedCatalog, expandedCatalog, pradaCatalog, stripeCheckout, categoryPrices, outerwearShirtPrices, sweatshirtPrices, placeholderCatalog, schema, journal] = await Promise.all([
     readFile(new URL(`../drizzle/${migrationFiles[0]}`, import.meta.url), "utf8"),
     readFile(new URL(`../drizzle/${migrationFiles[1]}`, import.meta.url), "utf8"),
     readFile(new URL(`../drizzle/${migrationFiles[2]}`, import.meta.url), "utf8"),
@@ -49,6 +49,7 @@ test("keeps the full commerce schema and applies category prices to the nineteen
     readFile(new URL(`../drizzle/${migrationFiles[5]}`, import.meta.url), "utf8"),
     readFile(new URL(`../drizzle/${migrationFiles[6]}`, import.meta.url), "utf8"),
     readFile(new URL(`../drizzle/${migrationFiles[7]}`, import.meta.url), "utf8"),
+    readFile(new URL(`../drizzle/${migrationFiles[8]}`, import.meta.url), "utf8"),
     readFile(new URL("../lib/placeholder-products.ts", import.meta.url), "utf8"),
     readFile(new URL("../db/schema.ts", import.meta.url), "utf8"),
     readFile(new URL("../drizzle/meta/_journal.json", import.meta.url), "utf8"),
@@ -82,14 +83,16 @@ test("keeps the full commerce schema and applies category prices to the nineteen
   assert.match(categoryPrices, /WHEN 'pantaloni' THEN 14000/);
   assert.match(outerwearShirtPrices, /WHEN 'camicie-e-polo' THEN 9000/);
   assert.match(outerwearShirtPrices, /WHEN 'giacche' THEN 20000/);
+  assert.match(sweatshirtPrices, /"base_price_cents" = 18000/);
   assert.equal((refreshedCatalog.match(/"pricePending":true/g) ?? []).length, 3);
   assert.equal((expandedCatalog.match(/"pricePending":true/g) ?? []).length, 11);
   assert.equal((pradaCatalog.match(/"pricePending":true/g) ?? []).length, 5);
-  assert.equal((placeholderCatalog.match(/price: 0/g) ?? []).length, 2);
+  assert.equal((placeholderCatalog.match(/price: 0/g) ?? []).length, 0);
   assert.equal((placeholderCatalog.match(/price: 8000/g) ?? []).length, 3);
   assert.equal((placeholderCatalog.match(/price: 9000/g) ?? []).length, 3);
   assert.equal((placeholderCatalog.match(/price: 12000/g) ?? []).length, 4);
   assert.equal((placeholderCatalog.match(/price: 14000/g) ?? []).length, 3);
+  assert.equal((placeholderCatalog.match(/price: 18000/g) ?? []).length, 2);
   assert.equal((placeholderCatalog.match(/price: 20000/g) ?? []).length, 4);
   assert.equal((refreshedCatalog.match(/"stock_quantity" = 0/g) ?? []).length, 1);
   assert.equal((expandedCatalog.match(/"stock_quantity" = 0/g) ?? []).length, 1);
@@ -103,6 +106,7 @@ test("keeps the full commerce schema and applies category prices to the nineteen
   assert.match(journal, /0005_stripe_checkout/);
   assert.match(journal, /0006_category_prices/);
   assert.match(journal, /0007_outerwear_shirt_prices/);
+  assert.match(journal, /0008_sweatshirt_prices/);
 });
 
 test("includes the supplied product images and refreshed social card", async () => {
@@ -132,7 +136,7 @@ test("includes the supplied product images and refreshed social card", async () 
   ]);
 });
 
-test("shows pending prices without exposing zero-value purchase actions", async () => {
+test("shows configured prices while keeping unavailable products out of the cart", async () => {
   const [shop, product, purchase, utils, admin] = await Promise.all([
     readFile(new URL("../app/shop/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/prodotto/[slug]/page.tsx", import.meta.url), "utf8"),

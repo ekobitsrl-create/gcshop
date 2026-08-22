@@ -142,7 +142,7 @@ export default function Home() {
       <section className="simple-note" id="provenienza">
         <p className="simple-eyebrow">Informazioni sui prodotti</p>
         <h2>Schede chiare, prima dell’acquisto.</h2>
-        <p>Nomi e descrizioni sono stati ricostruiti confrontando i modelli presenti nei cataloghi dei marchi. I prezzi non ancora indicati, le taglie, la composizione, le condizioni e l’autenticità verranno verificati prima della vendita.</p>
+        <p>Nomi e descrizioni sono stati ricostruiti confrontando i modelli presenti nei cataloghi dei marchi. Taglie, composizione, condizioni e autenticità verranno verificate prima della vendita.</p>
       </section>
 
       <section className="simple-newsletter" id="private-list">
