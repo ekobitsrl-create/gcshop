@@ -26,8 +26,8 @@ export function StoreHeader() {
   return (
     <>
       <div className="store-announcement" aria-label="Comunicazioni del negozio">
-        <span>Prezzi e disponibilità in aggiornamento</span>
-        <Link href="/informazioni-societarie">Serve aiuto? Contattaci</Link>
+        <span>Spedizione gratuita</span>
+        <span>Pagamenti sicuri</span>
       </div>
       <header className="store-header">
         <button

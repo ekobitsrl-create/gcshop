@@ -654,6 +654,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .store-announcement {
   min-height: 30px;
   justify-content: space-between;
+  gap: 24px;
   padding: 0 clamp(16px, 3vw, 40px);
   overflow: visible;
   background: var(--ink);
@@ -663,6 +664,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   letter-spacing: .02em;
   text-transform: none;
 }
+.store-announcement span + span::before { content: "•"; margin-right: 24px; color: var(--accent); }
 .store-announcement a { text-decoration: underline; text-underline-offset: 3px; }
 .store-header {
   height: 74px;
@@ -743,6 +745,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 
 @media (max-width: 680px) {
   .store-announcement { justify-content: center; text-align: center; }
+  .store-announcement span + span::before { margin-right: 16px; }
   .store-announcement a { display: none; }
   .store-header { height: 68px; padding: 0 14px; }
   .store-search-link { display: none; }

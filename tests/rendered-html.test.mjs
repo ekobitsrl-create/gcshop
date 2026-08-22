@@ -18,6 +18,8 @@ test("ships a restrained ecommerce home and keeps company details on the legal p
   assert.match(page, /Trova subito quello che cerchi/);
   assert.match(page, /Prezzo da definire/);
   assert.match(header, /catalogCategories/);
+  assert.match(header, /Spedizione gratuita/);
+  assert.match(header, /Pagamenti sicuri/);
   assert.match(catalog, /name: "T-shirt"/);
   assert.match(catalog, /name: "Cinture"/);
   assert.match(catalog, /name: "Felpe e cardigan"/);
