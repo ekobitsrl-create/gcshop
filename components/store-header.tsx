@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { catalogCategories } from "@/lib/catalog";
 import { getLocalCartCount, LOCAL_CART_EVENT } from "@/lib/local-cart";
@@ -56,8 +57,11 @@ export function StoreHeader() {
         </button>
 
         <Link className="store-wordmark" href="/" aria-label="Lusso Concept Store, home">
-          <strong>Lusso</strong>
-          <span>Concept store</span>
+          <Image className="store-logo-mark" src="/lusso-logo-mark.png" alt="" width={512} height={512} priority />
+          <span className="store-logo-copy">
+            <strong>Lusso</strong>
+            <span>Concept store</span>
+          </span>
         </Link>
 
         <nav className="store-nav" aria-label="Navigazione principale">

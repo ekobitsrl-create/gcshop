@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { catalogCategories } from "@/lib/catalog";
 
@@ -6,8 +7,9 @@ export function StoreFooter() {
     <footer className="store-footer">
       <div className="footer-grid">
         <div className="footer-brand">
-          <Link className="store-wordmark store-wordmark-light" href="/">
-            <strong>Lusso</strong><span>Concept store</span>
+          <Link className="store-wordmark store-wordmark-light" href="/" aria-label="Lusso Concept Store, home">
+            <Image className="store-logo-mark" src="/lusso-logo-mark.png" alt="" width={512} height={512} />
+            <span className="store-logo-copy"><strong>Lusso</strong><span>Concept store</span></span>
           </Link>
           <p>Abbigliamento e accessori firmati, selezionati con cura e presentati con informazioni semplici e chiare.</p>
         </div>

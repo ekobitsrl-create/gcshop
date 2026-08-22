@@ -29,6 +29,15 @@ export async function generateMetadata(): Promise<Metadata> {
     creator: "Lusso Concept Store",
     publisher: "Lusso Concept Store",
     category: "fashion",
+    manifest: "/site.webmanifest",
+    icons: {
+      icon: [
+        { url: "/favicon.ico", sizes: "any" },
+        { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
+      ],
+      shortcut: "/favicon.ico",
+      apple: [{ url: "/apple-touch-icon.png", type: "image/png", sizes: "180x180" }],
+    },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
