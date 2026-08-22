@@ -234,7 +234,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 </div>
               )}
 
-              <div className="product-services" aria-label="Servizi inclusi">
+              <div className="product-services" role="region" aria-label="Servizi inclusi">
                 <p><strong>Spedizione gratuita</strong><span>Consegna stimata in 7–12 giorni lavorativi</span></p>
                 <p><strong>Reso entro 14 giorni</strong><span>Secondo le condizioni di vendita</span></p>
                 <p><strong>Pagamento sicuro</strong><span>Checkout protetto con Stripe quando attivato</span></p>

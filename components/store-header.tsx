@@ -39,7 +39,7 @@ export function StoreHeader() {
 
   return (
     <>
-      <div className="store-announcement" aria-label="Comunicazioni del negozio">
+      <div className="store-announcement" role="region" aria-label="Comunicazioni del negozio">
         <span>Spedizione gratuita</span>
         <span>Pagamenti sicuri</span>
       </div>

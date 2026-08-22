@@ -610,13 +610,13 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .simple-category-card > div { position: relative; aspect-ratio: 4 / 3; overflow: hidden; border: 1px solid rgba(24,23,20,.08); background: var(--soft); }
 .simple-category-card img, .simple-product-media img { object-fit: cover; transition: transform .45s ease; }
 .simple-category-card:hover img, .simple-product-card:hover img { transform: scale(1.025); }
-.simple-category-card > p { margin: 16px 0 5px; color: #777770; font-size: 10px; text-transform: uppercase; }
+.simple-category-card > p { margin: 16px 0 5px; color: #666660; font-size: 10px; text-transform: uppercase; }
 .simple-category-card h3 { margin: 0; font-family: var(--serif); font-size: 28px; font-weight: 400; letter-spacing: -.025em; }
 .simple-products { background: var(--paper); }
 .simple-product-media { position: relative; aspect-ratio: 4 / 5; overflow: hidden; border: 1px solid rgba(24,23,20,.08); background: var(--soft); }
 .simple-product-copy { display: grid; gap: 6px; padding-top: 15px; }
 .simple-product-copy p, .simple-product-copy h3, .simple-product-copy span { margin: 0; }
-.simple-product-copy p { color: #777770; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+.simple-product-copy p { color: #666660; font-size: 10px; font-weight: 700; text-transform: uppercase; }
 .simple-product-copy h3 { max-width: 430px; font-family: var(--serif); font-size: 21px; font-weight: 400; line-height: 1.25; letter-spacing: -.018em; }
 .simple-product-copy span { color: #5f5f5a; font-size: 12px; }
 .simple-note { padding: clamp(85px, 10vw, 150px) clamp(24px, 12vw, 190px); background: var(--ink); color: #f8f4ec; text-align: center; }
@@ -707,7 +707,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   gap: 24px;
   padding: 0 clamp(20px, 6vw, 95px);
   border-top: 1px solid rgba(255,255,255,.13);
-  color: rgba(255,255,255,.45);
+  color: rgba(255,255,255,.52);
   font-size: 9px;
   font-weight: 400;
   letter-spacing: 0;
