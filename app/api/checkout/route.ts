@@ -16,6 +16,7 @@ import { getCartSnapshot } from "@/lib/cart";
 import { evaluateCoupon } from "@/lib/coupons";
 import { getBankTransferDetails, getPaymentMethods } from "@/lib/payment-config";
 import { createPayPalOrder } from "@/lib/paypal";
+import { createStripeCheckoutSession } from "@/lib/stripe";
 
 type CheckoutBody = {
   firstName?: string;
@@ -56,6 +57,9 @@ export async function POST(request: Request) {
   if (coupon && !coupon.ok) return Response.json({ error: coupon.error }, { status: 400 });
   const discountCents = coupon?.ok ? coupon.discountCents : 0;
   const totalCents = cart.subtotalCents - discountCents;
+  if (method.code === "stripe" && totalCents < 50) {
+    return Response.json({ error: "I prezzi dei prodotti non sono ancora configurati per il pagamento." }, { status: 400 });
+  }
 
   const db = getDb();
   const existingCustomer = await db.select({ id: customers.id }).from(customers).where(eq(customers.email, email)).limit(1);
@@ -124,13 +128,39 @@ export async function POST(request: Request) {
     id: transactionId,
     orderId,
     paymentMethodCode: method.code,
-    type: method.code === "paypal" ? "authorization" : "instruction",
+    type: method.code === "bank_transfer" ? "instruction" : "authorization",
     amountCents: totalCents,
     currency: cart.currency,
   });
 
   let redirectUrl = `/ordine/${encodeURIComponent(orderNumber)}`;
-  if (method.code === "paypal") {
+  if (method.code === "stripe") {
+    try {
+      const origin = new URL(request.url).origin;
+      const stripe = await createStripeCheckoutSession({
+        orderId,
+        orderNumber,
+        email,
+        amountCents: totalCents,
+        currency: cart.currency,
+        itemCount: cart.itemCount,
+        successUrl: `${origin}/checkout/stripe/complete?session_id={CHECKOUT_SESSION_ID}&order=${encodeURIComponent(orderNumber)}`,
+        cancelUrl: `${origin}/checkout?cancelled=1`,
+      });
+      if (!stripe.url) throw new Error("STRIPE_CHECKOUT_URL_MISSING");
+      await db.update(paymentTransactions).set({
+        providerReference: stripe.id,
+        responseJson: JSON.stringify({ id: stripe.id, status: stripe.status, paymentStatus: stripe.payment_status }),
+      }).where(eq(paymentTransactions.id, transactionId));
+      redirectUrl = stripe.url;
+    } catch {
+      await Promise.all([
+        db.update(paymentTransactions).set({ status: "failed" }).where(eq(paymentTransactions.id, transactionId)),
+        db.update(orders).set({ status: "cancelled", cancelledAt: sql`CURRENT_TIMESTAMP` }).where(eq(orders.id, orderId)),
+      ]);
+      return Response.json({ error: "Stripe non è al momento disponibile. Riprova più tardi." }, { status: 502 });
+    }
+  } else if (method.code === "paypal") {
     try {
       const origin = new URL(request.url).origin;
       const paypal = await createPayPalOrder({

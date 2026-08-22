@@ -38,14 +38,15 @@ test("keeps the full commerce schema and expands the pending-price catalog to ni
   const migrationFiles = (await readdir(new URL("../drizzle/", import.meta.url)))
     .filter((file) => file.endsWith(".sql"))
     .sort();
-  assert.equal(migrationFiles.length, 5);
+  assert.equal(migrationFiles.length, 6);
 
-  const [schemaMigration, originalCatalog, refreshedCatalog, expandedCatalog, pradaCatalog, placeholderCatalog, schema, journal] = await Promise.all([
+  const [schemaMigration, originalCatalog, refreshedCatalog, expandedCatalog, pradaCatalog, stripeCheckout, placeholderCatalog, schema, journal] = await Promise.all([
     readFile(new URL(`../drizzle/${migrationFiles[0]}`, import.meta.url), "utf8"),
     readFile(new URL(`../drizzle/${migrationFiles[1]}`, import.meta.url), "utf8"),
     readFile(new URL(`../drizzle/${migrationFiles[2]}`, import.meta.url), "utf8"),
     readFile(new URL(`../drizzle/${migrationFiles[3]}`, import.meta.url), "utf8"),
     readFile(new URL(`../drizzle/${migrationFiles[4]}`, import.meta.url), "utf8"),
+    readFile(new URL(`../drizzle/${migrationFiles[5]}`, import.meta.url), "utf8"),
     readFile(new URL("../lib/placeholder-products.ts", import.meta.url), "utf8"),
     readFile(new URL("../db/schema.ts", import.meta.url), "utf8"),
     readFile(new URL("../drizzle/meta/_journal.json", import.meta.url), "utf8"),
@@ -73,6 +74,7 @@ test("keeps the full commerce schema and expands the pending-price catalog to ni
   assert.match(pradaCatalog, /Giacca Prada Re-Nylon con cappuccio/);
   assert.match(pradaCatalog, /Jeans Prada a gamba ampia con effetto vernice/);
   assert.match(pradaCatalog, /Cintura Prada in pelle con fibbia ovale incisa/);
+  assert.match(stripeCheckout, /'stripe'/);
   assert.equal((refreshedCatalog.match(/"pricePending":true/g) ?? []).length, 3);
   assert.equal((expandedCatalog.match(/"pricePending":true/g) ?? []).length, 11);
   assert.equal((pradaCatalog.match(/"pricePending":true/g) ?? []).length, 5);
@@ -86,6 +88,7 @@ test("keeps the full commerce schema and expands the pending-price catalog to ni
   assert.match(journal, /0002_gentle_catalog_refresh/);
   assert.match(journal, /0003_catalog_expansion/);
   assert.match(journal, /0004_prada_catalog/);
+  assert.match(journal, /0005_stripe_checkout/);
 });
 
 test("includes the supplied product images and refreshed social card", async () => {

@@ -3,7 +3,7 @@
 import { type FormEvent, useState } from "react";
 import { formatMoney } from "@/lib/store-utils";
 
-type Method = { code: "paypal" | "bank_transfer"; name: string; instructions: string; configured: boolean };
+type Method = { code: "stripe" | "paypal" | "bank_transfer"; name: string; instructions: string; configured: boolean };
 type Cart = {
   currency: string;
   itemCount: number;
@@ -129,14 +129,14 @@ export function CheckoutForm({ methods, cart }: { methods: Method[]; cart: Cart 
               <label className={`payment-choice ${method === item.code ? "is-selected" : ""}`} key={item.code}>
                 <input type="radio" name="paymentMethod" value={item.code} checked={method === item.code} disabled={!item.configured} onChange={() => setMethod(item.code)} />
                 <span><strong>{item.name}</strong><small>{item.instructions}</small>{!item.configured ? <em>Configurazione amministratore necessaria.</em> : null}</span>
-                <b aria-hidden="true">{item.code === "paypal" ? "PP" : "BT"}</b>
+                <b aria-hidden="true">{item.code === "stripe" ? "S" : item.code === "paypal" ? "PP" : "BT"}</b>
               </label>
             ))}
           </fieldset>
 
-          {!available.length ? <p className="checkout-message">Nessun metodo di pagamento è ancora configurato. Inserisci le credenziali PayPal o l’IBAN nell’ambiente protetto.</p> : null}
+          {!available.length ? <p className="checkout-message">Nessun metodo di pagamento è ancora configurato. Le credenziali vanno inserite nell’ambiente protetto.</p> : null}
           {error ? <p className="checkout-message" role="alert">{error}</p> : null}
-          <button className="checkout-submit" disabled={busy || !method}>{busy ? "Elaborazione…" : method === "paypal" ? "Continua con PayPal" : "Conferma ordine"}<span>↗</span></button>
+          <button className="checkout-submit" disabled={busy || !method}>{busy ? "Elaborazione…" : method === "stripe" ? "Paga in sicurezza" : method === "paypal" ? "Continua con PayPal" : "Conferma ordine"}<span>↗</span></button>
         </div>
       </section>
 
