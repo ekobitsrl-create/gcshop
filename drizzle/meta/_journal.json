@@ -50,6 +50,13 @@
       "when": 1787420400000,
       "tag": "0006_category_prices",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1787421000000,
+      "tag": "0007_outerwear_shirt_prices",
+      "breakpoints": true
     }
   ]
 }
