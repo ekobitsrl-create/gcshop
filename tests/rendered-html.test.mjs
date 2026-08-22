@@ -30,9 +30,8 @@ test("ships a restrained ecommerce home and keeps company details on the legal p
   assert.match(layout, /Lusso Concept Store \| Abbigliamento e accessori/);
   assert.match(layout, /\/og\.png/);
   assert.doesNotMatch(`${page}\n${header}\n${footer}`, /Scelto\.\s*Non esibito|Shop by attitude|Objects of desire|The edit|Try-On|AR preview/i);
-  assert.match(company, /Ekobit SRL/);
-  assert.match(company, /02424510796/);
-  assert.match(company, /Via Firenze 185/);
+  assert.match(company, /Dati in aggiornamento/);
+  assert.doesNotMatch(company, /Ekobit|02424510796|Via Firenze 185|info@ekobit/);
 });
 
 test("keeps the full commerce schema and expands the pending-price catalog to nineteen items", async () => {

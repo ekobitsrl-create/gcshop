@@ -23,7 +23,7 @@ export default async function AdminLoginPage({
           <span>LS</span>
           <strong>Lusso</strong>
         </Link>
-        <p className="login-kicker">Area riservata Ekobit SRL</p>
+        <p className="login-kicker">Area riservata Lusso Concept Store</p>
         <h1>Accedi al pannello amministrativo.</h1>
         <p className="login-copy">
           Inserisci l’indirizzo autorizzato. Riceverai un collegamento sicuro e senza password.

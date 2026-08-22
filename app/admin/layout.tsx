@@ -16,7 +16,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
           <h1>Account non autorizzato.</h1>
           <p>
             L’account <strong>{user.email}</strong> non è presente nell’elenco amministratori.
-            Contatta Ekobit SRL per richiedere l’accesso.
+            Contatta l’amministratore del negozio per richiedere l’accesso.
           </p>
           <a href="/auth/logout?return_to=/accesso-admin">Accedi con un altro account</a>
         </div>

@@ -11,7 +11,7 @@ export type AdminUser = {
 };
 
 function configuredAdminEmails(): string[] {
-  const value = getRuntimeEnv().ADMIN_EMAILS ?? "info@ekobit.it";
+  const value = getRuntimeEnv().ADMIN_EMAILS ?? "";
   return value
     .split(",")
     .map((email) => email.trim().toLowerCase())

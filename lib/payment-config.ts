@@ -63,7 +63,7 @@ export async function getPaymentMethods(): Promise<StorePaymentMethod[]> {
 export function getBankTransferDetails() {
   const runtime = getRuntimeEnv();
   return {
-    accountHolder: runtime.BANK_ACCOUNT_HOLDER ?? "Ekobit SRL",
+    accountHolder: runtime.BANK_ACCOUNT_HOLDER ?? "",
     iban: runtime.BANK_IBAN ?? "",
     bic: runtime.BANK_BIC ?? "",
   };

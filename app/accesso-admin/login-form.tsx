@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from "react";
 
 export default function LoginForm({ returnTo }: { returnTo: string }) {
-  const [email, setEmail] = useState("info@ekobit.it");
+  const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [pending, setPending] = useState(false);
 
