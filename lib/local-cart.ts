@@ -51,16 +51,16 @@ export function addLocalCartItem(item: Omit<LocalCartItem, "key">) {
   const existing = items.find((entry) => entry.key === key);
   const next = existing
     ? items.map((entry) => entry.key === key
-      ? { ...entry, quantity: Math.min(10, entry.quantity + item.quantity) }
+      ? { ...entry, quantity: Math.min(20, entry.quantity + item.quantity) }
       : entry)
-    : [...items, { ...item, key, quantity: Math.min(10, Math.max(1, item.quantity)) }];
+    : [...items, { ...item, key, quantity: Math.min(20, Math.max(1, item.quantity)) }];
   writeLocalCart(next);
   return next;
 }
 
 export function updateLocalCartItem(key: string, quantity: number) {
   const next = readLocalCart().map((item) => item.key === key
-    ? { ...item, quantity: Math.min(10, Math.max(1, quantity)) }
+    ? { ...item, quantity: Math.min(20, Math.max(1, quantity)) }
     : item);
   writeLocalCart(next);
   return next;

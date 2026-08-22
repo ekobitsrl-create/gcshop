@@ -21,7 +21,7 @@ export default function TermsPage() {
         <p>
           Le presenti condizioni disciplinano la vendita a consumatori tramite Lusso Concept Store. L&apos;identità legale,
           la sede, la partita IVA, l&apos;email e il telefono del venditore sono da completare prima dell&apos;apertura. Il
-          catalogo pubblico è attualmente una preview e i prodotti non sono acquistabili finché tali dati e le giacenze non saranno attivati.
+          catalogo pubblico è attualmente una preview e i prodotti non sono acquistabili finché tali dati e l&apos;attivazione finale del checkout non saranno completati.
         </p>
       </section>
 

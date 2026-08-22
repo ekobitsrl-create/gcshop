@@ -174,7 +174,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       "@type": "Offer",
       priceCurrency: product.currency,
       price: (product.basePriceCents / 100).toFixed(2),
-      availability: `https://schema.org/${isPlaceholder ? "OutOfStock" : totalStock > 0 ? "InStock" : "OutOfStock"}`,
+      availability: `https://schema.org/${totalStock > 0 ? "InStock" : "OutOfStock"}`,
       url: productUrl,
     },
   };
@@ -206,7 +206,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <section className="product-info-panel">
               <div className="product-heading-row">
                 <p className="commerce-kicker">{product.brand ?? categoryName}</p>
-                <span>{isPlaceholder ? "Anteprima" : totalStock > 0 ? "Disponibile" : "Esaurito"}</span>
+                <span>{totalStock > 0 ? "Disponibile" : "Esaurito"}</span>
               </div>
               <h1>{product.name}</h1>
               <p className="product-price">{formatProductPrice(product.basePriceCents, product.currency)} <small>IVA inclusa</small></p>

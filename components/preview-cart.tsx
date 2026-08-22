@@ -62,7 +62,7 @@ export function PreviewCart() {
               <div className="preview-cart-controls">
                 <label>Quantità
                   <select value={item.quantity} onChange={(event) => setItems(updateLocalCartItem(item.key, Number(event.target.value)))}>
-                    {Array.from({ length: 10 }, (_, index) => index + 1).map((quantity) => <option key={quantity} value={quantity}>{quantity}</option>)}
+                    {Array.from({ length: 20 }, (_, index) => index + 1).map((quantity) => <option key={quantity} value={quantity}>{quantity}</option>)}
                   </select>
                 </label>
                 <button type="button" onClick={() => setItems(removeLocalCartItem(item.key))}>Rimuovi</button>
@@ -79,8 +79,8 @@ export function PreviewCart() {
         <div><span>Spedizione standard</span><strong>Gratuita</strong></div>
         <div className="preview-cart-total"><span>Totale indicativo</span><strong>{formatMoney(subtotal, "EUR")}</strong></div>
         <p>
-          La borsa funziona su questo dispositivo. Il pagamento resta disattivato finché disponibilità,
-          dati del venditore e schede prodotto non saranno confermati.
+          La borsa funziona su questo dispositivo. Il pagamento resta disattivato finché i dati del
+          venditore e le schede prodotto definitive non saranno completati.
         </p>
         <button type="button" disabled>Pagamento in attivazione</button>
         <Link href="/shop">Continua lo shopping</Link>

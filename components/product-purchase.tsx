@@ -28,7 +28,7 @@ export function ProductPurchase({ variants, product, categoryName, preview = fal
   const [busyAction, setBusyAction] = useState<"bag" | "checkout" | null>(null);
   const selected = variants.find((variant) => variant.id === variantId);
   const canAdd = Boolean(selected && (preview || selected.stockQuantity > 0));
-  const maxQuantity = preview ? 10 : Math.max(1, selected?.stockQuantity ?? 1);
+  const maxQuantity = Math.max(1, selected?.stockQuantity ?? 1);
 
   function selectVariant(nextVariantId: string) {
     setVariantId(nextVariantId);
@@ -96,7 +96,7 @@ export function ProductPurchase({ variants, product, categoryName, preview = fal
 
   return (
     <div className="purchase-box">
-      {preview ? <p className="purchase-preview-note"><span aria-hidden="true">●</span> Borsa preview attiva · disponibilità da confermare</p> : null}
+      {preview ? <p className="purchase-preview-note"><span aria-hidden="true">●</span> Disponibile · 20 pezzi per taglia o misura</p> : null}
       <fieldset className="variant-picker">
         <legend>{categoryName === "Cinture" ? "Scegli la misura" : "Scegli la taglia"}</legend>
         <div>

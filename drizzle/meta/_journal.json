@@ -64,6 +64,13 @@
       "when": 1787421600000,
       "tag": "0008_sweatshirt_prices",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1787422200000,
+      "tag": "0009_inventory_twenty",
+      "breakpoints": true
     }
   ]
 }

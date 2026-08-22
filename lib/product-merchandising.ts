@@ -34,7 +34,7 @@ export function createPreviewVariants(product: PlaceholderProduct): DisplayVaria
   return variantTitles(product.categoryName).map((title, index) => ({
     id: `${product.id}-${index + 1}`,
     title,
-    stockQuantity: 10,
+    stockQuantity: 20,
   }));
 }
 
@@ -45,6 +45,7 @@ export function getProductFacts(product: PlaceholderProduct) {
     { label: "Codice articolo", value: product.sku },
     { label: "Colori", value: colorsBySlug[product.slug] ?? "Come da immagine" },
     { label: "Composizione", value: "Da confermare sull’etichetta del prodotto" },
-    { label: "Stato scheda", value: "Anteprima · disponibilità da confermare" },
+    { label: "Disponibilità", value: "20 pezzi per taglia / misura" },
+    { label: "Stato scheda", value: "Anteprima catalogo" },
   ];
 }
