@@ -230,7 +230,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
               ) : (
                 <div className="placeholder-purchase">
                   <span>{product.basePriceCents > 0 ? "Disponibilità in aggiornamento" : "Prezzo in aggiornamento"}</span>
-                  <p>La scheda non è ancora completa e il prodotto non può essere aggiunto alla borsa.</p>
+                  <p>La scheda non è ancora completa e il prodotto non può essere aggiunto al carrello.</p>
                 </div>
               )}
 

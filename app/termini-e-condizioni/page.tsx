@@ -38,7 +38,7 @@ export default function TermsPage() {
       <section>
         <h2>3. Ordine e conclusione del contratto</h2>
         <p>
-          Prima del pagamento il cliente può controllare e correggere borsa, quantità e dati. L&apos;invio dell&apos;ordine
+          Prima del pagamento il cliente può controllare e correggere carrello, quantità e dati. L&apos;invio dell&apos;ordine
           costituisce una proposta di acquisto. Il contratto si conclude quando il venditore invia la conferma di
           accettazione dell&apos;ordine e il pagamento è autorizzato. In caso di indisponibilità o errore evidente, il
           cliente viene informato e le somme eventualmente incassate sono restituite senza indebito ritardo.

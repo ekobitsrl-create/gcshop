@@ -14,7 +14,7 @@ export default function PrivacyPage() {
     <LegalPage
       kicker="Privacy"
       title="Informativa privacy"
-      intro="Come vengono trattati i dati personali quando visiti il sito, usi la borsa o effettui un ordine."
+      intro="Come vengono trattati i dati personali quando visiti il sito, usi il carrello o effettui un ordine."
     >
       <section>
         <h2>1. Titolare del trattamento</h2>
@@ -29,7 +29,7 @@ export default function PrivacyPage() {
         <h2>2. Dati trattati</h2>
         <ul>
           <li>dati di navigazione e log tecnici, come indirizzo IP, data, ora, URL richiesto e informazioni sul dispositivo;</li>
-          <li>identificativo tecnico della borsa e prodotti inseriti;</li>
+          <li>identificativo tecnico del carrello e prodotti inseriti;</li>
           <li>nome, cognome, email, telefono, indirizzo di consegna, note e dati dell&apos;ordine quando il checkout sarà attivo;</li>
           <li>identificativi e stato del pagamento comunicati da Stripe; i dati completi della carta sono inseriti sulla pagina sicura di Stripe e non vengono memorizzati dal negozio;</li>
           <li>dati e credenziali di sessione degli utenti autorizzati dell&apos;area amministrativa.</li>
@@ -44,7 +44,7 @@ export default function PrivacyPage() {
         <h2>3. Finalità e basi giuridiche</h2>
         <div className="legal-table" role="table" aria-label="Finalità del trattamento">
           <div role="row"><strong role="cell">Navigazione e sicurezza</strong><span role="cell">Erogazione del servizio, sicurezza e prevenzione degli abusi; legittimo interesse e necessità tecnica.</span></div>
-          <div role="row"><strong role="cell">Borsa e checkout</strong><span role="cell">Gestione delle richieste precontrattuali e del contratto di vendita.</span></div>
+          <div role="row"><strong role="cell">Carrello e checkout</strong><span role="cell">Gestione delle richieste precontrattuali e del contratto di vendita.</span></div>
           <div role="row"><strong role="cell">Ordini e fatturazione</strong><span role="cell">Esecuzione del contratto e adempimento di obblighi fiscali, contabili e di legge.</span></div>
           <div role="row"><strong role="cell">Assistenza e controversie</strong><span role="cell">Riscontro alle richieste, tutela dei diritti e legittimo interesse alla difesa.</span></div>
           <div role="row"><strong role="cell">Marketing futuro</strong><span role="cell">Solo con consenso, revocabile in qualsiasi momento senza conseguenze sugli acquisti.</span></div>

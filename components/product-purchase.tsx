@@ -25,7 +25,7 @@ export function ProductPurchase({ variants, product, categoryName, preview = fal
   const [variantId, setVariantId] = useState(variants[0]?.id ?? "");
   const [quantity, setQuantity] = useState(1);
   const [message, setMessage] = useState("");
-  const [busyAction, setBusyAction] = useState<"bag" | "checkout" | null>(null);
+  const [busyAction, setBusyAction] = useState<"cart" | "checkout" | null>(null);
   const selected = variants.find((variant) => variant.id === variantId);
   const canAdd = Boolean(selected && (preview || selected.stockQuantity > 0));
   const maxQuantity = Math.max(1, selected?.stockQuantity ?? 1);
@@ -38,7 +38,7 @@ export function ProductPurchase({ variants, product, categoryName, preview = fal
 
   async function add(redirectToCheckout = false) {
     if (!selected) return;
-    setBusyAction(redirectToCheckout ? "checkout" : "bag");
+    setBusyAction(redirectToCheckout ? "checkout" : "cart");
     setMessage("");
 
     if (preview) {
@@ -60,9 +60,9 @@ export function ProductPurchase({ variants, product, categoryName, preview = fal
           return;
         }
         const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-        setMessage(`Aggiunto alla borsa. Ora contiene ${itemCount} ${itemCount === 1 ? "articolo" : "articoli"}.`);
+        setMessage(`Aggiunto al carrello. Ora contiene ${itemCount} ${itemCount === 1 ? "articolo" : "articoli"}.`);
       } catch {
-        setMessage("Non è stato possibile salvare la borsa su questo dispositivo.");
+        setMessage("Non è stato possibile salvare il carrello su questo dispositivo.");
       } finally {
         setBusyAction(null);
       }
@@ -77,7 +77,7 @@ export function ProductPurchase({ variants, product, categoryName, preview = fal
       });
       const payload = await response.json();
       if (!response.ok) {
-        setMessage(payload.error ?? "Non è stato possibile aggiornare la borsa.");
+        setMessage(payload.error ?? "Non è stato possibile aggiornare il carrello.");
         return;
       }
 
@@ -86,7 +86,7 @@ export function ProductPurchase({ variants, product, categoryName, preview = fal
         return;
       }
 
-      setMessage(`${payload.itemCount} articoli nella borsa.`);
+      setMessage(`${payload.itemCount} articoli nel carrello.`);
     } catch {
       setMessage("Connessione non disponibile. Riprova tra poco.");
     } finally {
@@ -125,13 +125,13 @@ export function ProductPurchase({ variants, product, categoryName, preview = fal
       </div>
       <div className="purchase-actions">
         <button className="purchase-add-bag" type="button" disabled={busyAction !== null || !canAdd} onClick={() => void add()}>
-          {busyAction === "bag" ? "Aggiunta…" : canAdd ? "Aggiungi alla borsa" : "Non disponibile"}<span>+</span>
+          {busyAction === "cart" ? "Aggiunta…" : canAdd ? "Aggiungi al carrello" : "Non disponibile"}<span>+</span>
         </button>
         <button className="purchase-buy-now" type="button" disabled={busyAction !== null || !canAdd} onClick={() => void add(true)}>
-          {busyAction === "checkout" ? "Verso la borsa…" : canAdd ? "Acquista ora" : "Non disponibile"}<span>↗</span>
+          {busyAction === "checkout" ? "Verso il carrello…" : canAdd ? "Acquista ora" : "Non disponibile"}<span>↗</span>
         </button>
       </div>
-      {message ? <p className="purchase-message" role="status">{message} <a href="/checkout">Apri la borsa ↗</a></p> : null}
+      {message ? <p className="purchase-message" role="status">{message} <a href="/checkout">Apri il carrello ↗</a></p> : null}
       <details className="size-guide">
         <summary>Guida taglie e misure <span>+</span></summary>
         <p>

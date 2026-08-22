@@ -19,6 +19,7 @@ html { scroll-behavior: smooth; background: var(--paper); }
 
 body {
   margin: 0;
+  overflow-x: clip;
   background: var(--paper);
   color: var(--ink);
   font-family: var(--sans);
@@ -775,7 +776,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   .store-announcement a { display: none; }
   .store-header { height: 68px; padding: 0 14px; }
   .store-search-link { display: none; }
-  .store-wordmark strong { font-size: 20px; }
+  .store-wordmark strong { font-size: 19px; }
+  .store-wordmark span { font-size: 5px; }
+  .store-bag { gap: 5px; font-size: 9px !important; }
   .store-mobile-nav {
     position: fixed;
     top: 98px;
@@ -795,4 +798,11 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   .footer-legal > a { grid-column: 2; grid-row: 1; }
   .cookie-notice { right: 10px; bottom: 10px; left: 10px; grid-template-columns: 1fr; gap: 18px; padding: 18px; }
   .cookie-notice-actions { display: grid; grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 390px) {
+  .store-header { padding: 0 10px; }
+  .store-wordmark strong { font-size: 17px; }
+  .store-bag { font-size: 8px !important; }
+  .cookie-notice-actions { grid-template-columns: 1fr; }
 }

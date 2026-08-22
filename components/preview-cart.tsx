@@ -30,13 +30,13 @@ export function PreviewCart() {
   }, []);
 
   if (!ready) {
-    return <div className="commerce-empty checkout-empty"><p>Caricamento della borsa…</p></div>;
+    return <div className="commerce-empty checkout-empty"><p>Caricamento del carrello…</p></div>;
   }
 
   if (!items.length) {
     return (
       <div className="commerce-empty checkout-empty">
-        <div><p className="commerce-kicker">La borsa è vuota</p><h2>Non hai ancora aggiunto prodotti.</h2><Link href="/shop">Vai allo shop <span>→</span></Link></div>
+        <div><p className="commerce-kicker">Il carrello è vuoto</p><h2>Non hai ancora aggiunto prodotti.</h2><Link href="/shop">Vai allo shop <span>→</span></Link></div>
       </div>
     );
   }
@@ -47,7 +47,7 @@ export function PreviewCart() {
     <div className="preview-cart-layout">
       <section className="preview-cart-items" aria-labelledby="preview-cart-title">
         <div className="preview-cart-heading">
-          <div><p className="commerce-kicker">Borsa locale</p><h2 id="preview-cart-title">La tua selezione</h2></div>
+          <div><p className="commerce-kicker">Carrello</p><h2 id="preview-cart-title">La tua selezione</h2></div>
           <span>{items.reduce((sum, item) => sum + item.quantity, 0)} articoli</span>
         </div>
         {items.map((item) => (
@@ -79,7 +79,7 @@ export function PreviewCart() {
         <div><span>Spedizione standard</span><strong>Gratuita</strong></div>
         <div className="preview-cart-total"><span>Totale indicativo</span><strong>{formatMoney(subtotal, "EUR")}</strong></div>
         <p>
-          La borsa funziona su questo dispositivo. Il pagamento resta disattivato finché i dati del
+          Il carrello funziona su questo dispositivo. Il pagamento resta disattivato finché i dati del
           venditore e le schede prodotto definitive non saranno completati.
         </p>
         <button type="button" disabled>Pagamento in attivazione</button>

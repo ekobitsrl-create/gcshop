@@ -28,8 +28,8 @@ export default function CookiePolicyPage() {
       <section>
         <h2>2. Strumenti tecnici</h2>
         <div className="legal-table cookie-table" role="table" aria-label="Elenco degli strumenti tecnici">
-          <div role="row"><strong role="cell">lcs_cart</strong><span role="cell">Cookie di prima parte, HTTP-only, durata massima 30 giorni. Collega il browser alla borsa e non contiene i dati della carta.</span></div>
-          <div role="row"><strong role="cell">lusso_preview_bag_v1</strong><span role="cell">Voce nel local storage che conserva sul dispositivo i prodotti aggiunti alla borsa di anteprima. Non contiene dati anagrafici o di pagamento.</span></div>
+          <div role="row"><strong role="cell">lcs_cart</strong><span role="cell">Cookie di prima parte, HTTP-only, durata massima 30 giorni. Collega il browser al carrello e non contiene i dati della carta.</span></div>
+          <div role="row"><strong role="cell">lusso_preview_bag_v1</strong><span role="cell">Voce nel local storage che conserva sul dispositivo i prodotti aggiunti al carrello di anteprima. Non contiene dati anagrafici o di pagamento.</span></div>
           <div role="row"><strong role="cell">Sessione area riservata</strong><span role="cell">Cookie tecnici usati solo dagli amministratori autenticati per mantenere la sessione e proteggere l&apos;area riservata.</span></div>
           <div role="row"><strong role="cell">lusso_cookie_notice_v1</strong><span role="cell">Voce nel local storage del browser, senza scadenza automatica, che ricorda la chiusura dell&apos;avviso informativo.</span></div>
         </div>
@@ -48,7 +48,7 @@ export default function CookiePolicyPage() {
         <h2>4. Gestione dal browser</h2>
         <p>
           Puoi eliminare cookie e local storage dalle impostazioni del browser. Se blocchi gli strumenti tecnici,
-          la borsa, il login amministrativo o il checkout potrebbero non funzionare. L&apos;avviso mostrato dal sito è
+          il carrello, il login amministrativo o il checkout potrebbero non funzionare. L&apos;avviso mostrato dal sito è
           informativo: il pulsante “Ho capito” non esprime un consenso a finalità pubblicitarie.
         </p>
       </section>

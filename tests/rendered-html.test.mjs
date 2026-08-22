@@ -164,7 +164,7 @@ test("shows configured prices and provides a complete preview product purchase f
   assert.doesNotMatch(product, /product-tryon-cta|Try-On AR/i);
   assert.match(utils, /Prezzo da definire/);
   assert.match(admin, /formatProductPrice/);
-  assert.match(purchase, /Aggiungi alla borsa/);
+  assert.match(purchase, /Aggiungi al carrello/);
   assert.match(purchase, /Acquista ora/);
   assert.match(purchase, /addLocalCartItem/);
   assert.match(purchase, /Guida taglie e misure/);

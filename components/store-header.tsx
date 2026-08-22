@@ -66,8 +66,8 @@ export function StoreHeader() {
 
         <div className="store-actions">
           <Link className="store-search-link" href="/shop">Cerca</Link>
-          <Link className="store-bag" href="/checkout" aria-label={`Borsa, ${cartCount} articoli`}>
-            Borsa <span>{cartCount}</span>
+          <Link className="store-bag" href="/checkout" aria-label={`Carrello, ${cartCount} articoli`}>
+            Carrello <span>{cartCount}</span>
           </Link>
         </div>
 

@@ -20,7 +20,7 @@ export default async function CheckoutPage() {
       <main>
         <header className="checkout-heading">
           <p className="commerce-kicker">Checkout</p>
-          <h1>La tua borsa</h1>
+          <h1>Il tuo carrello</h1>
           <p>Controlla i prodotti e inserisci i dati per la consegna.</p>
         </header>
         <section className="commerce-main checkout-content">

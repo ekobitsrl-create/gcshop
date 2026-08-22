@@ -35,7 +35,7 @@ export function CookieNotice() {
       <div>
         <strong id="cookie-notice-title">Cookie necessari</strong>
         <p>
-          Usiamo solo strumenti tecnici necessari alla borsa, alla sicurezza e alle sessioni.
+          Usiamo solo strumenti tecnici necessari al carrello, alla sicurezza e alle sessioni.
           Non sono attivi cookie pubblicitari o di profilazione.
         </p>
       </div>

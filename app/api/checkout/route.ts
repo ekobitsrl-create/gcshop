@@ -37,7 +37,7 @@ type CheckoutBody = {
 export async function POST(request: Request) {
   const token = (await cookies()).get("lcs_cart")?.value;
   const cart = await getCartSnapshot(token);
-  if (!cart.cartId || !cart.items.length) return Response.json({ error: "La borsa è vuota." }, { status: 400 });
+  if (!cart.cartId || !cart.items.length) return Response.json({ error: "Il carrello è vuoto." }, { status: 400 });
 
   const body = await request.json() as CheckoutBody;
   const required = [body.firstName, body.lastName, body.email, body.phone, body.addressLine1, body.postalCode, body.city, body.province];
