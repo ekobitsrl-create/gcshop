@@ -27,7 +27,7 @@ export default function CompanyInformationPage() {
           </div>
           <div className="company-pending-copy">
             <p>Ragione sociale, partita IVA, sede e contatti verranno inseriti non appena saranno definiti.</p>
-            <Link href="/">Torna alla home <span>→</span></Link>
+            <Link href="/contatti">Vai ai contatti <span>→</span></Link>
           </div>
         </section>
       </main>

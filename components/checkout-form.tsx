@@ -134,6 +134,14 @@ export function CheckoutForm({ methods, cart }: { methods: Method[]; cart: Cart 
             ))}
           </fieldset>
 
+          <label className="checkout-legal-consent">
+            <input type="checkbox" name="acceptTerms" value="true" required />
+            <span>
+              Ho letto e accetto i <a href="/termini-e-condizioni" target="_blank" rel="noreferrer">Termini e condizioni</a>
+              {" "}e dichiaro di aver letto l&apos;<a href="/privacy" target="_blank" rel="noreferrer">informativa privacy</a>.
+            </span>
+          </label>
+
           {!available.length ? <p className="checkout-message">Nessun metodo di pagamento è ancora configurato. Le credenziali vanno inserite nell’ambiente protetto.</p> : null}
           {error ? <p className="checkout-message" role="alert">{error}</p> : null}
           <button className="checkout-submit" disabled={busy || !method}>{busy ? "Elaborazione…" : method === "stripe" ? "Paga in sicurezza" : method === "paypal" ? "Continua con PayPal" : "Conferma ordine"}<span>↗</span></button>

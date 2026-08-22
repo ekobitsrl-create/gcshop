@@ -1,6 +1,7 @@
 "use client";
 
 import { type FormEvent, useState } from "react";
+import Link from "next/link";
 
 export function NewsletterForm() {
   const [sent, setSent] = useState(false);
@@ -11,7 +12,7 @@ export function NewsletterForm() {
   }
 
   if (sent) {
-    return <p className="newsletter-confirmation" role="status">Sei dentro. Ti scriveremo solo quando ne vale la pena.</p>;
+    return <p className="newsletter-confirmation" role="status">Richiesta registrata nella preview. L&apos;email non è stata salvata.</p>;
   }
 
   return (
@@ -21,7 +22,7 @@ export function NewsletterForm() {
         <input id="newsletter-email" type="email" name="email" placeholder="La tua email" autoComplete="email" required />
         <button type="submit">Iscriviti <span>↗</span></button>
       </div>
-      <small>Iscrivendoti accetti la nostra informativa privacy.</small>
+      <small>Il servizio non è ancora attivo. Leggi l&apos;<Link href="/privacy">informativa privacy</Link>.</small>
     </form>
   );
 }

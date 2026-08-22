@@ -87,7 +87,7 @@ export default function Home() {
       </section>
 
       <section className="simple-benefits" aria-label="Servizi del negozio">
-        <p>Spedizione in tutta Italia</p>
+        <p>Consegna in Italia in 7–12 giorni lavorativi</p>
         <p>Assistenza prima dell’acquisto</p>
         <p>Foto reali dei prodotti</p>
       </section>

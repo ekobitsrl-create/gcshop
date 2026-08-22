@@ -30,6 +30,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     })),
     { url: `${siteUrl}/informazioni-societarie`, changeFrequency: "yearly", priority: 0.2 },
+    { url: `${siteUrl}/contatti`, changeFrequency: "yearly", priority: 0.3 },
+    { url: `${siteUrl}/spedizioni-e-resi`, changeFrequency: "yearly", priority: 0.4 },
+    { url: `${siteUrl}/termini-e-condizioni`, changeFrequency: "yearly", priority: 0.3 },
+    { url: `${siteUrl}/privacy`, changeFrequency: "yearly", priority: 0.2 },
+    { url: `${siteUrl}/cookie-policy`, changeFrequency: "yearly", priority: 0.2 },
     ...catalog.map((product) => ({
       url: `${siteUrl}/prodotto/${product.slug}`,
       lastModified: product.updatedAt ? new Date(product.updatedAt) : undefined,

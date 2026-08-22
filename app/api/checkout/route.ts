@@ -31,6 +31,7 @@ type CheckoutBody = {
   customerNote?: string;
   paymentMethod?: string;
   couponCode?: string;
+  acceptTerms?: string;
 };
 
 export async function POST(request: Request) {
@@ -41,6 +42,7 @@ export async function POST(request: Request) {
   const body = await request.json() as CheckoutBody;
   const required = [body.firstName, body.lastName, body.email, body.phone, body.addressLine1, body.postalCode, body.city, body.province];
   if (required.some((value) => !value?.trim())) return Response.json({ error: "Completa tutti i campi obbligatori." }, { status: 400 });
+  if (body.acceptTerms !== "true") return Response.json({ error: "Accetta i termini e conferma di aver letto l'informativa privacy." }, { status: 400 });
 
   const methods = await getPaymentMethods();
   const method = methods.find((item) => item.code === body.paymentMethod && item.enabled);

@@ -162,7 +162,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </div>
           )}
           <div className="product-services">
-            <p>Spedizione in tutta Italia</p>
+            <p>Consegna in Italia in 7–12 giorni lavorativi</p>
             <p>Dettagli verificati prima della vendita</p>
             <p>Assistenza dedicata</p>
           </div>

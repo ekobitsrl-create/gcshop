@@ -183,3 +183,35 @@ test("removes the disposable starter preview", async () => {
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
   await assert.rejects(access(new URL("app/_sites-preview", templateRoot)));
 });
+
+test("includes the complete pre-launch legal area and a technical-cookie notice", async () => {
+  const [privacy, cookies, terms, shipping, contacts, cookieNotice, footer, checkout, checkoutRoute, sitemap] = await Promise.all([
+    readFile(new URL("../app/privacy/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/cookie-policy/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/termini-e-condizioni/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/spedizioni-e-resi/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/contatti/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/cookie-notice.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/store-footer.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/checkout-form.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/api/checkout/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/sitemap.ts", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(privacy, /Titolare del trattamento/);
+  assert.match(privacy, /da completare[\s\S]*prima dell&apos;apertura delle vendite/);
+  assert.match(cookies, /lcs_cart/);
+  assert.match(cookies, /non attiva cookie analytics, pubblicitari o di profilazione/);
+  assert.match(cookieNotice, /Cookie necessari/);
+  assert.match(cookieNotice, /localStorage/);
+  assert.match(terms, /garanzia legale di conformità di 2 anni/i);
+  assert.match(shipping, /7–12 giorni lavorativi/);
+  assert.match(shipping, /14 giorni di calendario/);
+  assert.match(contacts, /Recapiti in aggiornamento/);
+  assert.match(footer, /\/privacy/);
+  assert.match(footer, /\/spedizioni-e-resi/);
+  assert.match(checkout, /name="acceptTerms"/);
+  assert.match(checkoutRoute, /body\.acceptTerms !== "true"/);
+  assert.match(sitemap, /\/cookie-policy/);
+  assert.match(sitemap, /\/termini-e-condizioni/);
+});

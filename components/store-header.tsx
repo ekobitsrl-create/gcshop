@@ -62,7 +62,7 @@ export function StoreHeader() {
             <Link href={link.href} key={link.label} onClick={() => setMenuOpen(false)}>{link.label}</Link>
           ))}
           <div className="mobile-nav-footer">
-            <Link href="/informazioni-societarie" onClick={() => setMenuOpen(false)}>Contatti e assistenza</Link>
+            <Link href="/contatti" onClick={() => setMenuOpen(false)}>Contatti e assistenza</Link>
           </div>
         </nav>
       </header>
