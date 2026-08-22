@@ -11,7 +11,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     return (
       <main className="admin-access-denied">
         <div className="admin-access-card">
-          <span className="admin-mini-mark">LC</span>
+          <span className="admin-mini-mark">LS</span>
           <p className="admin-eyebrow">Area riservata</p>
           <h1>Account non autorizzato.</h1>
           <p>
@@ -27,9 +27,9 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   return (
     <div className="admin-shell">
       <aside className="admin-sidebar">
-        <a className="admin-logo" href="/admin" aria-label="LCS Admin">
-          <span>LC</span>
-          <div><strong>Luxury</strong><small>Concept Store Admin</small></div>
+        <a className="admin-logo" href="/admin" aria-label="Lusso Concept Store Admin">
+          <span>LS</span>
+          <div><strong>Lusso</strong><small>Concept Store Admin</small></div>
         </a>
         <nav aria-label="Amministrazione">
           <a href="/admin"><span>01</span>Panoramica</a>

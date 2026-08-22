@@ -6,7 +6,7 @@ import "./try-on.css";
 
 export const metadata: Metadata = {
   title: "Virtual Try-On AR",
-  description: "Non immaginarlo. Indossalo. Scopri il futuro camerino AR di LCS.",
+  description: "Non immaginarlo. Indossalo. Scopri il futuro camerino AR di Lusso Concept Store.",
   alternates: { canonical: "/try-on" },
 };
 
@@ -22,7 +22,7 @@ export default function TryOnPage() {
       <CommerceHeader />
       <main>
         <header className="tryon-heading">
-          <p>LCS / Vision 01</p>
+          <p>Lusso / Vision 01</p>
           <div className="tryon-heading-status"><i />AR experience / In sviluppo</div>
           <h1>Non immaginarlo.<br /><em>Indossalo.</em></h1>
           <div className="tryon-heading-copy">
@@ -34,9 +34,9 @@ export default function TryOnPage() {
 
         <section className="tryon-experience" aria-labelledby="tryon-experience-title">
           <div className="tryon-campaign">
-            <Image src="/images/try-on-campaign.png" alt="Campagna Virtual Try-On di LCS" fill priority sizes="100vw" />
+            <Image src="/images/try-on-campaign.png" alt="Campagna Virtual Try-On di Lusso Concept Store" fill priority sizes="100vw" />
             <div className="tryon-campaign-shade" />
-            <div className="tryon-orbit" aria-hidden="true"><i /><span>LCS</span></div>
+            <div className="tryon-orbit" aria-hidden="true"><i /><span>Lusso</span></div>
             <div className="tryon-campaign-status"><span>AR / DROP 01</span><strong>REAL-TIME FITTING EXPERIENCE</strong></div>
             <div className="tryon-campaign-pulse"><i />Body tracking signal</div>
           </div>
@@ -78,7 +78,7 @@ export default function TryOnPage() {
           <h2>Dal prodotto.<br /><em>Dentro il look.</em></h2>
           <div>
             <article><span>01</span><h3>Scan</h3><p>Il QR del prodotto apre immediatamente il suo look digitale.</p></article>
-            <article><span>02</span><h3>Step in</h3><p>Entri nell'inquadratura: nessuna app, nessuna foto da caricare.</p></article>
+            <article><span>02</span><h3>Step in</h3><p>Entri nell&apos;inquadratura: nessuna app, nessuna foto da caricare.</p></article>
             <article><span>03</span><h3>Own it</h3><p>Ti muovi, cambi variante e decidi con il look già davanti agli occhi.</p></article>
           </div>
         </section>

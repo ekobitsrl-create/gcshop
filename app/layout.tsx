@@ -1,50 +1,54 @@
 import type { Metadata, Viewport } from "next";
+import { headers } from "next/headers";
 import "./globals.css";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://lcsedit.vercel.app";
+const fallbackSiteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 export const viewport: Viewport = {
-  themeColor: "#111210",
+  themeColor: "#181714",
   colorScheme: "light",
 };
 
-export function generateMetadata(): Metadata {
-  const base = new URL(siteUrl);
-  const socialImage = new URL("/og-lcs.png", base).toString();
+export async function generateMetadata(): Promise<Metadata> {
+  const requestHeaders = await headers();
+  const incomingHost = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host");
+  const protocol = requestHeaders.get("x-forwarded-proto") ?? (incomingHost?.startsWith("localhost") ? "http" : "https");
+  const base = new URL(incomingHost ? `${protocol}://${incomingHost}` : fallbackSiteUrl);
+  const socialImage = new URL("/og.png", base).toString();
 
   return {
     metadataBase: base,
     title: {
-      default: "LCS | The Selected Edit",
-      template: "%s | LCS",
+      default: "Lusso Concept Store | Abbigliamento e accessori",
+      template: "%s | Lusso Concept Store",
     },
     description:
-      "Moda contemporanea e accessori selezionati per materia, proporzione e carattere. The Selected Edit by LCS.",
-    applicationName: "LCS",
-    creator: "LCS",
-    publisher: "LCS",
+      "Abbigliamento e accessori firmati, selezionati e presentati con informazioni semplici e chiare.",
+    applicationName: "Lusso Concept Store",
+    creator: "Lusso Concept Store",
+    publisher: "Lusso Concept Store",
     category: "fashion",
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
       locale: "it_IT",
-      siteName: "LCS",
-      title: "LCS | The Selected Edit",
-      description: "Fashion, edited by instinct. Moda e accessori selezionati da LCS.",
+      siteName: "Lusso Concept Store",
+      title: "Lusso Concept Store | Nuovi arrivi",
+      description: "Scopri abbigliamento e accessori firmati selezionati da Lusso Concept Store.",
       url: base,
       images: [
         {
           url: socialImage,
-          width: 1743,
-          height: 902,
-          alt: "LCS — The Selected Edit",
+          width: 1731,
+          height: 909,
+          alt: "Lusso Concept Store — Nuovi arrivi",
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: "LCS | The Selected Edit",
-      description: "Fashion, edited by instinct. Moda e accessori selezionati da LCS.",
+      title: "Lusso Concept Store | Nuovi arrivi",
+      description: "Scopri abbigliamento e accessori firmati selezionati da Lusso Concept Store.",
       images: [socialImage],
     },
   };

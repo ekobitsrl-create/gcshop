@@ -4,127 +4,160 @@ import test from "node:test";
 
 const templateRoot = new URL("../", import.meta.url);
 
-test("keeps the LCS home editorial and moves company details to the legal page", async () => {
-  const [page, layout, footer, header, company] = await Promise.all([
+test("ships a restrained ecommerce home and keeps company details on the legal page", async () => {
+  const [page, layout, footer, header, company, catalog] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/store-footer.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/store-header.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/informazioni-societarie/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../lib/catalog.ts", import.meta.url), "utf8"),
   ]);
-  assert.match(layout, /LCS \| The Selected Edit/i);
-  assert.match(page, /LCS/);
-  assert.doesNotMatch(`${page}\n${header}\n${footer}\n${layout}`, /Ekobit|Virtual Try-On|Try-On|\bAR\b|tecnolog|fitting/i);
+
+  assert.match(page, /Lusso,/);
+  assert.match(page, /Trova subito quello che cerchi/);
+  assert.match(page, /Prezzo da definire/);
+  assert.match(header, /catalogCategories/);
+  assert.match(catalog, /name: "T-shirt"/);
+  assert.match(catalog, /name: "Cinture"/);
+  assert.match(catalog, /name: "Felpe e cardigan"/);
+  assert.match(catalog, /name: "Pantaloni"/);
+  assert.match(catalog, /name: "Camicie e polo"/);
+  assert.match(catalog, /name: "Giacche"/);
+  assert.match(footer, /Tutti i prodotti/);
+  assert.match(layout, /Lusso Concept Store \| Abbigliamento e accessori/);
+  assert.match(layout, /\/og\.png/);
+  assert.doesNotMatch(`${page}\n${header}\n${footer}`, /Scelto\.\s*Non esibito|Shop by attitude|Objects of desire|The edit|Try-On|AR preview/i);
   assert.match(company, /Ekobit SRL/);
   assert.match(company, /02424510796/);
   assert.match(company, /Via Firenze 185/);
-  assert.match(company, /338 134 6675/);
-  assert.match(company, /info@ekobit\.it/);
-  assert.doesNotMatch(page, /InStyleShop|instyleshop|codex-preview|Building your site/i);
 });
 
-test("ships the ecommerce schema, placeholder catalog and all critical flows", async () => {
-  const migrationFiles = (await readdir(new URL("../drizzle/", import.meta.url))).filter((file) => file.endsWith(".sql"));
-  assert.equal(migrationFiles.length, 2);
-  const [schemaMigration, catalogMigration, schema, checkout, coupon, paypal, admin, header, checkoutUi] = await Promise.all([
+test("keeps the full commerce schema and expands the pending-price catalog to nineteen items", async () => {
+  const migrationFiles = (await readdir(new URL("../drizzle/", import.meta.url)))
+    .filter((file) => file.endsWith(".sql"))
+    .sort();
+  assert.equal(migrationFiles.length, 5);
+
+  const [schemaMigration, originalCatalog, refreshedCatalog, expandedCatalog, pradaCatalog, placeholderCatalog, schema, journal] = await Promise.all([
     readFile(new URL(`../drizzle/${migrationFiles[0]}`, import.meta.url), "utf8"),
     readFile(new URL(`../drizzle/${migrationFiles[1]}`, import.meta.url), "utf8"),
+    readFile(new URL(`../drizzle/${migrationFiles[2]}`, import.meta.url), "utf8"),
+    readFile(new URL(`../drizzle/${migrationFiles[3]}`, import.meta.url), "utf8"),
+    readFile(new URL(`../drizzle/${migrationFiles[4]}`, import.meta.url), "utf8"),
+    readFile(new URL("../lib/placeholder-products.ts", import.meta.url), "utf8"),
     readFile(new URL("../db/schema.ts", import.meta.url), "utf8"),
-    readFile(new URL("../app/api/checkout/route.ts", import.meta.url), "utf8"),
-    readFile(new URL("../app/api/checkout/coupon/route.ts", import.meta.url), "utf8"),
-    readFile(new URL("../app/api/payments/paypal/capture/route.ts", import.meta.url), "utf8"),
-    readFile(new URL("../app/api/admin/products/route.ts", import.meta.url), "utf8"),
-    readFile(new URL("../components/store-header.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../components/checkout-form.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../drizzle/meta/_journal.json", import.meta.url), "utf8"),
   ]);
+
   assert.equal((schemaMigration.match(/CREATE TABLE/g) ?? []).length, 17);
   assert.match(schemaMigration, /CREATE SCHEMA IF NOT EXISTS "luxury"/);
-  assert.doesNotMatch(schemaMigration, /^INSERT\s/gim);
-  assert.match(catalogMigration, /first_order_only/);
-  assert.match(catalogMigration, /WELCOME10/);
-  assert.equal((catalogMigration.match(/"placeholder":true/g) ?? []).length, 6);
+  assert.match(originalCatalog, /WELCOME10/);
+  assert.match(refreshedCatalog, /T-shirt Christian Dior Couture dalla vestibilità comoda/);
+  assert.match(refreshedCatalog, /Cintura in pelle avorio con fibbia rotonda Interlocking G/);
+  assert.match(refreshedCatalog, /Cardigan reversibile con cappuccio Dior Oblique/);
+  assert.match(refreshedCatalog, /'t-shirt'/);
+  assert.match(refreshedCatalog, /'cinture'/);
+  assert.match(refreshedCatalog, /'felpe-e-cardigan'/);
+  assert.match(expandedCatalog, /Jeans cargo Dior in twill di cotone blu/);
+  assert.match(expandedCatalog, /Camicia bowling Gucci in seta jacquard GG nera/);
+  assert.match(expandedCatalog, /Pantaloni tuta Balenciaga Loop Sports Icon/);
+  assert.match(expandedCatalog, /Giacca tuta Balenciaga Soccer nera/);
+  assert.match(expandedCatalog, /Cintura Burberry reversibile in pelle con fibbia TB/);
+  assert.match(expandedCatalog, /'pantaloni'/);
+  assert.match(expandedCatalog, /'camicie-e-polo'/);
+  assert.match(expandedCatalog, /'giacche'/);
+  assert.match(pradaCatalog, /Camicia-giacca Prada Re-Nylon nera/);
+  assert.match(pradaCatalog, /Cintura Prada in pelle Saffiano con fibbia triangolare/);
+  assert.match(pradaCatalog, /Giacca Prada Re-Nylon con cappuccio/);
+  assert.match(pradaCatalog, /Jeans Prada a gamba ampia con effetto vernice/);
+  assert.match(pradaCatalog, /Cintura Prada in pelle con fibbia ovale incisa/);
+  assert.equal((refreshedCatalog.match(/"pricePending":true/g) ?? []).length, 3);
+  assert.equal((expandedCatalog.match(/"pricePending":true/g) ?? []).length, 11);
+  assert.equal((pradaCatalog.match(/"pricePending":true/g) ?? []).length, 5);
+  assert.equal((placeholderCatalog.match(/price: 0/g) ?? []).length, 19);
+  assert.equal((refreshedCatalog.match(/"stock_quantity" = 0/g) ?? []).length, 1);
+  assert.equal((expandedCatalog.match(/"stock_quantity" = 0/g) ?? []).length, 1);
+  assert.match(refreshedCatalog, /"base_price_cents" = 0/);
+  assert.match(expandedCatalog, /"base_price_cents" = 0/);
+  assert.match(pradaCatalog, /"base_price_cents" = 0/);
   assert.match(schema, /pgSchema\("luxury"\)/);
-  assert.match(schema, /firstOrderOnly/);
-  assert.match(checkout, /bank_transfer/);
-  assert.match(checkout, /createPayPalOrder/);
-  assert.match(checkout, /discountCents/);
-  assert.match(coupon, /evaluateCoupon/);
-  assert.match(paypal, /capturePayPalOrder/);
-  assert.match(admin, /recordAdminAction/);
-  assert.match(header, /Spedizione gratuita su tutti gli ordini/);
-  assert.match(header, /Accesso alla selezione privata/);
-  assert.doesNotMatch(header, /WELCOME10|10% sul primo ordine/);
-  assert.match(checkoutUi, /WELCOME10/);
-  assert.doesNotMatch(header, /Crotone|Client service/i);
+  assert.match(journal, /0002_gentle_catalog_refresh/);
+  assert.match(journal, /0003_catalog_expansion/);
+  assert.match(journal, /0004_prada_catalog/);
 });
 
-test("removes the disposable starter preview", async () => {
-  const [page, layout, packageJson] = await Promise.all([
-    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../package.json", import.meta.url), "utf8"),
+test("includes the supplied product images and refreshed social card", async () => {
+  await Promise.all([
+    access(new URL("../public/images/catalog/dior-tshirt-christian-dior-couture.png", import.meta.url)),
+    access(new URL("../public/images/catalog/gucci-cintura-interlocking-g.png", import.meta.url)),
+    access(new URL("../public/images/catalog/dior-cardigan-oblique.png", import.meta.url)),
+    access(new URL("../public/images/catalog/dior-cargo-jeans-blue.png", import.meta.url)),
+    access(new URL("../public/images/catalog/gucci-gg-silk-jacquard-bowling-shirt-black.png", import.meta.url)),
+    access(new URL("../public/images/catalog/gucci-gg-canvas-bowling-shirt-beige.png", import.meta.url)),
+    access(new URL("../public/images/catalog/gucci-logo-embroidered-tshirt.png", import.meta.url)),
+    access(new URL("../public/images/catalog/balenciaga-distorted-logo-tshirt-black.png", import.meta.url)),
+    access(new URL("../public/images/catalog/balenciaga-loop-sports-icon-track-pants.png", import.meta.url)),
+    access(new URL("../public/images/catalog/balenciaga-flipped-uni-zip-hoodie.png", import.meta.url)),
+    access(new URL("../public/images/catalog/balenciaga-soccer-tracksuit-jacket.png", import.meta.url)),
+    access(new URL("../public/images/catalog/burberry-icon-stripe-polo.png", import.meta.url)),
+    access(new URL("../public/images/catalog/burberry-check-hooded-jacket.png", import.meta.url)),
+    access(new URL("../public/images/catalog/burberry-tb-belt.png", import.meta.url)),
+    access(new URL("../public/images/catalog/prada-re-nylon-shirt-black.png", import.meta.url)),
+    access(new URL("../public/images/catalog/prada-saffiano-triangle-belt-black.png", import.meta.url)),
+    access(new URL("../public/images/catalog/prada-re-nylon-hooded-jacket-black.png", import.meta.url)),
+    access(new URL("../public/images/catalog/prada-logo-patch-wide-leg-jeans.png", import.meta.url)),
+    access(new URL("../public/images/catalog/prada-oval-buckle-leather-belt-black.png", import.meta.url)),
+    access(new URL("../public/images/lusso-concept-store-hero.png", import.meta.url)),
+    access(new URL("../public/og.png", import.meta.url)),
+    access(new URL("../public/og-editorial-legacy.png", import.meta.url)),
   ]);
-
-  assert.match(page, /LCS/);
-  assert.match(layout, /og-lcs\.png/);
-  await access(new URL("../public/og-lcs.png", import.meta.url));
-  await access(new URL("../app/try-on/page.tsx", import.meta.url));
-  assert.doesNotMatch(packageJson, /react-loading-skeleton/);
-  await assert.rejects(access(new URL("app\/_sites-preview", templateRoot)));
 });
 
-test("ships the webcam-first Virtual Try-On project without photo uploads", async () => {
-  const [page, shop, product] = await Promise.all([
-    readFile(new URL("../app/try-on/page.tsx", import.meta.url), "utf8"),
+test("shows pending prices without exposing zero-value purchase actions", async () => {
+  const [shop, product, purchase, utils, admin] = await Promise.all([
     readFile(new URL("../app/shop/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/prodotto/[slug]/page.tsx", import.meta.url), "utf8"),
-  ]);
-
-  assert.match(page, /Virtual Try-On/i);
-  assert.match(page, /Non immaginarlo|specchio AR/i);
-  assert.match(page, /niente foto da caricare|nessuna foto da caricare/i);
-  assert.doesNotMatch(page, /type="file"|readAsDataURL|Carica la tua foto/i);
-  assert.match(shop, /product-card-tryon/);
-  assert.match(product, /product-tryon-cta/);
-});
-
-test("keeps purchase actions ahead of the AR story", async () => {
-  const [home, purchase, product, tryOn] = await Promise.all([
-    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/product-purchase.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../app/prodotto/[slug]/page.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../app/try-on/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../lib/store-utils.ts", import.meta.url), "utf8"),
+    readFile(new URL("../components/admin/admin-products.tsx", import.meta.url), "utf8"),
   ]);
 
-  assert.match(home, /\/shop\?categoria=donna/);
-  assert.match(home, /\/shop\?categoria=uomo/);
+  assert.match(shop, /formatProductPrice/);
+  assert.doesNotMatch(shop, /product-card-tryon|AR preview/i);
+  assert.match(product, /product\.basePriceCents > 0/);
+  assert.match(product, /Prezzo in aggiornamento/);
+  assert.doesNotMatch(product, /product-tryon-cta|Try-On AR/i);
+  assert.match(utils, /Prezzo da definire/);
+  assert.match(admin, /formatProductPrice/);
   assert.match(purchase, /Acquista ora/);
   assert.match(purchase, /window\.location\.assign\("\/checkout"\)/);
-  assert.ok(product.indexOf("<ProductPurchase") < product.indexOf("product-tryon-cta"));
-  assert.match(tryOn, /\/prodotto\/\$\{look\.slug\}/);
 });
 
-test("adds a restrained trust signal and catalog-driven SEO", async () => {
-  const [home, header, footer, product, sitemap, robots] = await Promise.all([
-    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../components/store-header.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../components/store-footer.tsx", import.meta.url), "utf8"),
+test("keeps catalog-driven product SEO and updates category routes", async () => {
+  const [product, sitemap, robots, catalog] = await Promise.all([
     readFile(new URL("../app/prodotto/[slug]/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/sitemap.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/robots.ts", import.meta.url), "utf8"),
+    readFile(new URL("../lib/catalog.ts", import.meta.url), "utf8"),
   ]);
 
-  assert.match(home, /Provenienza e autenticità/);
-  assert.match(home, /Non promettiamo ciò che non possiamo documentare/);
-  assert.match(home, /provenienza commerciale, condizioni e composizione/);
-  assert.match(footer, /\/#provenienza/);
-  assert.match(header, /<strong>LCS<\/strong>/);
-  assert.doesNotMatch(`${home}\n${header}\n${footer}`, /Luxury Concept Store|WELCOME10/i);
   assert.match(product, /generateMetadata/);
-  assert.match(product, /product\.brand/);
-  assert.match(sitemap, /products\.status/);
-  assert.match(sitemap, /informazioni-societarie/);
+  assert.match(product, /twitter/);
+  assert.match(product, /new URL\(primaryImage\.url, requestSiteUrl\)/);
+  assert.match(sitemap, /catalogCategories\.map/);
+  assert.match(catalog, /slug: "t-shirt"/);
+  assert.match(catalog, /slug: "cinture"/);
+  assert.match(catalog, /slug: "felpe-e-cardigan"/);
+  assert.match(catalog, /slug: "pantaloni"/);
+  assert.match(catalog, /slug: "camicie-e-polo"/);
+  assert.match(catalog, /slug: "giacche"/);
+  assert.doesNotMatch(sitemap, /categoria=donna|categoria=uomo|categoria=accessori/);
   assert.match(robots, /\/admin\//);
-  assert.match(sitemap, /https:\/\/lcsedit\.vercel\.app/);
-  assert.match(robots, /https:\/\/lcsedit\.vercel\.app/);
+});
+
+test("removes the disposable starter preview", async () => {
+  const packageJson = await readFile(new URL("../package.json", import.meta.url), "utf8");
+  assert.doesNotMatch(packageJson, /react-loading-skeleton/);
+  await assert.rejects(access(new URL("app/_sites-preview", templateRoot)));
 });

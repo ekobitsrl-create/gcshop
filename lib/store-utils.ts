@@ -13,6 +13,10 @@ export function formatMoney(cents: number, currency = "EUR"): string {
   return new Intl.NumberFormat("it-IT", { style: "currency", currency }).format(cents / 100);
 }
 
+export function formatProductPrice(cents: number, currency = "EUR"): string {
+  return cents > 0 ? formatMoney(cents, currency) : "Prezzo da definire";
+}
+
 export function parseEuroToCents(value: unknown): number {
   const normalized = String(value ?? "0").replace(",", ".");
   const amount = Number.parseFloat(normalized);

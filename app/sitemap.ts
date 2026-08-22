@@ -2,9 +2,10 @@ import { eq } from "drizzle-orm";
 import type { MetadataRoute } from "next";
 import { getDb } from "@/db";
 import { products } from "@/db/schema";
+import { catalogCategories } from "@/lib/catalog";
 import { placeholderProducts } from "@/lib/placeholder-products";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://lcsedit.vercel.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let catalog: Array<{ slug: string; updatedAt?: string }> = [];
@@ -23,10 +24,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     { url: siteUrl, changeFrequency: "weekly", priority: 1 },
     { url: `${siteUrl}/shop`, changeFrequency: "daily", priority: 0.9 },
-    { url: `${siteUrl}/shop?categoria=donna`, changeFrequency: "daily", priority: 0.8 },
-    { url: `${siteUrl}/shop?categoria=uomo`, changeFrequency: "daily", priority: 0.8 },
-    { url: `${siteUrl}/shop?categoria=accessori`, changeFrequency: "daily", priority: 0.8 },
-    { url: `${siteUrl}/try-on`, changeFrequency: "monthly", priority: 0.6 },
+    ...catalogCategories.map((category) => ({
+      url: `${siteUrl}/shop?categoria=${category.slug}`,
+      changeFrequency: "daily" as const,
+      priority: 0.8,
+    })),
     { url: `${siteUrl}/informazioni-societarie`, changeFrequency: "yearly", priority: 0.2 },
     ...catalog.map((product) => ({
       url: `${siteUrl}/prodotto/${product.slug}`,

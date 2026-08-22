@@ -2,17 +2,14 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { catalogCategories } from "@/lib/catalog";
 
 const links = [
-  { label: "New in", href: "/shop" },
-  { label: "Donna", href: "/shop?categoria=donna" },
-  { label: "Uomo", href: "/shop?categoria=uomo" },
-  { label: "Accessori", href: "/shop?categoria=accessori" },
-];
-
-const announcements = [
-  "Spedizione gratuita su tutti gli ordini",
-  "Accesso alla selezione privata",
+  { label: "Tutti i prodotti", href: "/shop" },
+  ...catalogCategories.map((category) => ({
+    label: category.name,
+    href: `/shop?categoria=${category.slug}`,
+  })),
 ];
 
 export function StoreHeader() {
@@ -29,15 +26,8 @@ export function StoreHeader() {
   return (
     <>
       <div className="store-announcement" aria-label="Comunicazioni del negozio">
-        <div className="announcement-track">
-          {[false, true].map((duplicate) => (
-            <div className="announcement-sequence" aria-hidden={duplicate || undefined} key={String(duplicate)}>
-              {announcements.map((announcement) => (
-                <span key={announcement}>{announcement}<b aria-hidden="true">✦</b></span>
-              ))}
-            </div>
-          ))}
-        </div>
+        <span>Prezzi e disponibilità in aggiornamento</span>
+        <Link href="/informazioni-societarie">Serve aiuto? Contattaci</Link>
       </div>
       <header className="store-header">
         <button
@@ -51,36 +41,28 @@ export function StoreHeader() {
           <span />
         </button>
 
-        <Link className="store-wordmark" href="/" aria-label="LCS, home">
-          <strong>LCS</strong>
-          <span>Selected edit</span>
+        <Link className="store-wordmark" href="/" aria-label="Lusso Concept Store, home">
+          <strong>Lusso</strong>
+          <span>Concept store</span>
         </Link>
 
         <nav className="store-nav" aria-label="Navigazione principale">
-          {links.map((link) => (
-            <Link href={link.href} key={link.label}>{link.label}</Link>
-          ))}
-          <Link href="/#manifesto">The edit</Link>
+          {links.map((link) => <Link href={link.href} key={link.label}>{link.label}</Link>)}
         </nav>
 
         <div className="store-actions">
           <Link className="store-search-link" href="/shop">Cerca</Link>
           <Link className="store-bag" href="/checkout" aria-label={`Borsa, ${cartCount} articoli`}>
-            Borsa <span>{String(cartCount).padStart(2, "0")}</span>
+            Borsa <span>{cartCount}</span>
           </Link>
         </div>
 
         <nav className={`store-mobile-nav ${menuOpen ? "is-open" : ""}`} aria-label="Menu mobile">
-          <div className="mobile-nav-index">Menu / 01—05</div>
-          {links.map((link, index) => (
-            <Link href={link.href} key={link.label} onClick={() => setMenuOpen(false)}>
-              <span>0{index + 1}</span>{link.label}
-            </Link>
+          {links.map((link) => (
+            <Link href={link.href} key={link.label} onClick={() => setMenuOpen(false)}>{link.label}</Link>
           ))}
-          <Link href="/#manifesto" onClick={() => setMenuOpen(false)}><span>05</span>The edit</Link>
           <div className="mobile-nav-footer">
-            <Link href="/#private-list" onClick={() => setMenuOpen(false)}>Private list</Link>
-            <a href="tel:+393381346675">+39 338 134 6675</a>
+            <Link href="/informazioni-societarie" onClick={() => setMenuOpen(false)}>Contatti e assistenza</Link>
           </div>
         </nav>
       </header>

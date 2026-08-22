@@ -24,7 +24,7 @@ export default async function OrderPage({ params }: { params: Promise<{ number: 
       <CommerceHeader />
       <main className="commerce-main order-confirmation">
         <p className="commerce-kicker">Ordine {order.orderNumber}</p>
-        <h1>Grazie per<br /><em>il tuo acquisto.</em></h1>
+        <h1>Grazie per il tuo acquisto.</h1>
         <p>Abbiamo registrato l’ordine per <strong>{order.email}</strong>.</p>
         {items.map((item) => <div className="order-line" key={item.id}><span>{item.productName} × {item.quantity}</span><strong>{formatMoney(item.totalCents, order.currency)}</strong></div>)}
         <div className="order-line order-total"><span>Totale</span><strong>{formatMoney(order.totalCents, order.currency)}</strong></div>

@@ -28,7 +28,7 @@ export default async function AdminDashboard() {
   return (
     <main className="admin-page">
       <div className="admin-page-heading">
-        <div><p>LCS / Operations</p><h1>Buon lavoro.</h1></div>
+        <div><p>Lusso / Operations</p><h1>Buon lavoro.</h1></div>
         <a className="admin-primary-action" href="/admin/prodotti">+ Nuovo prodotto</a>
       </div>
 

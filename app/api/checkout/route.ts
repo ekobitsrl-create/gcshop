@@ -78,7 +78,7 @@ export async function POST(request: Request) {
   }
 
   const orderId = crypto.randomUUID();
-  const orderNumber = `LCS-${Date.now().toString(36).toUpperCase()}-${crypto.randomUUID().slice(0, 4).toUpperCase()}`;
+  const orderNumber = `LUSSO-${Date.now().toString(36).toUpperCase()}-${crypto.randomUUID().slice(0, 4).toUpperCase()}`;
   const address = {
     recipientName: `${body.firstName} ${body.lastName}`,
     addressLine1: body.addressLine1,

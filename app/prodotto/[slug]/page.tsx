@@ -1,6 +1,8 @@
 import { and, asc, eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import Image from "next/image";
+import { headers } from "next/headers";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import { getDb } from "@/db";
@@ -9,10 +11,12 @@ import { CommerceHeader } from "@/components/commerce-header";
 import { ProductPurchase } from "@/components/product-purchase";
 import { StoreFooter } from "@/components/store-footer";
 import { findPlaceholderProduct } from "@/lib/placeholder-products";
-import { formatMoney } from "@/lib/store-utils";
+import { formatProductPrice } from "@/lib/store-utils";
 import "../../commerce.css";
 
 export const dynamic = "force-dynamic";
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 type ProductView = {
   id: string;
@@ -34,7 +38,6 @@ type ProductPageData = {
 };
 
 const getProductPageData = cache(async (slug: string): Promise<ProductPageData | null> => {
-  const db = getDb();
   let product: ProductView | null = null;
   let categoryName = "Selection";
   let images: ImageView[] = [];
@@ -42,6 +45,7 @@ const getProductPageData = cache(async (slug: string): Promise<ProductPageData |
   let isPlaceholder = false;
 
   try {
+    const db = getDb();
     const result = await db
       .select({ product: products, categoryName: categories.name })
       .from(products)
@@ -74,7 +78,7 @@ const getProductPageData = cache(async (slug: string): Promise<ProductPageData |
       name: placeholder.name,
       basePriceCents: placeholder.price,
       currency: placeholder.currency,
-      brand: null,
+      brand: placeholder.brand,
       description: placeholder.description,
       shortDescription: placeholder.shortDescription,
     };
@@ -98,20 +102,31 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
     ? `${product.brand} `
     : "";
   const title = `${brandPrefix}${product.name}`;
-  const rawDescription = product.shortDescription || product.description || `${title}: scopri dettagli, disponibilità e varianti nella selezione LCS.`;
+  const rawDescription = product.shortDescription || product.description || `${title}: scopri dettagli, disponibilità e varianti nella selezione Lusso Concept Store.`;
   const description = rawDescription.replace(/\s+/g, " ").trim().slice(0, 160);
   const primaryImage = images[0];
+  const requestHeaders = await headers();
+  const incomingHost = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host");
+  const protocol = requestHeaders.get("x-forwarded-proto") ?? (incomingHost?.startsWith("localhost") ? "http" : "https");
+  const requestSiteUrl = incomingHost ? `${protocol}://${incomingHost}` : siteUrl;
+  const socialImage = primaryImage ? new URL(primaryImage.url, requestSiteUrl).toString() : null;
 
   return {
     title,
     description,
     alternates: { canonical: `/prodotto/${slug}` },
-    keywords: [product.brand, categoryName, product.name, "LCS"].filter((value): value is string => Boolean(value)),
+    keywords: [product.brand, categoryName, product.name, "Lusso Concept Store"].filter((value): value is string => Boolean(value)),
     openGraph: {
       type: "website",
       title,
       description,
-      images: primaryImage ? [{ url: primaryImage.url, alt: primaryImage.altText ?? title }] : undefined,
+      images: socialImage ? [{ url: socialImage, alt: primaryImage?.altText ?? title }] : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: socialImage ? [socialImage] : [],
     },
   };
 }
@@ -132,25 +147,24 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <Image src={image.url} alt={image.altText ?? product.name} fill unoptimized sizes="(max-width: 760px) 100vw, 38vw" />
               <figcaption>{String(index + 1).padStart(2, "0")} / {String(images.length).padStart(2, "0")}</figcaption>
             </figure>
-          )) : <div className="product-placeholder"><span>LCS</span><small>Image coming soon</small></div>}
+          )) : <div className="product-placeholder"><span>Lusso</span><small>Immagine in arrivo</small></div>}
         </div>
         <section className="product-info-panel">
-          <div className="product-breadcrumb"><a href="/shop">Shop</a><span>/</span><span>{categoryName}</span></div>
+          <div className="product-breadcrumb"><Link href="/shop">Shop</Link><span>/</span><span>{categoryName}</span></div>
           <p className="commerce-kicker">{categoryName}</p>
           <h1>{product.name}</h1>
-          <p className="product-price">{formatMoney(product.basePriceCents, product.currency)}</p>
+          <p className="product-price">{formatProductPrice(product.basePriceCents, product.currency)}</p>
           <p className="product-copy">{product.description || product.shortDescription || "Una selezione contemporanea, scelta per la qualità dei materiali e il carattere delle forme."}</p>
-          {isPlaceholder ? (
-            <div className="placeholder-purchase"><span>Anteprima catalogo</span><p>Questo articolo dimostrativo sarà acquistabile appena il catalogo definitivo verrà pubblicato.</p></div>
-          ) : <ProductPurchase variants={variants} />}
-          <a className="product-tryon-cta" href={`/try-on?prodotto=${slug}`}>
-            <span><small>Innovation preview / In sviluppo</small><strong>Scopri il Try-On AR</strong></span>
-            <b>↗</b>
-          </a>
+          {product.basePriceCents > 0 && !isPlaceholder ? <ProductPurchase variants={variants} /> : (
+            <div className="placeholder-purchase">
+              <span>Prezzo in aggiornamento</span>
+              <p>Stiamo completando prezzo, taglie e disponibilità. Il prodotto non può essere aggiunto alla borsa finché la scheda non sarà completa.</p>
+            </div>
+          )}
           <div className="product-services">
-            <p><span>01</span>Spedizione gratuita</p>
-            <p><span>02</span>Reso entro 14 giorni</p>
-            <p><span>03</span>Assistenza dedicata</p>
+            <p>Spedizione in tutta Italia</p>
+            <p>Dettagli verificati prima della vendita</p>
+            <p>Assistenza dedicata</p>
           </div>
         </section>
       </main>

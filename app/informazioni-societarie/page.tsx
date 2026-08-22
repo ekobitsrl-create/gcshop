@@ -5,7 +5,7 @@ import "../commerce.css";
 
 export const metadata: Metadata = {
   title: "Informazioni societarie",
-  description: "Dati societari e contatti dell'operatore di LCS.",
+  description: "Dati societari e contatti dell'operatore di Lusso Concept Store.",
   alternates: { canonical: "/informazioni-societarie" },
 };
 
@@ -15,9 +15,9 @@ export default function CompanyInformationPage() {
       <CommerceHeader />
       <main>
         <header className="commerce-hero company-hero">
-          <p className="commerce-kicker">LCS / Legal</p>
+          <p className="commerce-kicker">Lusso Concept Store / Legal</p>
           <h1>Informazioni<br /><em>societarie.</em></h1>
-          <p className="commerce-hero-copy">Dati dell'operatore economico, contatti e riferimenti della società che gestisce il negozio.</p>
+          <p className="commerce-hero-copy">Dati dell&apos;operatore economico, contatti e riferimenti della società che gestisce il negozio.</p>
         </header>
         <section className="commerce-main company-information" aria-label="Dati societari">
           <div>

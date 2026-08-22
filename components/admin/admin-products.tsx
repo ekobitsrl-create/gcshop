@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useCallback, useEffect, useState } from "react";
+import { formatProductPrice } from "@/lib/store-utils";
 
 type ProductRow = {
   id: string;
@@ -128,7 +129,7 @@ export function AdminProducts() {
                 <tr key={product.id}>
                   <td><div className="admin-product-cell">{product.imageUrl ? <img src={product.imageUrl} alt="" /> : <span>LC</span>}<div><strong>{product.name}</strong><small>/{product.slug}</small></div></div></td>
                   <td>{product.sku}</td>
-                  <td>{new Intl.NumberFormat("it-IT", { style: "currency", currency: product.currency }).format(product.basePriceCents / 100)}</td>
+                  <td>{formatProductPrice(product.basePriceCents, product.currency)}</td>
                   <td>{product.stockQuantity}</td>
                   <td><span className={`admin-pill ${product.status === "active" ? "is-active" : ""}`}>{product.status}</span></td>
                   <td><div className="admin-row-actions"><button onClick={() => void changeStatus(product)}>{product.status === "active" ? "Sospendi" : "Pubblica"}</button><button className="danger" onClick={() => void remove(product)}>Elimina</button></div></td>

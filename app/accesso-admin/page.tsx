@@ -1,8 +1,9 @@
 import LoginForm from "./login-form";
+import Link from "next/link";
 import "./login.css";
 
 export const metadata = {
-  title: "Accesso amministrazione | LCS",
+  title: "Accesso amministrazione | Lusso Concept Store",
 };
 
 export default async function AdminLoginPage({
@@ -18,10 +19,10 @@ export default async function AdminLoginPage({
   return (
     <main className="login-page">
       <section className="login-card">
-        <a className="login-brand" href="/" aria-label="LCS">
-          <span>LC</span>
-          <strong>LCS</strong>
-        </a>
+        <Link className="login-brand" href="/" aria-label="Lusso Concept Store">
+          <span>LS</span>
+          <strong>Lusso</strong>
+        </Link>
         <p className="login-kicker">Area riservata Ekobit SRL</p>
         <h1>Accedi al pannello amministrativo.</h1>
         <p className="login-copy">
@@ -29,7 +30,7 @@ export default async function AdminLoginPage({
         </p>
         {params.errore ? <p className="login-error">Il collegamento non è valido o è scaduto.</p> : null}
         <LoginForm returnTo={returnTo} />
-        <a className="login-back" href="/">← Torna al negozio</a>
+        <Link className="login-back" href="/">← Torna al negozio</Link>
       </section>
     </main>
   );

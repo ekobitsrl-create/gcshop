@@ -15,6 +15,27 @@
       "when": 1786363372081,
       "tag": "0001_dazzling_the_order",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1787412000000,
+      "tag": "0002_gentle_catalog_refresh",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1787415600000,
+      "tag": "0003_catalog_expansion",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1787419200000,
+      "tag": "0004_prada_catalog",
+      "breakpoints": true
     }
   ]
 }
