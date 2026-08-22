@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { CommerceHeader } from "@/components/commerce-header";
 import { CheckoutForm } from "@/components/checkout-form";
+import { PreviewCart } from "@/components/preview-cart";
 import { StoreFooter } from "@/components/store-footer";
 import { getCartSnapshot } from "@/lib/cart";
 import { getPaymentMethods } from "@/lib/payment-config";
@@ -24,9 +25,7 @@ export default async function CheckoutPage() {
         </header>
         <section className="commerce-main checkout-content">
           {!cart.items.length ? (
-            <div className="commerce-empty checkout-empty">
-              <div><p className="commerce-kicker">La borsa è vuota</p><h2>Non hai ancora aggiunto prodotti.</h2><a href="/shop">Vai allo shop <span>→</span></a></div>
-            </div>
+            <PreviewCart />
           ) : (
             <CheckoutForm methods={methods} cart={cart} />
           )}

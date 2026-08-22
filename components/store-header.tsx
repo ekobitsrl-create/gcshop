@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { catalogCategories } from "@/lib/catalog";
+import { getLocalCartCount, LOCAL_CART_EVENT } from "@/lib/local-cart";
 
 const links = [
   { label: "Tutti i prodotti", href: "/shop" },
@@ -17,10 +18,23 @@ export function StoreHeader() {
   const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
-    void fetch("/api/cart", { cache: "no-store" })
-      .then((response) => response.json())
-      .then((cart) => setCartCount(cart.itemCount ?? 0))
-      .catch(() => setCartCount(0));
+    const syncLocalCart = () => setCartCount(getLocalCartCount());
+    const timer = window.setTimeout(() => {
+      const localCount = getLocalCartCount();
+      if (localCount > 0) {
+        setCartCount(localCount);
+      } else {
+        void fetch("/api/cart", { cache: "no-store" })
+          .then((response) => response.json())
+          .then((cart) => setCartCount(cart.itemCount ?? 0))
+          .catch(() => setCartCount(0));
+      }
+    }, 0);
+    window.addEventListener(LOCAL_CART_EVENT, syncLocalCart);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener(LOCAL_CART_EVENT, syncLocalCart);
+    };
   }, []);
 
   return (

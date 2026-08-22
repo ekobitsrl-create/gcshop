@@ -136,11 +136,15 @@ test("includes the supplied product images and refreshed social card", async () 
   ]);
 });
 
-test("shows configured prices while keeping unavailable products out of the cart", async () => {
-  const [shop, product, purchase, utils, admin] = await Promise.all([
+test("shows configured prices and provides a complete preview product purchase flow", async () => {
+  const [shop, product, purchase, previewCart, localCart, merchandising, checkoutPage, utils, admin] = await Promise.all([
     readFile(new URL("../app/shop/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/prodotto/[slug]/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/product-purchase.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/preview-cart.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../lib/local-cart.ts", import.meta.url), "utf8"),
+    readFile(new URL("../lib/product-merchandising.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/checkout/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../lib/store-utils.ts", import.meta.url), "utf8"),
     readFile(new URL("../components/admin/admin-products.tsx", import.meta.url), "utf8"),
   ]);
@@ -149,11 +153,25 @@ test("shows configured prices while keeping unavailable products out of the cart
   assert.doesNotMatch(shop, /product-card-tryon|AR preview/i);
   assert.match(product, /product\.basePriceCents > 0/);
   assert.match(product, /Prezzo in aggiornamento/);
+  assert.match(product, /application\/ld\+json/);
+  assert.match(product, /Dettagli prodotto/);
+  assert.match(product, /Spedizioni e resi/);
+  assert.match(product, /relatedProducts/);
   assert.doesNotMatch(product, /product-tryon-cta|Try-On AR/i);
   assert.match(utils, /Prezzo da definire/);
   assert.match(admin, /formatProductPrice/);
+  assert.match(purchase, /Aggiungi alla borsa/);
   assert.match(purchase, /Acquista ora/);
+  assert.match(purchase, /addLocalCartItem/);
+  assert.match(purchase, /Guida taglie e misure/);
   assert.match(purchase, /window\.location\.assign\("\/checkout"\)/);
+  assert.match(localCart, /lusso_preview_bag_v1/);
+  assert.match(localCart, /LOCAL_CART_EVENT/);
+  assert.match(previewCart, /La tua selezione/);
+  assert.match(previewCart, /Pagamento in attivazione/);
+  assert.match(checkoutPage, /PreviewCart/);
+  assert.match(merchandising, /createPreviewVariants/);
+  assert.match(merchandising, /80 cm/);
 });
 
 test("keeps catalog-driven product SEO and updates category routes", async () => {
@@ -201,6 +219,7 @@ test("includes the complete pre-launch legal area and a technical-cookie notice"
   assert.match(privacy, /Titolare del trattamento/);
   assert.match(privacy, /da completare[\s\S]*prima dell&apos;apertura delle vendite/);
   assert.match(cookies, /lcs_cart/);
+  assert.match(cookies, /lusso_preview_bag_v1/);
   assert.match(cookies, /non attiva cookie analytics, pubblicitari o di profilazione/);
   assert.match(cookieNotice, /Cookie necessari/);
   assert.match(cookieNotice, /localStorage/);
