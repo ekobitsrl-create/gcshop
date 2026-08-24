@@ -1,48 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { catalogCategories } from "@/lib/catalog";
-import { getLocalCartCount, LOCAL_CART_EVENT } from "@/lib/local-cart";
 
 const links = [
-  { label: "Tutti i prodotti", href: "/shop" },
-  ...catalogCategories.map((category) => ({
-    label: category.name,
-    href: `/shop?categoria=${category.slug}`,
-  })),
+  { label: "Il concept", href: "/#concept" },
+  { label: "Contatti", href: "/contatti" },
+  { label: "Informazioni", href: "/informazioni-societarie" },
 ];
 
 export function StoreHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [cartCount, setCartCount] = useState(0);
-
-  useEffect(() => {
-    const syncLocalCart = () => setCartCount(getLocalCartCount());
-    const timer = window.setTimeout(() => {
-      const localCount = getLocalCartCount();
-      if (localCount > 0) {
-        setCartCount(localCount);
-      } else {
-        void fetch("/api/cart", { cache: "no-store" })
-          .then((response) => response.json())
-          .then((cart) => setCartCount(cart.itemCount ?? 0))
-          .catch(() => setCartCount(0));
-      }
-    }, 0);
-    window.addEventListener(LOCAL_CART_EVENT, syncLocalCart);
-    return () => {
-      window.clearTimeout(timer);
-      window.removeEventListener(LOCAL_CART_EVENT, syncLocalCart);
-    };
-  }, []);
 
   return (
     <>
-      <div className="store-announcement" role="region" aria-label="Comunicazioni del negozio">
-        <span>Spedizione gratuita</span>
-        <span>Pagamenti sicuri</span>
+      <div className="store-announcement" role="region" aria-label="Comunicazioni del concept store">
+        <span>Selezione privata</span>
+        <span>Assistenza diretta</span>
       </div>
       <header className="store-header">
         <button
@@ -69,19 +44,13 @@ export function StoreHeader() {
         </nav>
 
         <div className="store-actions">
-          <Link className="store-search-link" href="/shop">Cerca</Link>
-          <Link className="store-bag" href="/checkout" aria-label={`Carrello, ${cartCount} articoli`}>
-            Carrello <span>{cartCount}</span>
-          </Link>
+          <Link className="store-search-link" href="/contatti">Contattaci</Link>
         </div>
 
         <nav className={`store-mobile-nav ${menuOpen ? "is-open" : ""}`} aria-label="Menu mobile">
           {links.map((link) => (
             <Link href={link.href} key={link.label} onClick={() => setMenuOpen(false)}>{link.label}</Link>
           ))}
-          <div className="mobile-nav-footer">
-            <Link href="/contatti" onClick={() => setMenuOpen(false)}>Contatti e assistenza</Link>
-          </div>
         </nav>
       </header>
     </>

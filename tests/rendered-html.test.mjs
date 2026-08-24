@@ -4,7 +4,7 @@ import test from "node:test";
 
 const templateRoot = new URL("../", import.meta.url);
 
-test("ships a restrained ecommerce home and keeps company details on the legal page", async () => {
+test("ships a catalog-free concept-store home and keeps company details on the legal page", async () => {
   const [page, layout, footer, header, company, catalog] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
@@ -15,20 +15,23 @@ test("ships a restrained ecommerce home and keeps company details on the legal p
   ]);
 
   assert.match(page, /Lusso,/);
-  assert.match(page, /Trova subito quello che cerchi/);
-  assert.match(page, /formatProductPrice/);
-  assert.match(header, /catalogCategories/);
-  assert.match(header, /Spedizione gratuita/);
-  assert.match(header, /Pagamenti sicuri/);
+  assert.match(page, /Un rapporto diretto, prima di tutto/);
+  assert.match(page, /Vai ai contatti/);
+  assert.doesNotMatch(page, /formatProductPrice|placeholderProducts|categoryCards|featuredProducts/);
+  assert.doesNotMatch(header, /catalogCategories|local-cart|api\/cart|Carrello|Cerca/);
+  assert.match(header, /Selezione privata/);
+  assert.match(header, /Assistenza diretta/);
   assert.match(catalog, /name: "T-shirt"/);
   assert.match(catalog, /name: "Cinture"/);
   assert.match(catalog, /name: "Felpe e cardigan"/);
   assert.match(catalog, /name: "Pantaloni"/);
   assert.match(catalog, /name: "Camicie e polo"/);
   assert.match(catalog, /name: "Giacche"/);
-  assert.match(footer, /Tutti i prodotti/);
-  assert.match(layout, /Lusso Concept Store \| Abbigliamento e accessori/);
+  assert.doesNotMatch(footer, /Tutti i prodotti|catalogCategories|\/shop/);
+  assert.match(footer, /Il concept/);
+  assert.match(layout, /Lusso Concept Store \| Selezione privata/);
   assert.match(layout, /\/og\.png/);
+  assert.doesNotMatch(`${page}\n${header}\n${footer}`, /href="\/shop|href=\{`\/prodotto/);
   assert.doesNotMatch(`${page}\n${header}\n${footer}`, /Scelto\.\s*Non esibito|Shop by attitude|Objects of desire|The edit|Try-On|AR preview/i);
   assert.match(company, /Dati in aggiornamento/);
   assert.doesNotMatch(company, /Ekobit|02424510796|Via Firenze 185|info@ekobit/);
@@ -140,67 +143,42 @@ test("includes the supplied product images and refreshed social card", async () 
   ]);
 });
 
-test("shows configured prices and provides a complete preview product purchase flow", async () => {
-  const [shop, product, purchase, previewCart, localCart, merchandising, checkoutPage, utils, admin] = await Promise.all([
+test("removes the public catalog while preserving its internal management data", async () => {
+  const [shop, product, tryOn, page, header, footer, sitemap, admin, catalog] = await Promise.all([
     readFile(new URL("../app/shop/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/prodotto/[slug]/page.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../components/product-purchase.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../components/preview-cart.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../lib/local-cart.ts", import.meta.url), "utf8"),
-    readFile(new URL("../lib/product-merchandising.ts", import.meta.url), "utf8"),
-    readFile(new URL("../app/checkout/page.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../lib/store-utils.ts", import.meta.url), "utf8"),
-    readFile(new URL("../components/admin/admin-products.tsx", import.meta.url), "utf8"),
-  ]);
-
-  assert.match(shop, /formatProductPrice/);
-  assert.doesNotMatch(shop, /product-card-tryon|AR preview/i);
-  assert.match(product, /product\.basePriceCents > 0/);
-  assert.match(product, /Prezzo in aggiornamento/);
-  assert.match(product, /application\/ld\+json/);
-  assert.match(product, /Dettagli prodotto/);
-  assert.match(product, /Spedizioni e resi/);
-  assert.match(product, /relatedProducts/);
-  assert.doesNotMatch(product, /product-tryon-cta|Try-On AR/i);
-  assert.match(utils, /Prezzo da definire/);
-  assert.match(admin, /formatProductPrice/);
-  assert.match(purchase, /Aggiungi al carrello/);
-  assert.match(purchase, /Acquista ora/);
-  assert.match(purchase, /addLocalCartItem/);
-  assert.match(purchase, /Guida taglie e misure/);
-  assert.match(purchase, /window\.location\.assign\("\/checkout"\)/);
-  assert.match(localCart, /lusso_preview_bag_v1/);
-  assert.match(localCart, /LOCAL_CART_EVENT/);
-  assert.match(previewCart, /La tua selezione/);
-  assert.match(previewCart, /Pagamento in attivazione/);
-  assert.match(checkoutPage, /PreviewCart/);
-  assert.match(merchandising, /createPreviewVariants/);
-  assert.match(merchandising, /80 cm/);
-  assert.match(merchandising, /stockQuantity: 20/);
-  assert.match(localCart, /Math\.min\(20/);
-  assert.match(previewCart, /length: 20/);
-});
-
-test("keeps catalog-driven product SEO and updates category routes", async () => {
-  const [product, sitemap, robots, catalog] = await Promise.all([
-    readFile(new URL("../app/prodotto/[slug]/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/try-on/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/store-header.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/store-footer.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/sitemap.ts", import.meta.url), "utf8"),
-    readFile(new URL("../app/robots.ts", import.meta.url), "utf8"),
+    readFile(new URL("../components/admin/admin-products.tsx", import.meta.url), "utf8"),
     readFile(new URL("../lib/catalog.ts", import.meta.url), "utf8"),
   ]);
 
-  assert.match(product, /generateMetadata/);
-  assert.match(product, /twitter/);
-  assert.match(product, /new URL\(primaryImage\.url, requestSiteUrl\)/);
-  assert.match(sitemap, /catalogCategories\.map/);
-  assert.match(catalog, /slug: "t-shirt"/);
-  assert.match(catalog, /slug: "cinture"/);
-  assert.match(catalog, /slug: "felpe-e-cardigan"/);
-  assert.match(catalog, /slug: "pantaloni"/);
-  assert.match(catalog, /slug: "camicie-e-polo"/);
-  assert.match(catalog, /slug: "giacche"/);
-  assert.doesNotMatch(sitemap, /categoria=donna|categoria=uomo|categoria=accessori/);
+  assert.match(shop, /notFound\(\)/);
+  assert.match(product, /notFound\(\)/);
+  assert.match(tryOn, /notFound\(\)/);
+  assert.doesNotMatch(`${page}\n${header}\n${footer}\n${sitemap}`, /\/shop|\/prodotto\/|catalogCategories|placeholderProducts/);
+  assert.match(catalog, /name: "T-shirt"/);
+  assert.match(catalog, /name: "Giacche"/);
+  assert.match(admin, /formatProductPrice/);
+});
+
+test("removes catalog routes from search-engine surfaces", async () => {
+  const [product, shop, sitemap, robots] = await Promise.all([
+    readFile(new URL("../app/prodotto/[slug]/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/shop/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/sitemap.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/robots.ts", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(product, /robots: \{ index: false, follow: false \}/);
+  assert.match(shop, /robots: \{ index: false, follow: false \}/);
+  assert.doesNotMatch(sitemap, /\/shop|\/prodotto|catalogCategories|placeholderProducts/);
   assert.match(robots, /\/admin\//);
+  assert.match(robots, /\/shop/);
+  assert.match(robots, /\/prodotto\//);
 });
 
 test("removes the disposable starter preview", async () => {
