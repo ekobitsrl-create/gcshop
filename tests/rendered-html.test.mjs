@@ -68,40 +68,37 @@ test("removes the disposable starter preview", async () => {
   assert.match(page, /LCS/);
   assert.match(layout, /og-lcs\.png/);
   await access(new URL("../public/og-lcs.png", import.meta.url));
-  await access(new URL("../app/try-on/page.tsx", import.meta.url));
+  await assert.rejects(access(new URL("../app/try-on/page.tsx", import.meta.url)));
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
   await assert.rejects(access(new URL("app\/_sites-preview", templateRoot)));
 });
 
-test("ships the webcam-first Virtual Try-On project without photo uploads", async () => {
-  const [page, shop, product] = await Promise.all([
-    readFile(new URL("../app/try-on/page.tsx", import.meta.url), "utf8"),
+test("keeps Try-On out of the public storefront", async () => {
+  const [shop, product, sitemap, commerceCss] = await Promise.all([
     readFile(new URL("../app/shop/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/prodotto/[slug]/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/sitemap.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/commerce.css", import.meta.url), "utf8"),
   ]);
 
-  assert.match(page, /Virtual Try-On/i);
-  assert.match(page, /Non immaginarlo|specchio AR/i);
-  assert.match(page, /niente foto da caricare|nessuna foto da caricare/i);
-  assert.doesNotMatch(page, /type="file"|readAsDataURL|Carica la tua foto/i);
-  assert.match(shop, /product-card-tryon/);
-  assert.match(product, /product-tryon-cta/);
+  assert.doesNotMatch(`${shop}\n${product}\n${sitemap}\n${commerceCss}`, /try-on|tryon|Virtual Try-On|AR preview/i);
+  await assert.rejects(access(new URL("../app/try-on/page.tsx", import.meta.url)));
+  await assert.rejects(access(new URL("../app/try-on/try-on.css", import.meta.url)));
 });
 
-test("keeps purchase actions ahead of the AR story", async () => {
-  const [home, purchase, product, tryOn] = await Promise.all([
+test("keeps purchase actions immediate", async () => {
+  const [home, purchase, product] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/product-purchase.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/prodotto/[slug]/page.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../app/try-on/page.tsx", import.meta.url), "utf8"),
   ]);
 
   assert.match(home, /\/shop\?categoria=donna/);
   assert.match(home, /\/shop\?categoria=uomo/);
   assert.match(purchase, /Acquista ora/);
   assert.match(purchase, /window\.location\.assign\("\/checkout"\)/);
-  assert.ok(product.indexOf("<ProductPurchase") < product.indexOf("product-tryon-cta"));
-  assert.match(tryOn, /\/prodotto\/\$\{look\.slug\}/);
+  assert.match(product, /<ProductPurchase/);
+  assert.doesNotMatch(product, /try-on|tryon|Virtual Try-On|AR preview/i);
 });
 
 test("adds a restrained trust signal and catalog-driven SEO", async () => {

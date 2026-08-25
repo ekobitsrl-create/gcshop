@@ -104,7 +104,6 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
                       <strong>{formatMoney(product.price, product.currency)}</strong>
                     </div>
                   </a>
-                  <a className="product-card-tryon" href={`/try-on?prodotto=${product.slug}`} aria-label={`Scopri l'anteprima AR di ${product.name}`}>AR preview <span>↗</span></a>
                 </article>
               ))}
             </div>
