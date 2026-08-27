@@ -13,6 +13,7 @@ import {
   productVariants,
 } from "@/db/schema";
 import { getCartSnapshot } from "@/lib/cart";
+import { getRequestLocale } from "@/lib/i18n-server";
 import { evaluateCoupon } from "@/lib/coupons";
 import { getBankTransferDetails, getPaymentMethods } from "@/lib/payment-config";
 import { createPayPalOrder } from "@/lib/paypal";
@@ -34,7 +35,7 @@ type CheckoutBody = {
 
 export async function POST(request: Request) {
   const token = (await cookies()).get("lcs_cart")?.value;
-  const cart = await getCartSnapshot(token);
+  const cart = await getCartSnapshot(token, await getRequestLocale());
   if (!cart.cartId || !cart.items.length) return Response.json({ error: "Il carrello è vuoto." }, { status: 400 });
 
   const body = await request.json() as CheckoutBody;

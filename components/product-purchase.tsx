@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { formatMoney } from "@/lib/store-utils";
+import { useI18n } from "@/components/locale-provider";
 
 type Variant = {
   id: string;
@@ -26,6 +27,7 @@ export function ProductPurchase({
   compareAtPriceCents: number | null;
   currency: string;
 }) {
+  const { localeTag, t } = useI18n();
   const firstAvailable = variants.find((variant) => variant.stockQuantity > 0) ?? variants[0];
   const initialVariant = variants.find((variant) => variant.id === defaultVariantId) ?? firstAvailable;
   const [variantId, setVariantId] = useState(initialVariant?.id ?? "");
@@ -57,16 +59,16 @@ export function ProductPurchase({
       });
       const payload = await response.json();
       if (!response.ok) {
-        setMessage(payload.error ?? "Non è stato possibile aggiornare il carrello.");
+        setMessage(t("purchase.cartError"));
         return;
       }
       if (redirectToCheckout) {
         window.location.assign("/checkout");
         return;
       }
-      setMessage(`${payload.itemCount} articoli nel carrello.`);
+      setMessage(t("purchase.cartUpdated", { count: payload.itemCount }));
     } catch {
-      setMessage("Connessione non disponibile. Riprova tra poco.");
+      setMessage(t("purchase.connectionError"));
     } finally {
       setBusyAction(null);
     }
@@ -75,12 +77,12 @@ export function ProductPurchase({
   return (
     <div className="purchase-box">
       <div className="product-price-block">
-        <p className="product-price">{formatMoney(price, currency)}</p>
-        {comparePrice && comparePrice > price ? <><del>{formatMoney(comparePrice, currency)}</del><span>−{discount}%</span></> : null}
+        <p className="product-price">{formatMoney(price, currency, localeTag)}</p>
+        {comparePrice && comparePrice > price ? <><del>{formatMoney(comparePrice, currency, localeTag)}</del><span>−{discount}%</span></> : null}
       </div>
-      {selected?.color ? <p className="selected-color"><span>Colore</span><strong>{selected.color}</strong></p> : null}
-      <div className="variant-heading"><span>Seleziona la taglia</span><a href="#product-details">Guida taglie</a></div>
-      <div className="variant-options" role="radiogroup" aria-label="Varianti disponibili">
+      {selected?.color ? <p className="selected-color"><span>{t("product.color")}</span><strong>{selected.color}</strong></p> : null}
+      <div className="variant-heading"><span>{t("purchase.selectSize")}</span><a href="#product-details">{t("purchase.sizeGuide")}</a></div>
+      <div className="variant-options" role="radiogroup" aria-label={t("purchase.variants")}>
         {sizes.map((variant) => (
           <button
             aria-checked={variant.id === variantId}
@@ -91,27 +93,27 @@ export function ProductPurchase({
             role="radio"
             type="button"
           >
-            <span>{variant.label}</span><small>{variant.stockQuantity ? (variant.stockQuantity <= 2 ? `Ultimi ${variant.stockQuantity}` : "Disponibile") : "Esaurito"}</small>
+            <span>{variant.label}</span><small>{variant.stockQuantity ? (variant.stockQuantity <= 2 ? t("purchase.last", { count: variant.stockQuantity }) : t("common.available")) : t("common.soldOut")}</small>
           </button>
         ))}
       </div>
       <div className="purchase-fields">
-        <label htmlFor="product-quantity">Quantità
+        <label htmlFor="product-quantity">{t("purchase.quantity")}
           <select id="product-quantity" value={quantity} onChange={(event) => setQuantity(Number(event.target.value))}>
             {Array.from({ length: Math.min(10, selected?.stockQuantity ?? 1) }, (_, index) => index + 1).map((value) => <option key={value} value={value}>{value}</option>)}
           </select>
         </label>
-        <span className="availability-note"><b />{selected?.stockQuantity ? "Pronto per la spedizione" : "Non disponibile"}</span>
+        <span className="availability-note"><b />{selected?.stockQuantity ? t("purchase.ready") : t("common.notAvailable")}</span>
       </div>
       <div className="purchase-actions">
         <button className="purchase-buy-now" type="button" disabled={busyAction !== null || !selected?.stockQuantity} onClick={() => void add(true)}>
-          {busyAction === "checkout" ? "Verso il checkout…" : selected?.stockQuantity ? "Acquista ora" : "Non disponibile"}<span>↗</span>
+          {busyAction === "checkout" ? t("purchase.toCheckout") : selected?.stockQuantity ? t("purchase.buyNow") : t("common.notAvailable")}<span>↗</span>
         </button>
         <button className="purchase-add-bag" type="button" disabled={busyAction !== null || !selected?.stockQuantity} onClick={() => void add()}>
-          {busyAction === "bag" ? "Aggiunta…" : selected?.stockQuantity ? "Aggiungi al carrello" : "Non disponibile"}<span>+</span>
+          {busyAction === "bag" ? t("purchase.adding") : selected?.stockQuantity ? t("purchase.addCart") : t("common.notAvailable")}<span>+</span>
         </button>
       </div>
-      {message ? <p role="status">{message} <a href="/checkout">Vai al checkout ↗</a></p> : null}
+      {message ? <p role="status">{message} <a href="/checkout">{t("purchase.goCheckout")} ↗</a></p> : null}
     </div>
   );
 }

@@ -16,7 +16,8 @@
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "dotenv -e .env.local -- drizzle-kit generate",
     "db:migrate": "dotenv -e .env.local -- drizzle-kit migrate",
-    "catalog:import:romanelli": "dotenv -e .env.local -- node scripts/import-romanelli.mjs"
+    "catalog:import:romanelli": "dotenv -e .env.local -- node scripts/import-romanelli.mjs",
+    "catalog:translate": "dotenv -e .env.local -- node scripts/translate-catalog.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",

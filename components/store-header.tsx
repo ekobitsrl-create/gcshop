@@ -2,22 +2,20 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-
-const links = [
-  { label: "New in", href: "/shop" },
-  { label: "Donna", href: "/shop?categoria=donna" },
-  { label: "Uomo", href: "/shop?categoria=uomo" },
-  { label: "Accessori", href: "/shop?categoria=accessori" },
-];
-
-const announcements = [
-  "Spedizione gratuita su tutti gli ordini",
-  "Accesso alla selezione privata",
-];
+import { LanguageSelector } from "@/components/language-selector";
+import { useI18n } from "@/components/locale-provider";
 
 export function StoreHeader() {
+  const { t } = useI18n();
   const [menuOpen, setMenuOpen] = useState(false);
   const [cartCount, setCartCount] = useState(0);
+  const links = [
+    { label: t("common.newIn"), href: "/shop" },
+    { label: t("common.woman"), href: "/shop?categoria=donna" },
+    { label: t("common.man"), href: "/shop?categoria=uomo" },
+    { label: t("common.accessories"), href: "/shop?categoria=accessori" },
+  ];
+  const announcements = [t("header.freeShipping"), t("header.privateAccess")];
 
   useEffect(() => {
     void fetch("/api/cart", { cache: "no-store" })
@@ -28,7 +26,7 @@ export function StoreHeader() {
 
   return (
     <>
-      <div className="store-announcement" aria-label="Comunicazioni del negozio">
+      <div className="store-announcement" aria-label={t("header.announcements")}>
         <div className="announcement-track">
           {[false, true].map((duplicate) => (
             <div className="announcement-sequence" aria-hidden={duplicate || undefined} key={String(duplicate)}>
@@ -43,7 +41,7 @@ export function StoreHeader() {
         <button
           className={`store-menu-toggle ${menuOpen ? "is-open" : ""}`}
           type="button"
-          aria-label={menuOpen ? "Chiudi menu" : "Apri menu"}
+          aria-label={menuOpen ? t("header.closeMenu") : t("header.openMenu")}
           aria-expanded={menuOpen}
           onClick={() => setMenuOpen((open) => !open)}
         >
@@ -56,30 +54,32 @@ export function StoreHeader() {
           <span>Selected edit</span>
         </Link>
 
-        <nav className="store-nav" aria-label="Navigazione principale">
+        <nav className="store-nav" aria-label={t("header.primaryNav")}>
           {links.map((link) => (
             <Link href={link.href} key={link.label}>{link.label}</Link>
           ))}
-          <Link href="/#manifesto">The edit</Link>
+          <Link href="/#manifesto">{t("common.theEdit")}</Link>
         </nav>
 
         <div className="store-actions">
-          <Link className="store-search-link" href="/shop">Cerca</Link>
-          <Link className="store-bag" href="/checkout" aria-label={`Carrello, ${cartCount} articoli`}>
-            Carrello <span>{String(cartCount).padStart(2, "0")}</span>
+          <LanguageSelector />
+          <Link className="store-search-link" href="/shop">{t("common.search")}</Link>
+          <Link className="store-bag" href="/checkout" aria-label={t("header.cartLabel", { count: cartCount })}>
+            {t("common.cart")} <span>{String(cartCount).padStart(2, "0")}</span>
           </Link>
         </div>
 
-        <nav className={`store-mobile-nav ${menuOpen ? "is-open" : ""}`} aria-label="Menu mobile">
-          <div className="mobile-nav-index">Menu / 01—05</div>
+        <nav className={`store-mobile-nav ${menuOpen ? "is-open" : ""}`} aria-label={t("header.mobileMenu")}>
+          <div className="mobile-nav-index">{t("common.menu")} / 01—05</div>
           {links.map((link, index) => (
             <Link href={link.href} key={link.label} onClick={() => setMenuOpen(false)}>
               <span>0{index + 1}</span>{link.label}
             </Link>
           ))}
-          <Link href="/#manifesto" onClick={() => setMenuOpen(false)}><span>05</span>The edit</Link>
+          <Link href="/#manifesto" onClick={() => setMenuOpen(false)}><span>05</span>{t("common.theEdit")}</Link>
+          <LanguageSelector mobile />
           <div className="mobile-nav-footer">
-            <Link href="/#private-list" onClick={() => setMenuOpen(false)}>Private list</Link>
+            <Link href="/#private-list" onClick={() => setMenuOpen(false)}>{t("common.privateList")}</Link>
             <a href="tel:+393381346675">+39 338 134 6675</a>
           </div>
         </nav>

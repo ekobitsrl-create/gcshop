@@ -9,8 +9,8 @@ export function slugify(value: string): string {
     .slice(0, 80);
 }
 
-export function formatMoney(cents: number, currency = "EUR"): string {
-  return new Intl.NumberFormat("it-IT", { style: "currency", currency }).format(cents / 100);
+export function formatMoney(cents: number, currency = "EUR", locale = "it-IT"): string {
+  return new Intl.NumberFormat(locale, { style: "currency", currency }).format(cents / 100);
 }
 
 export function parseEuroToCents(value: unknown): number {

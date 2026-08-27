@@ -1,8 +1,10 @@
 "use client";
 
 import { type FormEvent, useState } from "react";
+import { useI18n } from "@/components/locale-provider";
 
 export function NewsletterForm() {
+  const { t } = useI18n();
   const [sent, setSent] = useState(false);
 
   function submit(event: FormEvent<HTMLFormElement>) {
@@ -11,17 +13,17 @@ export function NewsletterForm() {
   }
 
   if (sent) {
-    return <p className="newsletter-confirmation" role="status">Sei dentro. Ti scriveremo solo quando ne vale la pena.</p>;
+    return <p className="newsletter-confirmation" role="status">{t("newsletter.success")}</p>;
   }
 
   return (
     <form className="newsletter-form" onSubmit={submit}>
       <label htmlFor="newsletter-email">Email</label>
       <div>
-        <input id="newsletter-email" type="email" name="email" placeholder="La tua email" autoComplete="email" required />
-        <button type="submit">Iscriviti <span>↗</span></button>
+        <input id="newsletter-email" type="email" name="email" placeholder={t("newsletter.placeholder")} autoComplete="email" required />
+        <button type="submit">{t("newsletter.submit")} <span>↗</span></button>
       </div>
-      <small>Iscrivendoti accetti la nostra informativa privacy.</small>
+      <small>{t("newsletter.privacy")}</small>
     </form>
   );
 }

@@ -2,6 +2,7 @@
 
 import { type FormEvent, useState } from "react";
 import { formatMoney } from "@/lib/store-utils";
+import { useI18n } from "@/components/locale-provider";
 
 type Method = { code: "paypal" | "bank_transfer"; name: string; instructions: string; configured: boolean };
 type Cart = {
@@ -13,6 +14,7 @@ type Cart = {
 type AppliedCoupon = { code: string; discountCents: number; totalCents: number };
 
 export function CheckoutForm({ methods, cart }: { methods: Method[]; cart: Cart }) {
+  const { localeTag, t } = useI18n();
   const available = methods.filter((item) => item.configured);
   const [method, setMethod] = useState(available[0]?.code ?? "");
   const [email, setEmail] = useState("");
@@ -31,7 +33,7 @@ export function CheckoutForm({ methods, cart }: { methods: Method[]; cart: Cart 
 
   async function applyCoupon() {
     if (!couponCode.trim()) {
-      setCouponMessage("Inserisci un codice sconto.");
+      setCouponMessage(t("checkout.enterCode"));
       return;
     }
     setCouponBusy(true);
@@ -45,15 +47,15 @@ export function CheckoutForm({ methods, cart }: { methods: Method[]; cart: Cart 
       const payload = await response.json();
       if (!response.ok) {
         setCoupon(null);
-        setCouponMessage(payload.error ?? "Codice non valido.");
+        setCouponMessage(t("checkout.invalidCode"));
         return;
       }
       setCoupon({ code: payload.code, discountCents: payload.discountCents, totalCents: payload.totalCents });
       setCouponCode(payload.code);
-      setCouponMessage(`${payload.code} applicato: hai risparmiato ${formatMoney(payload.discountCents, cart.currency)}.`);
+      setCouponMessage(t("checkout.couponApplied", { code: payload.code, amount: formatMoney(payload.discountCents, cart.currency, localeTag) }));
     } catch {
       setCoupon(null);
-      setCouponMessage("Il codice non può essere verificato in questo momento.");
+      setCouponMessage(t("checkout.couponUnavailable"));
     } finally {
       setCouponBusy(false);
     }
@@ -72,12 +74,12 @@ export function CheckoutForm({ methods, cart }: { methods: Method[]; cart: Cart 
       });
       const payload = await response.json();
       if (!response.ok) {
-        setError(payload.error ?? "Checkout non riuscito.");
+        setError(t("checkout.failed"));
         return;
       }
       window.location.href = payload.redirectUrl;
     } catch {
-      setError("Checkout temporaneamente non disponibile. Riprova tra poco.");
+      setError(t("checkout.unavailable"));
     } finally {
       setBusy(false);
     }
@@ -88,65 +90,65 @@ export function CheckoutForm({ methods, cart }: { methods: Method[]; cart: Cart 
   return (
     <form className="checkout-layout" onSubmit={submit}>
       <section className="checkout-form-panel">
-        <h2>Dati di spedizione</h2>
+        <h2>{t("checkout.shippingData")}</h2>
         <div className="checkout-form">
           <div className="field-row">
-            <label htmlFor="firstName">Nome<input id="firstName" required name="firstName" autoComplete="given-name" /></label>
-            <label htmlFor="lastName">Cognome<input id="lastName" required name="lastName" autoComplete="family-name" /></label>
+            <label htmlFor="firstName">{t("checkout.firstName")}<input id="firstName" required name="firstName" autoComplete="given-name" /></label>
+            <label htmlFor="lastName">{t("checkout.lastName")}<input id="lastName" required name="lastName" autoComplete="family-name" /></label>
           </div>
           <div className="field-row">
             <label htmlFor="email">Email<input id="email" required type="email" name="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} /></label>
-            <label htmlFor="phone">Telefono<input id="phone" required name="phone" autoComplete="tel" /></label>
+            <label htmlFor="phone">{t("checkout.phone")}<input id="phone" required name="phone" autoComplete="tel" /></label>
           </div>
-          <label htmlFor="addressLine1">Indirizzo<input id="addressLine1" required name="addressLine1" autoComplete="street-address" /></label>
+          <label htmlFor="addressLine1">{t("checkout.address")}<input id="addressLine1" required name="addressLine1" autoComplete="street-address" /></label>
           <div className="field-row field-row-three">
-            <label htmlFor="postalCode">CAP<input id="postalCode" required name="postalCode" autoComplete="postal-code" /></label>
-            <label htmlFor="city">Città<input id="city" required name="city" autoComplete="address-level2" /></label>
-            <label htmlFor="province">Provincia<input id="province" required name="province" autoComplete="address-level1" /></label>
+            <label htmlFor="postalCode">{t("checkout.postalCode")}<input id="postalCode" required name="postalCode" autoComplete="postal-code" /></label>
+            <label htmlFor="city">{t("checkout.city")}<input id="city" required name="city" autoComplete="address-level2" /></label>
+            <label htmlFor="province">{t("checkout.province")}<input id="province" required name="province" autoComplete="address-level1" /></label>
           </div>
-          <label className="country-field" htmlFor="countryCode">Paese<input id="countryCode" required name="countryCode" defaultValue="IT" maxLength={2} /></label>
-          <label htmlFor="customerNote">Note per l’ordine <textarea id="customerNote" name="customerNote" rows={3} /></label>
+          <label className="country-field" htmlFor="countryCode">{t("checkout.country")}<input id="countryCode" required name="countryCode" defaultValue="IT" maxLength={2} /></label>
+          <label htmlFor="customerNote">{t("checkout.orderNotes")} <textarea id="customerNote" name="customerNote" rows={3} /></label>
 
           <section className="discount-panel" aria-labelledby="discount-title">
             <div>
-              <p className="commerce-kicker">Primo ordine</p>
-              <h3 id="discount-title">Il tuo codice sconto</h3>
-              <p>Inserisci <strong>WELCOME10</strong> e ottieni il 10% sulla prima selezione.</p>
+              <p className="commerce-kicker">{t("checkout.firstOrder")}</p>
+              <h3 id="discount-title">{t("checkout.discountTitle")}</h3>
+              <p>{t("checkout.discountCopy")}</p>
             </div>
             <div className="discount-entry">
-              <label htmlFor="couponCode">Codice promozionale</label>
+              <label htmlFor="couponCode">{t("checkout.promoCode")}</label>
               <div>
                 <input id="couponCode" name="couponCode" value={couponCode} onChange={(event) => updateCouponCode(event.target.value)} autoComplete="off" placeholder="WELCOME10" aria-describedby="coupon-feedback" />
-                <button type="button" disabled={couponBusy} onClick={() => void applyCoupon()}>{couponBusy ? "Verifica…" : "Applica"}</button>
+                <button type="button" disabled={couponBusy} onClick={() => void applyCoupon()}>{couponBusy ? t("checkout.verify") : t("checkout.apply")}</button>
               </div>
               {couponMessage ? <p id="coupon-feedback" className={coupon ? "is-success" : ""} role="status">{couponMessage}</p> : null}
             </div>
           </section>
 
           <fieldset className="payment-methods">
-            <legend>Metodo di pagamento</legend>
+            <legend>{t("checkout.paymentMethod")}</legend>
             {methods.map((item) => (
               <label className={`payment-choice ${method === item.code ? "is-selected" : ""}`} key={item.code}>
                 <input type="radio" name="paymentMethod" value={item.code} checked={method === item.code} disabled={!item.configured} onChange={() => setMethod(item.code)} />
-                <span><strong>{item.name}</strong><small>{item.instructions}</small>{!item.configured ? <em>Configurazione amministratore necessaria.</em> : null}</span>
+                <span><strong>{item.code === "paypal" ? t("checkout.paypalName") : t("checkout.bankName")}</strong><small>{item.code === "paypal" ? t("checkout.paypalInstructions") : t("checkout.bankInstructions")}</small>{!item.configured ? <em>{t("checkout.adminRequired")}</em> : null}</span>
                 <b aria-hidden="true">{item.code === "paypal" ? "PP" : "BT"}</b>
               </label>
             ))}
           </fieldset>
 
-          {!available.length ? <p className="checkout-message">Nessun metodo di pagamento è ancora configurato. Inserisci le credenziali PayPal o l’IBAN nell’ambiente protetto.</p> : null}
+          {!available.length ? <p className="checkout-message">{t("checkout.noPayment")}</p> : null}
           {error ? <p className="checkout-message" role="alert">{error}</p> : null}
-          <button className="checkout-submit" disabled={busy || !method}>{busy ? "Elaborazione…" : method === "paypal" ? "Continua con PayPal" : "Conferma ordine"}<span>↗</span></button>
+          <button className="checkout-submit" disabled={busy || !method}>{busy ? t("checkout.processing") : method === "paypal" ? t("checkout.continuePaypal") : t("checkout.confirmOrder")}<span>↗</span></button>
         </div>
       </section>
 
       <aside className="order-summary">
-        <div className="summary-heading"><p>Il tuo ordine</p><span>{String(cart.itemCount).padStart(2, "0")}</span></div>
-        {cart.items.map((item) => <div className="order-line" key={item.id}><span>{item.name}<small> × {item.quantity}</small></span><strong>{formatMoney(item.lineTotalCents, cart.currency)}</strong></div>)}
-        <div className="order-line"><span>Spedizione</span><strong>Inclusa</strong></div>
-        {coupon ? <div className="order-line order-discount"><span>Sconto · {coupon.code}</span><strong>−{formatMoney(coupon.discountCents, cart.currency)}</strong></div> : null}
-        <div className="order-line order-total"><span>Totale</span><strong>{formatMoney(totalCents, cart.currency)}</strong></div>
-        <p className="summary-note">Imposte comprese. Riceverai la conferma all’indirizzo email indicato.</p>
+        <div className="summary-heading"><p>{t("checkout.yourOrder")}</p><span>{String(cart.itemCount).padStart(2, "0")}</span></div>
+        {cart.items.map((item) => <div className="order-line" key={item.id}><span>{item.name}<small> × {item.quantity}</small></span><strong>{formatMoney(item.lineTotalCents, cart.currency, localeTag)}</strong></div>)}
+        <div className="order-line"><span>{t("checkout.shipping")}</span><strong>{t("checkout.included")}</strong></div>
+        {coupon ? <div className="order-line order-discount"><span>{t("checkout.discount")} · {coupon.code}</span><strong>−{formatMoney(coupon.discountCents, cart.currency, localeTag)}</strong></div> : null}
+        <div className="order-line order-total"><span>{t("common.total")}</span><strong>{formatMoney(totalCents, cart.currency, localeTag)}</strong></div>
+        <p className="summary-note">{t("checkout.taxNote")}</p>
       </aside>
     </form>
   );

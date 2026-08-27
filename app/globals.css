@@ -130,6 +130,11 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 
 .store-nav a:hover::after, .store-actions a:hover::after { right: 0; }
 .store-actions { display: flex; justify-content: flex-end; align-items: center; gap: 25px; }
+.language-selector { position: relative; display: flex; align-items: center; gap: 7px; }
+.language-selector > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.language-selector select { appearance: none; min-width: 38px; padding: 4px 14px 4px 3px; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='4' viewBox='0 0 7 4'%3E%3Cpath d='M1 .5 3.5 3 6 .5' fill='none' stroke='%23111210'/%3E%3C/svg%3E") no-repeat right 3px center; color: var(--ink); font: 700 9px/1 var(--sans); letter-spacing: .12em; text-transform: uppercase; cursor: pointer; }
+.language-selector select:focus-visible { outline: 1px solid var(--accent-strong); outline-offset: 4px; }
+.language-selector-mobile { display: none; }
 .store-bag { display: flex; gap: 9px; }
 .store-bag span { color: var(--accent-strong); }
 .store-menu-toggle, .store-mobile-nav { display: none; }
@@ -490,6 +495,10 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   .store-wordmark span { font-size: 5px; }
   .store-search-link { display: none; }
   .store-actions { gap: 0; }
+  .store-actions .language-selector { display: none; }
+  .language-selector-mobile { display: flex; min-height: 64px; justify-content: space-between; padding: 15px 20px; border-bottom: 1px solid var(--line); }
+  .language-selector-mobile > span { position: static; width: auto; height: auto; overflow: visible; clip: auto; font-size: 9px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
+  .language-selector-mobile select { min-width: 112px; font-size: 11px; }
   .store-bag { font-size: 8px !important; }
   .store-mobile-nav { position: fixed; top: 100px; bottom: 0; grid-template-columns: 1fr; align-content: start; overflow-y: auto; transform: translateX(-100%); }
   .store-mobile-nav.is-open { transform: translateX(0); }

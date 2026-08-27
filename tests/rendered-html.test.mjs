@@ -25,11 +25,12 @@ test("keeps the LCS home editorial and moves company details to the legal page",
 
 test("ships the ecommerce schema, placeholder catalog and all critical flows", async () => {
   const migrationFiles = (await readdir(new URL("../drizzle/", import.meta.url))).filter((file) => file.endsWith(".sql"));
-  assert.equal(migrationFiles.length, 4);
-  const [schemaMigration, catalogMigration, feedMigration, schema, checkout, coupon, paypal, admin, header, checkoutUi] = await Promise.all([
+  assert.equal(migrationFiles.length, 5);
+  const [schemaMigration, catalogMigration, feedMigration, translationMigration, schema, checkout, coupon, paypal, admin, header, checkoutUi, i18n] = await Promise.all([
     readFile(new URL(`../drizzle/${migrationFiles[0]}`, import.meta.url), "utf8"),
     readFile(new URL(`../drizzle/${migrationFiles[1]}`, import.meta.url), "utf8"),
     readFile(new URL(`../drizzle/${migrationFiles[2]}`, import.meta.url), "utf8"),
+    readFile(new URL(`../drizzle/${migrationFiles[4]}`, import.meta.url), "utf8"),
     readFile(new URL("../db/schema.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/api/checkout/route.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/api/checkout/coupon/route.ts", import.meta.url), "utf8"),
@@ -37,6 +38,7 @@ test("ships the ecommerce schema, placeholder catalog and all critical flows", a
     readFile(new URL("../app/api/admin/products/route.ts", import.meta.url), "utf8"),
     readFile(new URL("../components/store-header.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/checkout-form.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../lib/i18n.ts", import.meta.url), "utf8"),
   ]);
   assert.equal((schemaMigration.match(/CREATE TABLE/g) ?? []).length, 17);
   assert.match(schemaMigration, /CREATE SCHEMA IF NOT EXISTS "luxury"/);
@@ -47,6 +49,7 @@ test("ships the ecommerce schema, placeholder catalog and all critical flows", a
   assert.match(feedMigration, /catalog_imports/);
   assert.match(feedMigration, /shipments/);
   assert.match(feedMigration, /supplier_stock_quantity/);
+  assert.match(translationMigration, /product_translations/);
   assert.match(schema, /pgSchema\("luxury"\)/);
   assert.match(schema, /firstOrderOnly/);
   assert.match(checkout, /bank_transfer/);
@@ -55,8 +58,8 @@ test("ships the ecommerce schema, placeholder catalog and all critical flows", a
   assert.match(coupon, /evaluateCoupon/);
   assert.match(paypal, /capturePayPalOrder/);
   assert.match(admin, /recordAdminAction/);
-  assert.match(header, /Spedizione gratuita su tutti gli ordini/);
-  assert.match(header, /Accesso alla selezione privata/);
+  assert.match(i18n, /Spedizione gratuita su tutti gli ordini/);
+  assert.match(i18n, /Accesso alla selezione privata/);
   assert.doesNotMatch(header, /WELCOME10|10% sul primo ordine/);
   assert.match(checkoutUi, /WELCOME10/);
   assert.doesNotMatch(header, /Crotone|Client service/i);
@@ -99,25 +102,26 @@ test("keeps purchase actions immediate", async () => {
 
   assert.match(home, /\/shop\?categoria=donna/);
   assert.match(home, /\/shop\?categoria=uomo/);
-  assert.match(purchase, /Acquista ora/);
+  assert.match(purchase, /purchase\.buyNow/);
   assert.match(purchase, /window\.location\.assign\("\/checkout"\)/);
   assert.match(product, /<ProductPurchase/);
   assert.doesNotMatch(product, /try-on|tryon|Virtual Try-On|AR preview/i);
 });
 
 test("adds a restrained trust signal and catalog-driven SEO", async () => {
-  const [home, header, footer, product, sitemap, robots] = await Promise.all([
+  const [home, header, footer, product, sitemap, robots, i18n] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/store-header.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/store-footer.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/prodotto/[slug]/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/sitemap.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/robots.ts", import.meta.url), "utf8"),
+    readFile(new URL("../lib/i18n.ts", import.meta.url), "utf8"),
   ]);
 
-  assert.match(home, /Provenienza e autenticità/);
-  assert.match(home, /Non promettiamo ciò che non possiamo documentare/);
-  assert.match(home, /provenienza commerciale, condizioni e composizione/);
+  assert.match(i18n, /Provenienza e autenticità/);
+  assert.match(i18n, /Non promettiamo ciò che non possiamo documentare/);
+  assert.match(i18n, /provenienza commerciale, condizioni e composizione/);
   assert.match(footer, /\/#provenienza/);
   assert.match(header, /<strong>LCS<\/strong>/);
   assert.doesNotMatch(`${home}\n${header}\n${footer}`, /Luxury Concept Store|WELCOME10/i);
@@ -154,13 +158,40 @@ test("uses carrello consistently for the shopping flow", async () => {
     readFile(new URL("../app/api/checkout/route.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/api/checkout/coupon/route.ts", import.meta.url), "utf8"),
     readFile(new URL("../lib/coupons.ts", import.meta.url), "utf8"),
+    readFile(new URL("../lib/i18n.ts", import.meta.url), "utf8"),
   ]);
   const commerceCopy = files.join("\n");
 
   assert.match(commerceCopy, /Aggiungi al carrello/);
-  assert.match(commerceCopy, /Carrello, \$\{cartCount\} articoli/);
+  assert.match(commerceCopy, /header\.cartLabel/);
+  assert.match(commerceCopy, /Carrello, \{count\} articoli/);
   assert.match(commerceCopy, /Il carrello è vuoto/);
   assert.doesNotMatch(commerceCopy, /Aggiungi alla borsa|articoli nella borsa|La borsa è vuota|totale della borsa|Borsa, \$\{cartCount\}/i);
+});
+
+test("localizes the storefront and persists product translations", async () => {
+  const [i18n, server, selector, localeRoute, schema, translator, shop, product, checkout] = await Promise.all([
+    readFile(new URL("../lib/i18n.ts", import.meta.url), "utf8"),
+    readFile(new URL("../lib/i18n-server.ts", import.meta.url), "utf8"),
+    readFile(new URL("../components/language-selector.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/api/locale/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../db/schema.ts", import.meta.url), "utf8"),
+    readFile(new URL("../scripts/translate-catalog.mjs", import.meta.url), "utf8"),
+    readFile(new URL("../app/shop/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/prodotto/[slug]/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/checkout-form.tsx", import.meta.url), "utf8"),
+  ]);
+  assert.match(i18n, /\["it", "en", "fr", "es", "de"\]/);
+  for (const label of ["English", "Français", "Español", "Deutsch"]) assert.match(i18n, new RegExp(label));
+  assert.match(server, /lcs_locale/);
+  assert.match(selector, /api\/locale/);
+  assert.match(localeRoute, /maxAge: 60 \* 60 \* 24 \* 365/);
+  assert.match(schema, /productTranslations/);
+  assert.match(translator, /translate\.googleapis\.com/);
+  assert.match(translator, /on conflict \(product_id, locale\)/);
+  assert.match(shop, /productTranslations\.name/);
+  assert.match(product, /productTranslations/);
+  assert.match(checkout, /useI18n/);
 });
 
 test("publishes a variant-level Google Merchant RSS feed", async () => {

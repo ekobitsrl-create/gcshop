@@ -4,6 +4,7 @@ import {
   index,
   integer,
   pgSchema,
+  primaryKey,
   text,
   timestamp,
   uniqueIndex,
@@ -78,6 +79,27 @@ export const products = luxury.table(
     uniqueIndex("idx_products_source_supplier_id").on(table.catalogSource, table.supplierProductId),
     index("idx_products_brand_status").on(table.brand, table.status),
     index("idx_products_gender_status").on(table.gender, table.status),
+  ],
+);
+
+export const productTranslations = luxury.table(
+  "product_translations",
+  {
+    productId: uuid("product_id").notNull().references(() => products.id, { onDelete: "cascade" }),
+    locale: text("locale").notNull(),
+    name: text("name").notNull(),
+    shortDescription: text("short_description"),
+    description: text("description"),
+    color: text("color"),
+    composition: text("composition"),
+    category: text("category"),
+    subcategory: text("subcategory"),
+    season: text("season"),
+    ...timestamps,
+  },
+  (table) => [
+    primaryKey({ columns: [table.productId, table.locale], name: "product_translations_pkey" }),
+    index("idx_product_translations_locale_name").on(table.locale, table.name),
   ],
 );
 
@@ -428,6 +450,7 @@ export const adminAuditLogs = luxury.table(
 
 export type Product = typeof products.$inferSelect;
 export type ProductVariant = typeof productVariants.$inferSelect;
+export type ProductTranslation = typeof productTranslations.$inferSelect;
 export type Order = typeof orders.$inferSelect;
 export type PaymentMethod = typeof paymentMethods.$inferSelect;
 export type Shipment = typeof shipments.$inferSelect;

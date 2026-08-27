@@ -3,20 +3,22 @@ import type { Metadata } from "next";
 import { NewsletterForm } from "@/components/newsletter-form";
 import { StoreFooter } from "@/components/store-footer";
 import { StoreHeader } from "@/components/store-header";
+import { translate } from "@/lib/i18n";
+import { getRequestLocale } from "@/lib/i18n-server";
 
-export const metadata: Metadata = {
-  title: "LCS | The Selected Edit",
-  description: "Moda contemporanea e accessori selezionati per materia, proporzione e carattere. Scopri il nuovo edit LCS.",
-  alternates: { canonical: "/" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getRequestLocale();
+  return { title: "LCS | The Selected Edit", description: translate(locale, "home.description"), alternates: { canonical: "/" } };
+}
 
-const categories = [
-  { index: "01", title: "Donna", note: "Forme decise, libertà assoluta", image: "/images/category-woman.jpg", position: "center" },
-  { index: "02", title: "Uomo", note: "Sartoriale, senza formalità", image: "/images/category-man.jpg", position: "center" },
-  { index: "03", title: "Accessori", note: "L'oggetto che cambia tutto", image: "/images/category-accessories.jpg", position: "center" },
-];
-
-export default function Home() {
+export default async function Home() {
+  const locale = await getRequestLocale();
+  const t = (key: string) => translate(locale, key);
+  const categories = [
+    { index: "01", title: t("common.woman"), slug: "donna", note: t("home.womanNote"), image: "/images/category-woman.jpg", position: "center" },
+    { index: "02", title: t("common.man"), slug: "uomo", note: t("home.manNote"), image: "/images/category-man.jpg", position: "center" },
+    { index: "03", title: t("common.accessories"), slug: "accessori", note: t("home.accessoriesNote"), image: "/images/category-accessories.jpg", position: "center" },
+  ];
   return (
     <main id="top" className="home-page">
       <StoreHeader />
@@ -24,38 +26,38 @@ export default function Home() {
       <section className="new-hero">
         <div className="hero-copy-panel">
           <p className="micro-label">LCS / Edit 01</p>
-          <h1>Scelto.<br /><em>Non esibito.</em></h1>
+          <h1>{t("home.heroTitle")}<br /><em>{t("home.heroEmphasis")}</em></h1>
           <div className="hero-copy-bottom">
-            <p>Moda e oggetti scelti per materia, proporzione e carattere. Il resto può rimanere fuori.</p>
+            <p>{t("home.heroCopy")}</p>
             <div className="hero-commerce-actions">
-              <a className="hero-shop-link" href="/shop?categoria=donna">Shop donna <span>↗</span></a>
-              <a className="hero-shop-link" href="/shop?categoria=uomo">Shop uomo <span>↗</span></a>
-              <a className="hero-text-link" href="/shop">Esplora tutto l'edit <span>→</span></a>
+              <a className="hero-shop-link" href="/shop?categoria=donna">{t("home.shopWoman")} <span>↗</span></a>
+              <a className="hero-shop-link" href="/shop?categoria=uomo">{t("home.shopMan")} <span>↗</span></a>
+              <a className="hero-text-link" href="/shop">{t("home.exploreEdit")} <span>→</span></a>
             </div>
           </div>
         </div>
 
         <div className="hero-visual">
-          <Image src="/images/editorial.jpg" alt="Editoriale moda della selezione LCS" fill priority sizes="(max-width: 820px) 100vw, 58vw" />
+          <Image src="/images/editorial.jpg" alt={t("home.editorialAlt")} fill priority sizes="(max-width: 820px) 100vw, 58vw" />
           <div className="hero-visual-tag"><span>The edit</span><strong>01</strong></div>
-          <p>Form / Matter / Character</p>
+          <p>{t("home.formMatterCharacter")}</p>
         </div>
 
-        <div className="hero-side-note" aria-hidden="true">LCS · Selected fashion and objects · Edit 01</div>
+        <div className="hero-side-note" aria-hidden="true">{t("home.sideNote")}</div>
       </section>
 
-      <section className="ticker" aria-label="Valori del negozio">
-        <div>New in <span>✦</span> Donna <span>✦</span> Uomo <span>✦</span> Accessori <span>✦</span> Private list <span>✦</span></div>
+      <section className="ticker" aria-label={t("home.storeValues")}>
+        <div>{t("common.newIn")} <span>✦</span> {t("common.woman")} <span>✦</span> {t("common.man")} <span>✦</span> {t("common.accessories")} <span>✦</span> {t("common.privateList")} <span>✦</span></div>
       </section>
 
       <section className="manifesto" id="manifesto">
-        <div className="manifesto-label"><span>01</span><p>Manifesto</p></div>
+        <div className="manifesto-label"><span>01</span><p>{t("common.manifesto")}</p></div>
         <div className="manifesto-copy">
-          <p className="micro-label">Style, made personal.</p>
-          <h2>Il tuo stile.<br />La tua firma.</h2>
-          <p className="manifesto-lead">Scegli ciò che ti rappresenta.</p>
+          <p className="micro-label">{t("home.manifestoEyebrow")}</p>
+          <h2>{t("home.manifestoTitle")}<br />{t("home.manifestoEmphasis")}</h2>
+          <p className="manifesto-lead">{t("home.manifestoLead")}</p>
           <div className="manifesto-detail">
-            <p>Forme decise, materie da sentire e dettagli che fanno la differenza. Ogni edit LCS accompagna il tuo modo di essere.</p>
+            <p>{t("home.manifestoCopy")}</p>
             <span>LCS / EDIT 01</span>
           </div>
         </div>
@@ -63,18 +65,18 @@ export default function Home() {
 
       <section className="category-story" aria-labelledby="category-title">
         <div className="category-heading">
-          <div><span>02</span><p>Shop by attitude</p></div>
-          <h2 id="category-title">Tre prospettive.<br /><em>Un solo istinto.</em></h2>
+          <div><span>02</span><p>{t("home.attitude")}</p></div>
+          <h2 id="category-title">{t("home.perspectives")}<br /><em>{t("home.oneInstinct")}</em></h2>
         </div>
         <div className="category-mosaic">
           {categories.map((category) => (
-            <a href={`/shop?categoria=${category.title.toLowerCase()}`} className="category-tile" key={category.title}>
+            <a href={`/shop?categoria=${category.slug}`} className="category-tile" key={category.slug}>
               <Image src={category.image} alt={category.note} fill sizes="(max-width: 760px) 100vw, 34vw" style={{ objectPosition: category.position }} />
               <span className="category-index">{category.index}</span>
               <div className="category-tile-copy">
                 <p>{category.note}</p>
                 <h3>{category.title}</h3>
-                <span>Entra ↗</span>
+                <span>{t("home.enter")} ↗</span>
               </div>
             </a>
           ))}
@@ -83,14 +85,14 @@ export default function Home() {
 
       <section className="feature-story">
         <div className="feature-image">
-          <Image src="/images/product-2.jpg" alt="Look grafici della selezione LCS" fill sizes="(max-width: 800px) 100vw, 50vw" />
-          <span>New forms / 01</span>
+          <Image src="/images/product-2.jpg" alt={t("home.graphicLooksAlt")} fill sizes="(max-width: 800px) 100vw, 50vw" />
+          <span>{t("home.newForms")}</span>
         </div>
         <div className="feature-copy">
           <p className="micro-label">The edit / Vol. 01</p>
-          <h2>Colore.<br />Contrasto.<br /><em>Carattere.</em></h2>
-          <p>La nuova eleganza non chiede permesso. Abbina linee nette, dettagli inattesi e una sicurezza che viene da dentro.</p>
-          <a className="text-link" href="/shop">Scopri l’edit <span>↗</span></a>
+          <h2>{t("home.featureColor")}<br />{t("home.featureContrast")}<br /><em>{t("home.featureCharacter")}</em></h2>
+          <p>{t("home.featureCopy")}</p>
+          <a className="text-link" href="/shop">{t("home.discoverEdit")} <span>↗</span></a>
           <div className="feature-signature">LCS</div>
         </div>
       </section>
@@ -98,42 +100,42 @@ export default function Home() {
       <section className="objects-section">
         <div className="objects-intro">
           <span>03</span>
-          <div><p className="micro-label">Objects of desire</p><h2>Il dettaglio<br />fa il look.</h2></div>
-          <p>Oggetti scelti per diventare firma, non complemento.</p>
+          <div><p className="micro-label">{t("home.objectsOfDesire")}</p><h2>{t("home.detailTitle")}<br />{t("home.detailEmphasis")}</h2></div>
+          <p>{t("home.detailCopy")}</p>
         </div>
         <div className="objects-grid">
           <a href="/shop?categoria=accessori" className="object-card object-card-large">
-            <Image src="/images/product-3.jpg" alt="Borsa con stampa floreale" fill sizes="(max-width: 760px) 100vw, 54vw" />
-            <span>01 / Borse</span>
+            <Image src="/images/product-3.jpg" alt={t("home.floralBagAlt")} fill sizes="(max-width: 760px) 100vw, 54vw" />
+            <span>01 / {t("home.bags")}</span>
           </a>
           <a href="/shop?categoria=accessori" className="object-card">
-            <Image src="/images/category-accessories.jpg" alt="Borsa rossa strutturata" fill sizes="(max-width: 760px) 100vw, 35vw" />
+            <Image src="/images/category-accessories.jpg" alt={t("home.redBagAlt")} fill sizes="(max-width: 760px) 100vw, 35vw" />
             <span>02 / Icons</span>
           </a>
         </div>
       </section>
 
       <section className="trust-story" id="provenienza" aria-labelledby="trust-title">
-        <div className="trust-index"><span>04</span><p>Provenienza e autenticità</p></div>
+        <div className="trust-index"><span>04</span><p>{t("home.originAuthenticity")}</p></div>
         <div className="trust-content">
-          <p className="micro-label">Trust is a method.</p>
-          <h2 id="trust-title">Prima il controllo.<br /><em>Poi la scelta.</em></h2>
-          <p className="trust-lead">Non promettiamo ciò che non possiamo documentare.</p>
+          <p className="micro-label">{t("home.trustMethod")}</p>
+          <h2 id="trust-title">{t("home.trustTitle")}<br /><em>{t("home.trustEmphasis")}</em></h2>
+          <p className="trust-lead">{t("home.trustLead")}</p>
           <div className="trust-principles">
             <article>
               <span>01</span>
-              <h3>Informazioni verificabili</h3>
-              <p>Con il catalogo definitivo, ogni articolo sarà accompagnato dalle informazioni disponibili su provenienza commerciale, condizioni e composizione.</p>
+              <h3>{t("home.trustOneTitle")}</h3>
+              <p>{t("home.trustOneCopy")}</p>
             </article>
             <article>
               <span>02</span>
-              <h3>Controllo prima della pubblicazione</h3>
-              <p>Descrizioni, immagini, varianti e disponibilità saranno controllate prima di entrare nella selezione online.</p>
+              <h3>{t("home.trustTwoTitle")}</h3>
+              <p>{t("home.trustTwoCopy")}</p>
             </article>
             <article>
               <span>03</span>
-              <h3>Un referente reale</h3>
-              <p>Ogni dubbio può essere chiarito prima dell'acquisto: condizioni, composizione e disponibilità devono essere comprensibili.</p>
+              <h3>{t("home.trustThreeTitle")}</h3>
+              <p>{t("home.trustThreeCopy")}</p>
             </article>
           </div>
         </div>
@@ -142,10 +144,10 @@ export default function Home() {
       <section className="newsletter-section" id="private-list">
         <div>
           <p className="micro-label">Private list</p>
-          <h2>Prima degli altri.<br /><em>Solo quando conta.</em></h2>
+          <h2>{t("home.newsletterTitle")}<br /><em>{t("home.newsletterEmphasis")}</em></h2>
         </div>
         <div className="newsletter-copy">
-          <p>Nuovi arrivi, storie e selezioni private. Niente rumore, solo capi scelti bene.</p>
+          <p>{t("home.newsletterCopy")}</p>
           <NewsletterForm />
         </div>
       </section>

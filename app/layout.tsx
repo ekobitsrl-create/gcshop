@@ -1,4 +1,7 @@
 import type { Metadata, Viewport } from "next";
+import { LocaleProvider } from "@/components/locale-provider";
+import { localeTags, translate } from "@/lib/i18n";
+import { getRequestLocale } from "@/lib/i18n-server";
 import "./globals.css";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://lcsedit.vercel.app";
@@ -8,7 +11,8 @@ export const viewport: Viewport = {
   colorScheme: "light",
 };
 
-export function generateMetadata(): Metadata {
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getRequestLocale();
   const base = new URL(siteUrl);
   const socialImage = new URL("/og-lcs.png", base).toString();
 
@@ -18,8 +22,7 @@ export function generateMetadata(): Metadata {
       default: "LCS | The Selected Edit",
       template: "%s | LCS",
     },
-    description:
-      "Moda contemporanea e accessori selezionati per materia, proporzione e carattere. The Selected Edit by LCS.",
+    description: translate(locale, "meta.description"),
     applicationName: "LCS",
     creator: "LCS",
     publisher: "LCS",
@@ -27,10 +30,10 @@ export function generateMetadata(): Metadata {
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
-      locale: "it_IT",
+      locale: localeTags[locale].replace("-", "_"),
       siteName: "LCS",
       title: "LCS | The Selected Edit",
-      description: "Fashion, edited by instinct. Moda e accessori selezionati da LCS.",
+      description: translate(locale, "meta.socialDescription"),
       url: base,
       images: [
         {
@@ -44,16 +47,17 @@ export function generateMetadata(): Metadata {
     twitter: {
       card: "summary_large_image",
       title: "LCS | The Selected Edit",
-      description: "Fashion, edited by instinct. Moda e accessori selezionati da LCS.",
+      description: translate(locale, "meta.socialDescription"),
       images: [socialImage],
     },
   };
 }
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const locale = await getRequestLocale();
   return (
-    <html lang="it">
-      <body>{children}</body>
+    <html lang={locale}>
+      <body><LocaleProvider locale={locale}>{children}</LocaleProvider></body>
     </html>
   );
 }
