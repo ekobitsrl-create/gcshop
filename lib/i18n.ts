@@ -346,6 +346,22 @@ Object.assign(de, {
   "common.menu": "Menü", "common.manifesto": "Manifest", "home.formMatterCharacter": "Form / Material / Charakter", "home.sideNote": "LCS · Ausgewählte Mode und Objekte · Edit 01", "home.objectsOfDesire": "Objekte der Begierde", "home.trustMethod": "Vertrauen ist eine Methode.", "home.newForms": "Neue Formen / 01", "footer.nextEdit": "Der nächste Edit / Privater Zugang", "checkout.secureKicker": "Sicherer Checkout / 01", "paypal.verify": "PayPal / Prüfung",
 });
 
+Object.assign(it, {
+  "shop.clothing": "Abbigliamento", "shop.shoes": "Scarpe", "shop.bags": "Borse", "shop.categories": "Categorie", "shop.browseCategories": "Esplora per categoria", "shop.categoryIntro": "Vai direttamente alle forme e alle tipologie che stai cercando.", "shop.clearCategory": "Rimuovi filtro",
+});
+Object.assign(en, {
+  "shop.clothing": "Clothing", "shop.shoes": "Shoes", "shop.bags": "Bags", "shop.categories": "Categories", "shop.browseCategories": "Browse by category", "shop.categoryIntro": "Go straight to the shapes and product types you are looking for.", "shop.clearCategory": "Clear filter",
+});
+Object.assign(fr, {
+  "shop.clothing": "Vêtements", "shop.shoes": "Chaussures", "shop.bags": "Sacs", "shop.categories": "Catégories", "shop.browseCategories": "Explorer par catégorie", "shop.categoryIntro": "Accédez directement aux formes et aux types de pièces que vous recherchez.", "shop.clearCategory": "Effacer le filtre",
+});
+Object.assign(es, {
+  "shop.clothing": "Ropa", "shop.shoes": "Calzado", "shop.bags": "Bolsos", "shop.categories": "Categorías", "shop.browseCategories": "Explorar por categoría", "shop.categoryIntro": "Ve directamente a las formas y tipos de prenda que estás buscando.", "shop.clearCategory": "Quitar filtro",
+});
+Object.assign(de, {
+  "shop.clothing": "Bekleidung", "shop.shoes": "Schuhe", "shop.bags": "Taschen", "shop.categories": "Kategorien", "shop.browseCategories": "Nach Kategorie entdecken", "shop.categoryIntro": "Gehen Sie direkt zu den Formen und Produkttypen, die Sie suchen.", "shop.clearCategory": "Filter entfernen",
+});
+
 export const dictionaries: Record<Locale, Messages> = { it, en, fr, es, de };
 
 export function isLocale(value: unknown): value is Locale {

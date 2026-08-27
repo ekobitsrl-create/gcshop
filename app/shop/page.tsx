@@ -1,10 +1,11 @@
-import { and, asc, eq, ilike, or, sql, type SQL } from "drizzle-orm";
+import { and, asc, desc, eq, ilike, isNotNull, or, sql, type SQL } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { getDb } from "@/db";
 import { categories, productImages, products, productTranslations, productVariants } from "@/db/schema";
 import { CommerceHeader } from "@/components/commerce-header";
+import { BrandLogo } from "@/components/brand-logo";
 import { StoreFooter } from "@/components/store-footer";
 import { placeholderProducts } from "@/lib/placeholder-products";
 import { formatMoney } from "@/lib/store-utils";
@@ -34,16 +35,24 @@ type ProductRow = {
   stockQuantity: number;
 };
 
-function shopUrl({ category, query, page = 1 }: { category: string; query: string; page?: number }) {
+type CategoryRow = {
+  slug: string;
+  name: string;
+  groupName: string;
+  count: number;
+};
+
+function shopUrl({ category, type = "", query, page = 1 }: { category: string; type?: string; query: string; page?: number }) {
   const params = new URLSearchParams();
   if (category !== "tutto") params.set("categoria", category);
+  if (type) params.set("tipologia", type);
   if (query) params.set("q", query);
   if (page > 1) params.set("pagina", String(page));
   const suffix = params.toString();
   return suffix ? `/shop?${suffix}` : "/shop";
 }
 
-export default async function ShopPage({ searchParams }: { searchParams: Promise<{ categoria?: string; q?: string; pagina?: string }> }) {
+export default async function ShopPage({ searchParams }: { searchParams: Promise<{ categoria?: string; tipologia?: string; q?: string; pagina?: string }> }) {
   const locale = await getRequestLocale();
   const localeTag = localeTags[locale];
   const t = (key: string, values?: Record<string, string | number>) => translate(locale, key, values);
@@ -51,32 +60,40 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
     { label: t("shop.all"), value: "tutto" },
     { label: t("common.woman"), value: "donna" },
     { label: t("common.man"), value: "uomo" },
+    { label: t("shop.clothing"), value: "abbigliamento" },
+    { label: t("shop.shoes"), value: "scarpe" },
+    { label: t("shop.bags"), value: "borse" },
     { label: t("common.accessories"), value: "accessori" },
   ];
   const params = await searchParams;
   const activeFilter = filters.some((filter) => filter.value === params.categoria) ? params.categoria! : "tutto";
+  const activeType = params.tipologia?.trim().slice(0, 120) ?? "";
   const query = params.q?.trim() ?? "";
   const page = Math.max(1, Number.parseInt(params.pagina ?? "1", 10) || 1);
   const db = getDb();
   const parentCategories = alias(categories, "parent_categories");
-  const conditions: SQL[] = [eq(products.status, "active")];
-  if (activeFilter === "donna" || activeFilter === "uomo") conditions.push(eq(products.gender, activeFilter));
-  if (activeFilter === "accessori") {
-    conditions.push(or(
-      eq(parentCategories.name, "Accessori"), eq(parentCategories.name, "Borse"), eq(parentCategories.name, "Scarpe"),
-      eq(categories.name, "Accessori"), eq(categories.name, "Borse"), eq(categories.name, "Scarpe"),
-    )!);
+  let scopeCondition: SQL | undefined;
+  if (activeFilter === "donna" || activeFilter === "uomo") scopeCondition = eq(products.gender, activeFilter);
+  if (["abbigliamento", "scarpe", "borse", "accessori"].includes(activeFilter)) {
+    const rootSlug = `romanelli-${activeFilter}`;
+    scopeCondition = or(eq(categories.slug, rootSlug), eq(parentCategories.slug, rootSlug));
   }
+  const conditions: SQL[] = [eq(products.status, "active")];
+  if (scopeCondition) conditions.push(scopeCondition);
+  if (activeType) conditions.push(eq(categories.slug, activeType));
   if (query) {
     const term = `%${query}%`;
     conditions.push(or(ilike(products.name, term), ilike(productTranslations.name, term), ilike(products.brand, term), ilike(products.sku, term))!);
   }
   const where = and(...conditions);
   let rows: ProductRow[] = [];
+  let categoryRows: CategoryRow[] = [];
   let total = 0;
 
   try {
-    const [databaseRows, countRows] = await Promise.all([
+    const categoryConditions: SQL[] = [eq(products.status, "active"), isNotNull(categories.parentId)];
+    if (scopeCondition) categoryConditions.push(scopeCondition);
+    const [databaseRows, countRows, databaseCategories] = await Promise.all([
       db.select({
         id: products.id,
         name: sql<string>`coalesce(${productTranslations.name}, ${products.name})`,
@@ -102,8 +119,21 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
         .leftJoin(parentCategories, eq(categories.parentId, parentCategories.id))
         .leftJoin(productTranslations, and(eq(productTranslations.productId, products.id), eq(productTranslations.locale, locale)))
         .where(where),
+      db.select({
+        slug: categories.slug,
+        name: sql<string>`coalesce(min(${productTranslations.subcategory}), ${categories.name})`,
+        groupName: sql<string>`coalesce(min(${productTranslations.category}), ${parentCategories.name}, ${categories.name})`,
+        count: sql<number>`count(distinct ${products.id})`,
+      }).from(products)
+        .innerJoin(categories, eq(products.categoryId, categories.id))
+        .leftJoin(parentCategories, eq(categories.parentId, parentCategories.id))
+        .leftJoin(productTranslations, and(eq(productTranslations.productId, products.id), eq(productTranslations.locale, locale)))
+        .where(and(...categoryConditions))
+        .groupBy(categories.id, categories.slug, categories.name, parentCategories.name, parentCategories.sortOrder)
+        .orderBy(asc(parentCategories.sortOrder), desc(sql`count(distinct ${products.id})`), asc(categories.name)),
     ]);
     rows = databaseRows;
+    categoryRows = databaseCategories.map((category) => ({ ...category, count: Number(category.count) }));
     total = Number(countRows[0]?.value ?? 0);
   } catch {
     // L’anteprima locale usa i segnaposto solo quando il database non è raggiungibile.
@@ -127,6 +157,18 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
   }
 
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const categoryGroups = Array.from(categoryRows.reduce((groups, category) => {
+    const current = groups.get(category.groupName) ?? [];
+    current.push(category);
+    groups.set(category.groupName, current);
+    return groups;
+  }, new Map<string, CategoryRow[]>())).map(([name, items]) => ({
+    name,
+    items: items
+      .sort((left, right) => right.count - left.count || left.name.localeCompare(right.name, localeTag))
+      .slice(0, activeFilter === "tutto" || activeFilter === "donna" || activeFilter === "uomo" ? 7 : 18),
+  }));
+  const activeTypeLabel = categoryRows.find((category) => category.slug === activeType)?.name;
   return (
     <div className="commerce-shell">
       <CommerceHeader />
@@ -142,10 +184,33 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
           <span>{total.toLocaleString(localeTag)} {t("shop.items")}</span>
         </nav>
 
+        {categoryGroups.length ? (
+          <section className="shop-taxonomy" aria-labelledby="shop-taxonomy-title">
+            <header className="shop-taxonomy-heading">
+              <div><p className="commerce-kicker">{t("shop.categories")}</p><h2 id="shop-taxonomy-title">{t("shop.browseCategories")}</h2></div>
+              {activeType ? <a href={shopUrl({ category: activeFilter, query })}>{t("shop.clearCategory")} <span>×</span></a> : <p>{t("shop.categoryIntro")}</p>}
+            </header>
+            <div className="shop-taxonomy-groups">
+              {categoryGroups.map((group) => (
+                <section className="shop-taxonomy-group" key={group.name}>
+                  <h3>{group.name}</h3>
+                  <div>
+                    {group.items.map((category) => (
+                      <a className={activeType === category.slug ? "is-active" : ""} href={shopUrl({ category: activeFilter, type: category.slug, query })} key={category.slug}>
+                        <span>{category.name}</span><small>{category.count.toLocaleString(localeTag)}</small>
+                      </a>
+                    ))}
+                  </div>
+                </section>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
         <section className="commerce-main shop-content">
           <div className="shop-tools">
-            <div><p className="commerce-kicker">{filters.find((filter) => filter.value === activeFilter)?.label}</p><h2>{query ? t("shop.results", { query }) : t("shop.complete")}</h2></div>
-            <form action="/shop" method="get"><input name="q" defaultValue={query} placeholder={t("shop.searchPlaceholder")} /><input type="hidden" name="categoria" value={activeFilter === "tutto" ? "" : activeFilter} /><button>{t("common.search")}</button></form>
+            <div><p className="commerce-kicker">{activeTypeLabel ?? filters.find((filter) => filter.value === activeFilter)?.label}</p><h2>{query ? t("shop.results", { query }) : activeTypeLabel ?? t("shop.complete")}</h2></div>
+            <form action="/shop" method="get"><input name="q" defaultValue={query} placeholder={t("shop.searchPlaceholder")} /><input type="hidden" name="categoria" value={activeFilter === "tutto" ? "" : activeFilter} /><input type="hidden" name="tipologia" value={activeType} /><button>{t("common.search")}</button></form>
           </div>
           {rows.length ? (
             <div className="commerce-product-grid">
@@ -158,7 +223,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
                       {product.stockQuantity <= 2 && product.stockQuantity > 0 ? <em>{t("shop.lastPieces")}</em> : null}
                     </div>
                     <div className="product-card-copy">
-                      <p>{product.brand ?? product.categoryName ?? "LCS selection"}</p>
+                      <BrandLogo brand={product.brand} />
                       <h2>{product.name}</h2>
                       <div className="product-card-price"><strong>{formatMoney(product.price, product.currency, localeTag)}</strong>{product.compareAtPrice && product.compareAtPrice > product.price ? <del>{formatMoney(product.compareAtPrice, product.currency, localeTag)}</del> : null}</div>
                     </div>
@@ -167,7 +232,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
               ))}
             </div>
           ) : <div className="commerce-empty"><div className="empty-number">00</div><div><p className="commerce-kicker">{t("shop.noResults")}</p><h2>{t("shop.emptyTitle")}<br /><em>{t("shop.emptyEmphasis")}</em></h2><p>{t("shop.emptyCopy")}</p><a href="/shop">{t("shop.back")} <span>↗</span></a></div></div>}
-          {pages > 1 ? <nav className="shop-pagination" aria-label={t("shop.pages")}><a aria-disabled={page <= 1} href={shopUrl({ category: activeFilter, query, page: Math.max(1, page - 1) })}>← {t("shop.previous")}</a><span>{page} / {pages}</span><a aria-disabled={page >= pages} href={shopUrl({ category: activeFilter, query, page: Math.min(pages, page + 1) })}>{t("shop.next")} →</a></nav> : null}
+          {pages > 1 ? <nav className="shop-pagination" aria-label={t("shop.pages")}><a aria-disabled={page <= 1} href={shopUrl({ category: activeFilter, type: activeType, query, page: Math.max(1, page - 1) })}>← {t("shop.previous")}</a><span>{page} / {pages}</span><a aria-disabled={page >= pages} href={shopUrl({ category: activeFilter, type: activeType, query, page: Math.min(pages, page + 1) })}>{t("shop.next")} →</a></nav> : null}
         </section>
       </main>
       <StoreFooter />

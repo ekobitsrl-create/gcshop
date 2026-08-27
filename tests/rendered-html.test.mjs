@@ -216,3 +216,24 @@ test("publishes a variant-level Google Merchant RSS feed", async () => {
   assert.match(product, /defaultVariantId=\{requestedVariant\?\.id\}/);
   assert.match(purchase, /window\.history\.replaceState/);
 });
+
+test("makes catalogue prices prominent and organizes products by real categories", async () => {
+  const [shop, product, brandLogo, commerceCss, i18n] = await Promise.all([
+    readFile(new URL("../app/shop/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/prodotto/[slug]/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/brand-logo.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/commerce.css", import.meta.url), "utf8"),
+    readFile(new URL("../lib/i18n.ts", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(shop, /tipologia/);
+  assert.match(shop, /count\(distinct/);
+  assert.match(shop, /shop-taxonomy-groups/);
+  assert.match(shop, /<BrandLogo brand=\{product\.brand\}/);
+  assert.match(product, /<BrandLogo brand=\{product\.brand\}/);
+  assert.match(brandLogo, /logos\.hunter\.io/);
+  for (const domain of ["dolcegabbana.com", "burberry.com", "loropiana.com", "pinko.com", "patriziapepe.com"]) assert.match(brandLogo, new RegExp(domain.replaceAll(".", "\\.")));
+  assert.match(commerceCss, /product-card-price strong[^}]+font-size:19px/);
+  assert.match(commerceCss, /shop-taxonomy-group/);
+  for (const label of ["Esplora per categoria", "Browse by category", "Explorer par catégorie", "Explorar por categoría", "Nach Kategorie entdecken"]) assert.match(i18n, new RegExp(label));
+});

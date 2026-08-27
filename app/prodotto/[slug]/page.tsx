@@ -6,6 +6,7 @@ import { cache } from "react";
 import { getDb } from "@/db";
 import { categories, productImages, products, productTranslations, productVariants } from "@/db/schema";
 import { CommerceHeader } from "@/components/commerce-header";
+import { BrandLogo } from "@/components/brand-logo";
 import { ProductPurchase } from "@/components/product-purchase";
 import { StoreFooter } from "@/components/store-footer";
 import { findPlaceholderProduct } from "@/lib/placeholder-products";
@@ -214,7 +215,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
           </div>
           <section className="product-info-panel">
             <div className="product-breadcrumb"><a href="/shop">{t("common.shop")}</a><span>/</span><span>{product.gender === "donna" ? t("common.woman") : product.gender === "uomo" ? t("common.man") : attributes.gender || product.gender}</span><span>/</span><span>{categoryName}</span></div>
-            <p className="product-brand">{product.brand ?? "LCS Selection"}</p>
+            <BrandLogo brand={product.brand} className="product-brand" />
             <h1>{product.name}</h1>
             <p className="product-reference">{categoryName} · {t("product.ref")} {product.sku}</p>
             <p className="product-copy">{product.description || product.shortDescription || t("product.copyFallback")}</p>
