@@ -60,12 +60,17 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   }
 
   if (body.resetPrice) {
-    const row = await db.select({ supplierRetailPriceCents: products.supplierRetailPriceCents }).from(products).where(eq(products.id, id)).limit(1);
+    const row = await db.select({
+      supplierCostCents: products.supplierCostCents,
+      supplierRetailPriceCents: products.supplierRetailPriceCents,
+    }).from(products).where(eq(products.id, id)).limit(1);
     if (!row.length) return Response.json({ error: "Prodotto non trovato." }, { status: 404 });
-    const fallback = row[0].supplierRetailPriceCents ?? 0;
+    const fallback = row[0].supplierCostCents !== null
+      ? row[0].supplierCostCents * 2
+      : (row[0].supplierRetailPriceCents ?? 0);
     await Promise.all([
       db.update(products).set({ basePriceCents: fallback, compareAtPriceCents: null, priceLocked: false, updatedAt: sql`CURRENT_TIMESTAMP` }).where(eq(products.id, id)),
-      db.update(productVariants).set({ priceCents: sql`coalesce(${productVariants.supplierRetailPriceCents}, ${fallback})`, compareAtPriceCents: null, updatedAt: sql`CURRENT_TIMESTAMP` }).where(eq(productVariants.productId, id)),
+      db.update(productVariants).set({ priceCents: sql`coalesce(${productVariants.supplierCostCents} * 2, ${fallback})`, compareAtPriceCents: null, updatedAt: sql`CURRENT_TIMESTAMP` }).where(eq(productVariants.productId, id)),
     ]);
     await recordAdminAction(auth.user, "reset_price", "product", id, { priceCents: fallback });
     return Response.json({ ok: true });

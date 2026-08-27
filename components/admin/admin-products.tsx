@@ -237,8 +237,8 @@ export function AdminProducts() {
               <thead><tr><th>Prodotto</th><th>Prezzo pubblico</th><th>Costo fornitore</th><th>Disponibilità</th><th>Stato</th><th /></tr></thead>
               <tbody>{products.map((product) => {
                 const priceValue = priceDrafts[product.id] ?? (product.basePriceCents / 100).toFixed(2);
-                const margin = product.supplierCostCents && product.basePriceCents
-                  ? Math.round(((product.basePriceCents - product.supplierCostCents) / product.basePriceCents) * 100)
+                const markup = product.supplierCostCents && product.basePriceCents
+                  ? Math.round(((product.basePriceCents - product.supplierCostCents) / product.supplierCostCents) * 100)
                   : null;
                 return (
                   <tr key={product.id}>
@@ -246,8 +246,8 @@ export function AdminProducts() {
                       <span className="admin-product-thumb">{product.imageUrl ? <Image src={product.imageUrl} alt="" fill unoptimized sizes="56px" /> : <b>LC</b>}</span>
                       <span><small>{product.brand ?? "LCS"} · {product.catalogSource}</small><strong>{product.name}</strong><em>{product.sku} · {product.variantCount} varianti</em></span>
                     </button></td>
-                    <td><div className="admin-inline-price"><span>€</span><input aria-label={`Prezzo ${product.name}`} inputMode="decimal" value={priceValue} onChange={(event) => setPriceDrafts({ ...priceDrafts, [product.id]: event.target.value })} /><button disabled={saving} onClick={() => void mutateProduct(product.id, { price: priceValue })}>Salva</button></div>{product.priceLocked ? <button className="admin-sync-link" onClick={() => void mutateProduct(product.id, { resetPrice: true })}>Ripristina feed</button> : <small className="admin-synced-label">Sincronizzato</small>}</td>
-                    <td><strong>{euro(product.supplierCostCents)}</strong>{margin !== null ? <small>Margine lordo {margin}%</small> : null}</td>
+                    <td><div className="admin-inline-price"><span>€</span><input aria-label={`Prezzo ${product.name}`} inputMode="decimal" value={priceValue} onChange={(event) => setPriceDrafts({ ...priceDrafts, [product.id]: event.target.value })} /><button disabled={saving} onClick={() => void mutateProduct(product.id, { price: priceValue })}>Salva</button></div>{product.priceLocked ? <button className="admin-sync-link" onClick={() => void mutateProduct(product.id, { resetPrice: true })}>Ripristina regola +100%</button> : <small className="admin-synced-label">Costo × 2</small>}</td>
+                    <td><strong>{euro(product.supplierCostCents)}</strong>{markup !== null ? <small>Ricarico {markup}%</small> : null}</td>
                     <td><strong>{product.stockQuantity}</strong><small>{product.variantCount} varianti · feed {product.supplierStockQuantity}</small>{product.lowStockCount ? <span className="admin-stock-alert">{product.lowStockCount} basse</span> : null}</td>
                     <td><select className={`admin-status-select is-${product.status}`} value={product.status} onChange={(event) => void mutateProduct(product.id, { status: event.target.value })}><option value="active">Online</option><option value="draft">Bozza</option><option value="archived">Archiviato</option></select></td>
                     <td><div className="admin-row-actions"><a href={`/prodotto/${product.slug}`} target="_blank" rel="noreferrer">Vedi ↗</a><button onClick={() => void openDetail(product.id)}>Gestisci</button><button className="danger" onClick={() => void archive(product)}>Archivia</button></div></td>

@@ -129,3 +129,19 @@ test("adds a restrained trust signal and catalog-driven SEO", async () => {
   assert.match(sitemap, /https:\/\/lcsedit\.vercel\.app/);
   assert.match(robots, /https:\/\/lcsedit\.vercel\.app/);
 });
+
+test("derives Romanelli selling prices from supplier cost plus 100 percent", async () => {
+  const [importer, adminApi, adminUi] = await Promise.all([
+    readFile(new URL("../scripts/import-romanelli.mjs", import.meta.url), "utf8"),
+    readFile(new URL("../app/api/admin/products/[id]/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../components/admin/admin-products.tsx", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(importer, /SELLING_PRICE_MULTIPLIER = 2/);
+  assert.match(importer, /supplier_cost_plus_100_percent/);
+  assert.match(importer, /costPriceCents \* SELLING_PRICE_MULTIPLIER/);
+  assert.match(importer, /variantCost \* SELLING_PRICE_MULTIPLIER/);
+  assert.match(adminApi, /supplierCostCents \* 2/);
+  assert.match(adminUi, /Costo × 2/);
+  assert.match(adminUi, /Ricarico/);
+});

@@ -6,6 +6,7 @@ import postgres from "postgres";
 const SOURCE = "romanelli";
 const MEDIA_ORIGIN = "https://www.romanellib2b.com";
 const CHUNK_SIZE = 150;
+const SELLING_PRICE_MULTIPLIER = 2;
 
 function stableUuid(namespace, value) {
   const bytes = createHash("sha256").update(`${namespace}:${value}`).digest().subarray(0, 16);
@@ -110,6 +111,9 @@ function normalizeFeed(feed) {
     const description = cleanText(item.productLocalizations?.description?.it_IT?.value);
     const retailPriceCents = cents(item.streetPrice);
     const costPriceCents = cents(item.bestTaxable ?? item.taxable);
+    const sellingPriceCents = costPriceCents > 0
+      ? costPriceCents * SELLING_PRICE_MULTIPLIER
+      : retailPriceCents;
     const status = item.online && Number(item.availability) > 0 ? "active" : "draft";
     const productSlug = `${slugify(`${brand}-${name}-${item.code}`) || "prodotto"}-${supplierProductId}`.slice(0, 125);
     const metadata = {
@@ -134,6 +138,10 @@ function normalizeFeed(feed) {
         availability: item.availability ?? 0,
         intangible: Boolean(item.intangible),
       },
+      pricing: {
+        rule: "supplier_cost_plus_100_percent",
+        multiplier: SELLING_PRICE_MULTIPLIER,
+      },
     };
 
     products.push({
@@ -147,7 +155,7 @@ function normalizeFeed(feed) {
       brand,
       gender,
       status,
-      base_price_cents: retailPriceCents,
+      base_price_cents: sellingPriceCents,
       compare_at_price_cents: null,
       supplier_retail_price_cents: retailPriceCents,
       supplier_cost_cents: costPriceCents,
@@ -199,6 +207,9 @@ function normalizeFeed(feed) {
       const stock = Math.max(0, Number.parseInt(String(variant.availability ?? 0), 10) || 0);
       const variantRetail = cents(variant.streetPrice ?? item.streetPrice);
       const variantCost = cents(variant.bestTaxable ?? variant.taxable ?? item.bestTaxable ?? item.taxable);
+      const variantSellingPrice = variantCost > 0
+        ? variantCost * SELLING_PRICE_MULTIPLIER
+        : variantRetail;
       variants.push({
         id: stableUuid("romanelli-variant", supplierVariantId),
         product_id: productId,
@@ -206,7 +217,7 @@ function normalizeFeed(feed) {
         title,
         color,
         size,
-        price_cents: variantRetail,
+        price_cents: variantSellingPrice,
         compare_at_price_cents: null,
         supplier_retail_price_cents: variantRetail,
         supplier_cost_cents: variantCost,
@@ -329,7 +340,16 @@ async function importFeed(filePath) {
             title = excluded.title,
             color = excluded.color,
             size = excluded.size,
-            price_cents = excluded.price_cents,
+            price_cents = case
+              when (select product.price_locked from luxury.products as product where product.id = excluded.product_id)
+                then luxury.product_variants.price_cents
+              else excluded.price_cents
+            end,
+            compare_at_price_cents = case
+              when (select product.price_locked from luxury.products as product where product.id = excluded.product_id)
+                then luxury.product_variants.compare_at_price_cents
+              else excluded.compare_at_price_cents
+            end,
             supplier_retail_price_cents = excluded.supplier_retail_price_cents,
             supplier_cost_cents = excluded.supplier_cost_cents,
             stock_quantity = case when luxury.product_variants.stock_locked then luxury.product_variants.stock_quantity else excluded.stock_quantity end,
