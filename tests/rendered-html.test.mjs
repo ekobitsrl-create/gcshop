@@ -145,3 +145,20 @@ test("derives Romanelli selling prices from supplier cost plus 100 percent", asy
   assert.match(adminUi, /Costo × 2/);
   assert.match(adminUi, /Ricarico/);
 });
+
+test("uses carrello consistently for the shopping flow", async () => {
+  const files = await Promise.all([
+    readFile(new URL("../components/store-header.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/product-purchase.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/checkout/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/api/checkout/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/api/checkout/coupon/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../lib/coupons.ts", import.meta.url), "utf8"),
+  ]);
+  const commerceCopy = files.join("\n");
+
+  assert.match(commerceCopy, /Aggiungi al carrello/);
+  assert.match(commerceCopy, /Carrello, \$\{cartCount\} articoli/);
+  assert.match(commerceCopy, /Il carrello è vuoto/);
+  assert.doesNotMatch(commerceCopy, /Aggiungi alla borsa|articoli nella borsa|La borsa è vuota|totale della borsa|Borsa, \$\{cartCount\}/i);
+});

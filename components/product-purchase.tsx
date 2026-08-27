@@ -46,14 +46,14 @@ export function ProductPurchase({
       });
       const payload = await response.json();
       if (!response.ok) {
-        setMessage(payload.error ?? "Non è stato possibile aggiornare la borsa.");
+        setMessage(payload.error ?? "Non è stato possibile aggiornare il carrello.");
         return;
       }
       if (redirectToCheckout) {
         window.location.assign("/checkout");
         return;
       }
-      setMessage(`${payload.itemCount} articoli nella borsa.`);
+      setMessage(`${payload.itemCount} articoli nel carrello.`);
     } catch {
       setMessage("Connessione non disponibile. Riprova tra poco.");
     } finally {
@@ -97,7 +97,7 @@ export function ProductPurchase({
           {busyAction === "checkout" ? "Verso il checkout…" : selected?.stockQuantity ? "Acquista ora" : "Non disponibile"}<span>↗</span>
         </button>
         <button className="purchase-add-bag" type="button" disabled={busyAction !== null || !selected?.stockQuantity} onClick={() => void add()}>
-          {busyAction === "bag" ? "Aggiunta…" : selected?.stockQuantity ? "Aggiungi alla borsa" : "Non disponibile"}<span>+</span>
+          {busyAction === "bag" ? "Aggiunta…" : selected?.stockQuantity ? "Aggiungi al carrello" : "Non disponibile"}<span>+</span>
         </button>
       </div>
       {message ? <p role="status">{message} <a href="/checkout">Vai al checkout ↗</a></p> : null}

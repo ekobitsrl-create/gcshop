@@ -36,7 +36,7 @@ export async function evaluateCoupon(input: {
   if (coupon.endsAt && new Date(coupon.endsAt).getTime() < now) return { ok: false, error: "Questo codice è scaduto." };
   if (coupon.usageLimit !== null && coupon.usageCount >= coupon.usageLimit) return { ok: false, error: "Questo codice ha raggiunto il limite di utilizzi." };
   if (coupon.minimumOrderCents !== null && input.subtotalCents < coupon.minimumOrderCents) {
-    return { ok: false, error: "Il totale della borsa non raggiunge il minimo richiesto." };
+    return { ok: false, error: "Il totale del carrello non raggiunge il minimo richiesto." };
   }
 
   if (coupon.firstOrderOnly) {

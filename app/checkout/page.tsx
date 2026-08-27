@@ -26,7 +26,7 @@ export default async function CheckoutPage() {
           {!cart.items.length ? (
             <div className="commerce-empty checkout-empty">
               <div className="empty-number">00</div>
-              <div><p className="commerce-kicker">La borsa è vuota</p><h2>Il primo pezzo<br /><em>è quello giusto.</em></h2><a href="/shop">Scopri la selezione <span>↗</span></a></div>
+              <div><p className="commerce-kicker">Il carrello è vuoto</p><h2>Il primo pezzo<br /><em>è quello giusto.</em></h2><a href="/shop">Scopri la selezione <span>↗</span></a></div>
             </div>
           ) : (
             <CheckoutForm methods={methods} cart={cart} />
