@@ -162,3 +162,25 @@ test("uses carrello consistently for the shopping flow", async () => {
   assert.match(commerceCopy, /Il carrello è vuoto/);
   assert.doesNotMatch(commerceCopy, /Aggiungi alla borsa|articoli nella borsa|La borsa è vuota|totale della borsa|Borsa, \$\{cartCount\}/i);
 });
+
+test("publishes a variant-level Google Merchant RSS feed", async () => {
+  const [route, feed, product, purchase] = await Promise.all([
+    readFile(new URL("../app/feeds/google-merchant.xml/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../lib/google-merchant.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/prodotto/[slug]/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/product-purchase.tsx", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(route, /application\/xml; charset=utf-8/);
+  assert.match(route, /s-maxage=1800/);
+  assert.match(route, /new ReadableStream/);
+  assert.match(feed, /xmlns:g=\"http:\/\/base\.google\.com\/ns\/1\.0\"/);
+  for (const attribute of ["g:id", "g:image_link", "g:availability", "g:condition", "g:price", "g:brand", "g:item_group_id", "g:color", "g:size", "g:gender", "g:age_group", "g:product_type", "g:google_product_category"]) {
+    assert.match(feed, new RegExp(attribute));
+  }
+  assert.match(feed, /g:variant_option/);
+  assert.match(feed, /normalizeGtin/);
+  assert.match(product, /searchParams/);
+  assert.match(product, /defaultVariantId=\{requestedVariant\?\.id\}/);
+  assert.match(purchase, /window\.history\.replaceState/);
+});

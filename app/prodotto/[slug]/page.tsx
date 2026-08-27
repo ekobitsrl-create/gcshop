@@ -111,7 +111,10 @@ const getProductPageData = cache(async (slug: string): Promise<ProductPageData |
   return { product, categoryName, images, variants, attributes: attributesFrom(product.metadataJson), isPlaceholder };
 });
 
-type ProductPageProps = { params: Promise<{ slug: string }> };
+type ProductPageProps = {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ variant?: string | string[] }>;
+};
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params;
@@ -132,11 +135,14 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   };
 }
 
-export default async function ProductPage({ params }: ProductPageProps) {
+export default async function ProductPage({ params, searchParams }: ProductPageProps) {
   const { slug } = await params;
+  const query = await searchParams;
   const data = await getProductPageData(slug);
   if (!data) notFound();
   const { product, categoryName, images, variants, attributes, isPlaceholder } = data;
+  const requestedVariantId = Array.isArray(query.variant) ? query.variant[0] : query.variant;
+  const requestedVariant = variants.find((variant) => variant.id === requestedVariantId);
   const totalStock = variants.reduce((sum, variant) => sum + variant.stockQuantity, 0);
   const detailRows = [
     ["Composizione", attributes.composition],
@@ -150,16 +156,16 @@ export default async function ProductPage({ params }: ProductPageProps) {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
-    sku: product.sku,
+    sku: requestedVariant ? `${product.sku}-${requestedVariant.title}` : product.sku,
     brand: product.brand ? { "@type": "Brand", name: product.brand } : undefined,
     description: product.shortDescription || product.description,
     image: images.map((image) => image.url),
     offers: {
       "@type": "Offer",
       priceCurrency: product.currency,
-      price: (product.basePriceCents / 100).toFixed(2),
-      availability: totalStock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-      url: `https://lcsedit.vercel.app/prodotto/${product.slug}`,
+      price: ((requestedVariant?.priceCents ?? product.basePriceCents) / 100).toFixed(2),
+      availability: (requestedVariant ? requestedVariant.stockQuantity : totalStock) > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      url: `https://lcsedit.vercel.app/prodotto/${product.slug}${requestedVariant ? `?variant=${requestedVariant.id}` : ""}`,
     },
   };
 
@@ -185,7 +191,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <p className="product-copy">{product.description || product.shortDescription || "Una selezione contemporanea, scelta per la qualità dei materiali e il carattere delle forme."}</p>
             {isPlaceholder ? (
               <div className="placeholder-purchase"><span>Anteprima catalogo</span><p>Questo articolo dimostrativo sarà acquistabile appena il catalogo definitivo verrà pubblicato.</p><strong>{formatMoney(product.basePriceCents, product.currency)}</strong></div>
-            ) : <ProductPurchase variants={variants} basePriceCents={product.basePriceCents} compareAtPriceCents={product.compareAtPriceCents} currency={product.currency} />}
+            ) : <ProductPurchase variants={variants} defaultVariantId={requestedVariant?.id} basePriceCents={product.basePriceCents} compareAtPriceCents={product.compareAtPriceCents} currency={product.currency} />}
             <div className="product-details-list" id="product-details">
               <details open><summary>Dettagli prodotto <span>+</span></summary><dl>{detailRows.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl></details>
               <details><summary>Spedizioni e resi <span>+</span></summary><p>Spedizione gratuita. Puoi richiedere il reso entro 14 giorni dalla consegna, nel rispetto delle condizioni di vendita.</p></details>

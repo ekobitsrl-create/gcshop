@@ -15,17 +15,20 @@ type Variant = {
 
 export function ProductPurchase({
   variants,
+  defaultVariantId,
   basePriceCents,
   compareAtPriceCents,
   currency,
 }: {
   variants: Variant[];
+  defaultVariantId?: string;
   basePriceCents: number;
   compareAtPriceCents: number | null;
   currency: string;
 }) {
   const firstAvailable = variants.find((variant) => variant.stockQuantity > 0) ?? variants[0];
-  const [variantId, setVariantId] = useState(firstAvailable?.id ?? "");
+  const initialVariant = variants.find((variant) => variant.id === defaultVariantId) ?? firstAvailable;
+  const [variantId, setVariantId] = useState(initialVariant?.id ?? "");
   const [quantity, setQuantity] = useState(1);
   const [message, setMessage] = useState("");
   const [busyAction, setBusyAction] = useState<"bag" | "checkout" | null>(null);
@@ -34,6 +37,14 @@ export function ProductPurchase({
   const comparePrice = selected?.compareAtPriceCents ?? compareAtPriceCents;
   const discount = comparePrice && comparePrice > price ? Math.round((1 - price / comparePrice) * 100) : null;
   const sizes = useMemo(() => variants.map((variant) => ({ ...variant, label: variant.size || variant.title })), [variants]);
+
+  function selectVariant(id: string) {
+    setVariantId(id);
+    setQuantity(1);
+    const url = new URL(window.location.href);
+    url.searchParams.set("variant", id);
+    window.history.replaceState(null, "", url);
+  }
 
   async function add(redirectToCheckout = false) {
     setBusyAction(redirectToCheckout ? "checkout" : "bag");
@@ -76,7 +87,7 @@ export function ProductPurchase({
             className={variant.id === variantId ? "is-selected" : ""}
             disabled={!variant.stockQuantity}
             key={variant.id}
-            onClick={() => { setVariantId(variant.id); setQuantity(1); }}
+            onClick={() => selectVariant(variant.id)}
             role="radio"
             type="button"
           >
