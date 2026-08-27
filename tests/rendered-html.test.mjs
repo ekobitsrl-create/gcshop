@@ -25,10 +25,11 @@ test("keeps the LCS home editorial and moves company details to the legal page",
 
 test("ships the ecommerce schema, placeholder catalog and all critical flows", async () => {
   const migrationFiles = (await readdir(new URL("../drizzle/", import.meta.url))).filter((file) => file.endsWith(".sql"));
-  assert.equal(migrationFiles.length, 2);
-  const [schemaMigration, catalogMigration, schema, checkout, coupon, paypal, admin, header, checkoutUi] = await Promise.all([
+  assert.equal(migrationFiles.length, 4);
+  const [schemaMigration, catalogMigration, feedMigration, schema, checkout, coupon, paypal, admin, header, checkoutUi] = await Promise.all([
     readFile(new URL(`../drizzle/${migrationFiles[0]}`, import.meta.url), "utf8"),
     readFile(new URL(`../drizzle/${migrationFiles[1]}`, import.meta.url), "utf8"),
+    readFile(new URL(`../drizzle/${migrationFiles[2]}`, import.meta.url), "utf8"),
     readFile(new URL("../db/schema.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/api/checkout/route.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/api/checkout/coupon/route.ts", import.meta.url), "utf8"),
@@ -43,6 +44,9 @@ test("ships the ecommerce schema, placeholder catalog and all critical flows", a
   assert.match(catalogMigration, /first_order_only/);
   assert.match(catalogMigration, /WELCOME10/);
   assert.equal((catalogMigration.match(/"placeholder":true/g) ?? []).length, 6);
+  assert.match(feedMigration, /catalog_imports/);
+  assert.match(feedMigration, /shipments/);
+  assert.match(feedMigration, /supplier_stock_quantity/);
   assert.match(schema, /pgSchema\("luxury"\)/);
   assert.match(schema, /firstOrderOnly/);
   assert.match(checkout, /bank_transfer/);

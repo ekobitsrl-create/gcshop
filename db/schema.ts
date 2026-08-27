@@ -51,9 +51,21 @@ export const products = luxury.table(
     status: text("status").notNull().default("draft"),
     basePriceCents: integer("base_price_cents").notNull().default(0),
     compareAtPriceCents: integer("compare_at_price_cents"),
+    supplierRetailPriceCents: integer("supplier_retail_price_cents"),
+    supplierCostCents: integer("supplier_cost_cents"),
     currency: text("currency").notNull().default("EUR"),
     taxRateBps: integer("tax_rate_bps").notNull().default(2200),
     isFeatured: boolean("is_featured").notNull().default(false),
+    priceLocked: boolean("price_locked").notNull().default(false),
+    statusLocked: boolean("status_locked").notNull().default(false),
+    catalogSource: text("catalog_source").notNull().default("manual"),
+    supplierProductId: text("supplier_product_id"),
+    supplierIsOnline: boolean("supplier_is_online"),
+    originCountry: text("origin_country"),
+    hsCode: text("hs_code"),
+    weightGrams: integer("weight_grams"),
+    feedUpdatedAt: timestamp("feed_updated_at", { withTimezone: true, mode: "string" }),
+    lastSyncedAt: timestamp("last_synced_at", { withTimezone: true, mode: "string" }),
     metadataJson: text("metadata_json"),
     ...timestamps,
   },
@@ -63,6 +75,9 @@ export const products = luxury.table(
     index("idx_products_category_id").on(table.categoryId),
     index("idx_products_status_created").on(table.status, table.createdAt),
     index("idx_products_featured_status").on(table.isFeatured, table.status),
+    uniqueIndex("idx_products_source_supplier_id").on(table.catalogSource, table.supplierProductId),
+    index("idx_products_brand_status").on(table.brand, table.status),
+    index("idx_products_gender_status").on(table.gender, table.status),
   ],
 );
 
@@ -74,6 +89,7 @@ export const productImages = luxury.table(
     url: text("url").notNull(),
     altText: text("alt_text"),
     sortOrder: integer("sort_order").notNull().default(0),
+    sourceImageId: text("source_image_id"),
     ...timestamps,
   },
   (table) => [index("idx_product_images_product_sort").on(table.productId, table.sortOrder)],
@@ -90,9 +106,19 @@ export const productVariants = luxury.table(
     size: text("size"),
     priceCents: integer("price_cents"),
     compareAtPriceCents: integer("compare_at_price_cents"),
+    supplierRetailPriceCents: integer("supplier_retail_price_cents"),
+    supplierCostCents: integer("supplier_cost_cents"),
     stockQuantity: integer("stock_quantity").notNull().default(0),
+    supplierStockQuantity: integer("supplier_stock_quantity").notNull().default(0),
+    stockLocked: boolean("stock_locked").notNull().default(false),
     lowStockThreshold: integer("low_stock_threshold").notNull().default(2),
     weightGrams: integer("weight_grams"),
+    supplierVariantId: text("supplier_variant_id"),
+    supplierCode: text("supplier_code"),
+    barcode: text("barcode"),
+    backorder: boolean("backorder").notNull().default(false),
+    feedUpdatedAt: timestamp("feed_updated_at", { withTimezone: true, mode: "string" }),
+    lastSyncedAt: timestamp("last_synced_at", { withTimezone: true, mode: "string" }),
     isActive: boolean("is_active").notNull().default(true),
     ...timestamps,
   },
@@ -100,7 +126,28 @@ export const productVariants = luxury.table(
     uniqueIndex("idx_product_variants_sku").on(table.sku),
     index("idx_product_variants_product_active").on(table.productId, table.isActive),
     index("idx_product_variants_low_stock").on(table.stockQuantity, table.lowStockThreshold),
+    uniqueIndex("idx_product_variants_supplier_id").on(table.supplierVariantId),
+    index("idx_product_variants_barcode").on(table.barcode),
   ],
+);
+
+export const catalogImports = luxury.table(
+  "catalog_imports",
+  {
+    id: uuid("id").primaryKey(),
+    source: text("source").notNull(),
+    filename: text("filename").notNull(),
+    sourceLastUpdate: timestamp("source_last_update", { withTimezone: true, mode: "string" }),
+    status: text("status").notNull().default("running"),
+    productsReceived: integer("products_received").notNull().default(0),
+    productsImported: integer("products_imported").notNull().default(0),
+    variantsImported: integer("variants_imported").notNull().default(0),
+    imagesImported: integer("images_imported").notNull().default(0),
+    errorMessage: text("error_message"),
+    startedAt: timestamp("started_at", { withTimezone: true, mode: "string" }).notNull().defaultNow(),
+    completedAt: timestamp("completed_at", { withTimezone: true, mode: "string" }),
+  },
+  (table) => [index("idx_catalog_imports_source_started").on(table.source, table.startedAt)],
 );
 
 export const inventoryMovements = luxury.table(
@@ -187,6 +234,7 @@ export const cartItems = luxury.table(
   (table) => [
     uniqueIndex("idx_cart_items_cart_variant").on(table.cartId, table.variantId),
     index("idx_cart_items_product_id").on(table.productId),
+    index("idx_cart_items_variant_id").on(table.variantId),
   ],
 );
 
@@ -222,6 +270,29 @@ export const orders = luxury.table(
     index("idx_orders_customer_created").on(table.customerId, table.createdAt),
     index("idx_orders_status_created").on(table.status, table.createdAt),
     index("idx_orders_payment_status").on(table.paymentStatus),
+    index("idx_orders_cart_id").on(table.cartId),
+  ],
+);
+
+export const shipments = luxury.table(
+  "shipments",
+  {
+    id: uuid("id").primaryKey(),
+    orderId: uuid("order_id").notNull().references(() => orders.id, { onDelete: "cascade" }),
+    status: text("status").notNull().default("preparing"),
+    carrier: text("carrier"),
+    service: text("service"),
+    trackingNumber: text("tracking_number"),
+    trackingUrl: text("tracking_url"),
+    labelUrl: text("label_url"),
+    note: text("note"),
+    shippedAt: timestamp("shipped_at", { withTimezone: true, mode: "string" }),
+    deliveredAt: timestamp("delivered_at", { withTimezone: true, mode: "string" }),
+    ...timestamps,
+  },
+  (table) => [
+    index("idx_shipments_order_status").on(table.orderId, table.status),
+    index("idx_shipments_tracking_number").on(table.trackingNumber),
   ],
 );
 
@@ -241,7 +312,11 @@ export const orderItems = luxury.table(
     taxRateBps: integer("tax_rate_bps").notNull().default(2200),
     createdAt: timestamp("created_at", { withTimezone: true, mode: "string" }).notNull().defaultNow(),
   },
-  (table) => [index("idx_order_items_order_id").on(table.orderId)],
+  (table) => [
+    index("idx_order_items_order_id").on(table.orderId),
+    index("idx_order_items_product_id").on(table.productId),
+    index("idx_order_items_variant_id").on(table.variantId),
+  ],
 );
 
 export const paymentMethods = luxury.table(
@@ -322,6 +397,7 @@ export const couponUses = luxury.table(
     uniqueIndex("idx_coupon_uses_coupon_order").on(table.couponId, table.orderId),
     uniqueIndex("idx_coupon_uses_coupon_customer").on(table.couponId, table.customerId),
     index("idx_coupon_uses_customer").on(table.customerId),
+    index("idx_coupon_uses_order_id").on(table.orderId),
   ],
 );
 
@@ -354,3 +430,4 @@ export type Product = typeof products.$inferSelect;
 export type ProductVariant = typeof productVariants.$inferSelect;
 export type Order = typeof orders.$inferSelect;
 export type PaymentMethod = typeof paymentMethods.$inferSelect;
+export type Shipment = typeof shipments.$inferSelect;
