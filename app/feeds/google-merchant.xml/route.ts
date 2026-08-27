@@ -6,6 +6,7 @@ import { buildGoogleMerchantFeed, type GoogleMerchantFeedRow } from "@/lib/googl
 export const dynamic = "force-dynamic";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://lcsedit.vercel.app";
+const canonicalFeedUrl = "https://lcsedit.vercel.app/feeds/google-merchant.xml";
 
 function streamXml(xml: string) {
   const encoder = new TextEncoder();
@@ -29,6 +30,10 @@ function streamXml(xml: string) {
 }
 
 export async function GET() {
+  if (!process.env.POSTGRES_URL && !process.env.DATABASE_URL) {
+    return Response.redirect(canonicalFeedUrl, 307);
+  }
+
   const db = getDb();
   const rows = await db
     .select({

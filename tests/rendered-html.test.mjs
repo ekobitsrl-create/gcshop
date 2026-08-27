@@ -174,6 +174,7 @@ test("publishes a variant-level Google Merchant RSS feed", async () => {
   assert.match(route, /application\/xml; charset=utf-8/);
   assert.match(route, /s-maxage=1800/);
   assert.match(route, /new ReadableStream/);
+  assert.match(route, /Response\.redirect\(canonicalFeedUrl, 307\)/);
   assert.match(feed, /xmlns:g=\"http:\/\/base\.google\.com\/ns\/1\.0\"/);
   for (const attribute of ["g:id", "g:image_link", "g:availability", "g:condition", "g:price", "g:brand", "g:item_group_id", "g:color", "g:size", "g:gender", "g:age_group", "g:product_type", "g:google_product_category"]) {
     assert.match(feed, new RegExp(attribute));
