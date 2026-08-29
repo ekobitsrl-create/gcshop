@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useState } from "react";
 
 const BRAND_DOMAINS: Record<string, string> = {
   "alpha studio": "alphastudio.it",
@@ -91,12 +94,23 @@ export function brandLogoUrl(brand: string | null | undefined) {
 export function BrandLogo({ brand, className = "" }: { brand: string | null | undefined; className?: string }) {
   const logoUrl = brandLogoUrl(brand);
   const label = brand ?? "LCS Selection";
+  const [failedLogoUrl, setFailedLogoUrl] = useState<string | null>(null);
 
-  if (!logoUrl) return <span className={`brand-wordmark ${className}`.trim()}>{label}</span>;
+  if (!logoUrl || failedLogoUrl === logoUrl) {
+    return <span className={`brand-wordmark ${className}`.trim()}>{label}</span>;
+  }
 
   return (
-    <span className={`brand-logo ${className}`.trim()} title={label}>
-      <Image className="brand-logo-image" src={logoUrl} alt={`${label} logo`} width={168} height={42} unoptimized />
+    <span className={`brand-logo ${className}`.trim()} aria-label={label} title={label}>
+      <Image
+        className="brand-logo-image"
+        src={logoUrl}
+        alt=""
+        width={200}
+        height={50}
+        unoptimized
+        onError={() => setFailedLogoUrl(logoUrl)}
+      />
     </span>
   );
 }

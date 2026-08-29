@@ -236,10 +236,14 @@ test("makes catalogue prices prominent and organizes products by real categories
   assert.match(shop, /<BrandLogo brand=\{brand\.name\}/);
   assert.match(product, /<BrandLogo brand=\{product\.brand\}/);
   assert.match(brandLogo, /logos\.hunter\.io/);
+  assert.match(brandLogo, /"use client"/);
+  assert.match(brandLogo, /onError=\{\(\) => setFailedLogoUrl\(logoUrl\)\}/);
+  assert.match(brandLogo, /alt=""/);
   for (const domain of ["dolcegabbana.com", "burberry.com", "loropiana.com", "pinko.com", "patriziapepe.com"]) assert.match(brandLogo, new RegExp(domain.replaceAll(".", "\\.")));
   assert.match(commerceCss, /product-card-price strong[^}]+font-size:19px/);
   assert.match(commerceCss, /shop-taxonomy-group/);
   assert.match(commerceCss, /shop-brand-grid/);
+  assert.match(commerceCss, /brand-filter-logo\.brand-logo \.brand-logo-image[^}]+height:\s*34px/);
   for (const label of ["Esplora per categoria", "Browse by category", "Explorer par catégorie", "Explorar por categoría", "Nach Kategorie entdecken"]) assert.match(i18n, new RegExp(label));
   for (const label of ["Esplora per marchio", "Browse by brand", "Explorer par marque", "Explorar por marca", "Nach Marke entdecken"]) assert.match(i18n, new RegExp(label));
 });
