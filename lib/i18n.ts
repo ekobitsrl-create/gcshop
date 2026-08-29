@@ -347,19 +347,19 @@ Object.assign(de, {
 });
 
 Object.assign(it, {
-  "shop.clothing": "Abbigliamento", "shop.shoes": "Scarpe", "shop.bags": "Borse", "shop.categories": "Categorie", "shop.browseCategories": "Esplora per categoria", "shop.categoryIntro": "Vai direttamente alle forme e alle tipologie che stai cercando.", "shop.clearCategory": "Rimuovi filtro",
+  "shop.clothing": "Abbigliamento", "shop.shoes": "Scarpe", "shop.bags": "Borse", "shop.categories": "Categorie", "shop.browseCategories": "Esplora per categoria", "shop.categoryIntro": "Vai direttamente alle forme e alle tipologie che stai cercando.", "shop.clearCategory": "Rimuovi categoria", "shop.brands": "Marchi", "shop.browseBrands": "Esplora per marchio", "shop.brandsAvailable": "{count} marchi disponibili", "shop.clearBrand": "Rimuovi marchio",
 });
 Object.assign(en, {
-  "shop.clothing": "Clothing", "shop.shoes": "Shoes", "shop.bags": "Bags", "shop.categories": "Categories", "shop.browseCategories": "Browse by category", "shop.categoryIntro": "Go straight to the shapes and product types you are looking for.", "shop.clearCategory": "Clear filter",
+  "shop.clothing": "Clothing", "shop.shoes": "Shoes", "shop.bags": "Bags", "shop.categories": "Categories", "shop.browseCategories": "Browse by category", "shop.categoryIntro": "Go straight to the shapes and product types you are looking for.", "shop.clearCategory": "Clear category", "shop.brands": "Brands", "shop.browseBrands": "Browse by brand", "shop.brandsAvailable": "{count} brands available", "shop.clearBrand": "Clear brand",
 });
 Object.assign(fr, {
-  "shop.clothing": "Vêtements", "shop.shoes": "Chaussures", "shop.bags": "Sacs", "shop.categories": "Catégories", "shop.browseCategories": "Explorer par catégorie", "shop.categoryIntro": "Accédez directement aux formes et aux types de pièces que vous recherchez.", "shop.clearCategory": "Effacer le filtre",
+  "shop.clothing": "Vêtements", "shop.shoes": "Chaussures", "shop.bags": "Sacs", "shop.categories": "Catégories", "shop.browseCategories": "Explorer par catégorie", "shop.categoryIntro": "Accédez directement aux formes et aux types de pièces que vous recherchez.", "shop.clearCategory": "Effacer la catégorie", "shop.brands": "Marques", "shop.browseBrands": "Explorer par marque", "shop.brandsAvailable": "{count} marques disponibles", "shop.clearBrand": "Effacer la marque",
 });
 Object.assign(es, {
-  "shop.clothing": "Ropa", "shop.shoes": "Calzado", "shop.bags": "Bolsos", "shop.categories": "Categorías", "shop.browseCategories": "Explorar por categoría", "shop.categoryIntro": "Ve directamente a las formas y tipos de prenda que estás buscando.", "shop.clearCategory": "Quitar filtro",
+  "shop.clothing": "Ropa", "shop.shoes": "Calzado", "shop.bags": "Bolsos", "shop.categories": "Categorías", "shop.browseCategories": "Explorar por categoría", "shop.categoryIntro": "Ve directamente a las formas y tipos de prenda que estás buscando.", "shop.clearCategory": "Quitar categoría", "shop.brands": "Marcas", "shop.browseBrands": "Explorar por marca", "shop.brandsAvailable": "{count} marcas disponibles", "shop.clearBrand": "Quitar marca",
 });
 Object.assign(de, {
-  "shop.clothing": "Bekleidung", "shop.shoes": "Schuhe", "shop.bags": "Taschen", "shop.categories": "Kategorien", "shop.browseCategories": "Nach Kategorie entdecken", "shop.categoryIntro": "Gehen Sie direkt zu den Formen und Produkttypen, die Sie suchen.", "shop.clearCategory": "Filter entfernen",
+  "shop.clothing": "Bekleidung", "shop.shoes": "Schuhe", "shop.bags": "Taschen", "shop.categories": "Kategorien", "shop.browseCategories": "Nach Kategorie entdecken", "shop.categoryIntro": "Gehen Sie direkt zu den Formen und Produkttypen, die Sie suchen.", "shop.clearCategory": "Kategorie entfernen", "shop.brands": "Marken", "shop.browseBrands": "Nach Marke entdecken", "shop.brandsAvailable": "{count} Marken verfügbar", "shop.clearBrand": "Marke entfernen",
 });
 
 export const dictionaries: Record<Locale, Messages> = { it, en, fr, es, de };
