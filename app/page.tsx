@@ -11,6 +11,14 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
+const selectedBrands = [
+  { name: "Dior", logo: "/images/brands/dior.svg", width: 198, height: 55 },
+  { name: "Gucci", logo: "/images/brands/gucci.svg", width: 218, height: 35 },
+  { name: "Balenciaga", logo: "/images/brands/balenciaga.svg", width: 250, height: 26 },
+  { name: "Burberry", logo: "/images/brands/burberry.svg", width: 218, height: 42 },
+  { name: "Prada", logo: "/images/brands/prada.svg", width: 210, height: 32 },
+] as const;
+
 export default function Home() {
   return (
     <div id="top" className="simple-home">
@@ -46,6 +54,30 @@ export default function Home() {
           <p>Ricerca su richiesta</p>
           <p>Assistenza personale</p>
           <p>Informazioni verificate</p>
+        </section>
+
+        <section className="brand-showcase" aria-labelledby="brand-showcase-title">
+          <div className="brand-showcase-heading">
+            <p className="simple-eyebrow">Maison selezionate</p>
+            <h2 id="brand-showcase-title">I brand della nostra ricerca.</h2>
+            <p>Una selezione privata costruita intorno ai nomi più riconoscibili della moda contemporanea.</p>
+          </div>
+          <ul className="brand-logo-grid" aria-label="Brand disponibili su richiesta">
+            {selectedBrands.map((brand) => (
+              <li className="brand-logo-item" key={brand.name}>
+                <Image
+                  src={brand.logo}
+                  alt={brand.name}
+                  width={brand.width}
+                  height={brand.height}
+                />
+              </li>
+            ))}
+          </ul>
+          <div className="brand-showcase-foot">
+            <span>Disponibilità variabile</span>
+            <Link href="/contatti">Richiedi un articolo <span aria-hidden="true">↗</span></Link>
+          </div>
         </section>
 
         <section className="simple-note" id="concept">

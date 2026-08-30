@@ -607,6 +607,22 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .simple-benefits { min-height: 68px; display: grid; grid-template-columns: repeat(3, 1fr); align-items: center; border-bottom: 1px solid var(--line); background: var(--paper); }
 .simple-benefits p { margin: 0; padding: 0 24px; border-right: 1px solid var(--line); color: #5f5f5a; font-size: 11px; text-align: center; }
 .simple-benefits p:last-child { border-right: 0; }
+.brand-showcase { padding: clamp(82px, 9vw, 138px) clamp(18px, 5vw, 80px); background: var(--chalk); }
+.brand-showcase-heading { display: grid; grid-template-columns: minmax(260px, 1fr) minmax(280px, 520px); align-items: end; gap: 28px 50px; margin-bottom: 48px; }
+.brand-showcase-heading .simple-eyebrow { grid-column: 1 / -1; margin-bottom: -8px; }
+.brand-showcase-heading h2 { max-width: 690px; margin: 0; font-family: var(--serif); font-size: clamp(42px, 4.8vw, 74px); font-weight: 300; line-height: .95; letter-spacing: -.045em; }
+.brand-showcase-heading > p:last-child { max-width: 470px; margin: 0; color: #5f5f5a; font-size: 15px; line-height: 1.65; }
+.brand-logo-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1px; margin: 0; padding: 1px; background: var(--line); list-style: none; }
+.brand-logo-item { min-width: 0; min-height: 132px; display: grid; place-items: center; padding: 30px 20px; background: var(--paper); }
+.brand-logo-item img { width: auto; height: auto; max-width: 82%; max-height: 48px; object-fit: contain; }
+.brand-logo-item:nth-child(1) img { max-width: 116px; }
+.brand-logo-item:nth-child(2) img { max-width: 158px; }
+.brand-logo-item:nth-child(3) img { max-width: 178px; }
+.brand-logo-item:nth-child(4) img { max-width: 154px; }
+.brand-logo-item:nth-child(5) img { max-width: 150px; }
+.brand-showcase-foot { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-top: 18px; color: #6f6b63; font-size: 10px; }
+.brand-showcase-foot > span { text-transform: uppercase; letter-spacing: .12em; }
+.brand-showcase-foot a { display: inline-flex; align-items: center; gap: 20px; padding-bottom: 5px; border-bottom: 1px solid var(--ink); color: var(--ink); font-size: 11px; font-weight: 600; }
 .simple-section { padding: clamp(78px, 9vw, 135px) clamp(18px, 5vw, 80px); background-color: var(--chalk); }
 .simple-section-heading { display: flex; align-items: end; justify-content: space-between; gap: 30px; margin-bottom: 42px; }
 .simple-section-heading h2, .simple-note h2, .simple-newsletter h2 { max-width: 760px; margin: 0; font-family: var(--serif); font-size: clamp(40px, 4.5vw, 70px); font-weight: 300; line-height: .95; letter-spacing: -.045em; }
@@ -637,6 +653,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   .lusso-hero { min-height: auto; grid-template-columns: 1fr; }
   .lusso-hero-visual { min-height: min(78svh, 760px); }
   .lusso-hero-copy { min-height: 560px; }
+  .brand-showcase-heading { grid-template-columns: 1fr; }
+  .brand-showcase-heading .simple-eyebrow { grid-column: auto; }
+  .brand-logo-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .simple-hero { grid-template-columns: 1fr; }
   .simple-hero-copy { min-height: 540px; }
   .simple-hero-image { min-height: 72svh; }
@@ -650,6 +669,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   .lusso-hero-visual { min-height: 62svh; }
   .lusso-hero-copy { min-height: 510px; padding: 28px 20px 32px; }
   .lusso-hero-copy h1 { font-size: 60px; }
+  .brand-showcase { padding-right: 12px; padding-left: 12px; }
+  .brand-showcase-heading { padding: 0 8px; }
+  .brand-logo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .brand-logo-item { min-height: 112px; padding: 26px 14px; }
+  .brand-logo-item:last-child { grid-column: 1 / -1; }
+  .brand-showcase-foot { align-items: flex-start; padding: 0 8px; }
   .simple-hero-copy { padding: 70px 20px; }
   .simple-hero h1 { font-size: 58px; }
   .simple-benefits { grid-template-columns: 1fr; padding: 8px 0; }
