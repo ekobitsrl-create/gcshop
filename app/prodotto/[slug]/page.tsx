@@ -10,6 +10,8 @@ import { BrandLogo } from "@/components/brand-logo";
 import { ProductPurchase } from "@/components/product-purchase";
 import { StoreFooter } from "@/components/store-footer";
 import { findPlaceholderProduct } from "@/lib/placeholder-products";
+import { normalizeGtin } from "@/lib/google-merchant";
+import { SITE_URL } from "@/lib/site-url.mjs";
 import { formatMoney } from "@/lib/store-utils";
 import { localeTags, translate, translateCatalogFallback, type Locale } from "@/lib/i18n";
 import { getRequestLocale } from "@/lib/i18n-server";
@@ -34,7 +36,7 @@ type ProductView = {
   metadataJson: string | null;
 };
 type ImageView = { id: string; url: string; altText: string | null };
-type VariantView = { id: string; title: string; size: string | null; color: string | null; priceCents: number | null; compareAtPriceCents: number | null; stockQuantity: number };
+type VariantView = { id: string; sku: string; title: string; size: string | null; color: string | null; priceCents: number | null; compareAtPriceCents: number | null; stockQuantity: number; backorder: boolean; supplierCode: string | null; barcode: string | null };
 type Attributes = { brand?: string; category?: string; subcategory?: string; gender?: string; color?: string | null; composition?: string | null; season?: string | null; model?: string | null; promo?: string | null };
 type TranslationView = { name: string; shortDescription: string | null; description: string | null; color: string | null; composition: string | null; category: string | null; subcategory: string | null; season: string | null };
 type ProductPageData = { product: ProductView; categoryName: string; images: ImageView[]; variants: VariantView[]; attributes: Attributes; isPlaceholder: boolean };
@@ -81,12 +83,16 @@ const getProductPageData = cache(async (slug: string, locale: Locale): Promise<P
           .orderBy(asc(productImages.sortOrder)),
         db.select({
           id: productVariants.id,
+          sku: productVariants.sku,
           title: productVariants.title,
           size: productVariants.size,
           color: productVariants.color,
           priceCents: productVariants.priceCents,
           compareAtPriceCents: productVariants.compareAtPriceCents,
           stockQuantity: productVariants.stockQuantity,
+          backorder: productVariants.backorder,
+          supplierCode: productVariants.supplierCode,
+          barcode: productVariants.barcode,
         }).from(productVariants)
           .where(and(eq(productVariants.productId, product.id), eq(productVariants.isActive, true)))
           .orderBy(asc(productVariants.title)),
@@ -173,6 +179,12 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
   const requestedVariantId = Array.isArray(query.variant) ? query.variant[0] : query.variant;
   const requestedVariant = variants.find((variant) => variant.id === requestedVariantId);
   const totalStock = variants.reduce((sum, variant) => sum + variant.stockQuantity, 0);
+  const gtin = normalizeGtin(requestedVariant?.barcode);
+  const offerAvailability = (requestedVariant ? requestedVariant.stockQuantity : totalStock) > 0
+    ? "https://schema.org/InStock"
+    : (requestedVariant?.backorder || variants.some((variant) => variant.backorder))
+      ? "https://schema.org/BackOrder"
+      : "https://schema.org/OutOfStock";
   const detailRows = [
     [t("product.composition"), attributes.composition],
     [t("product.color"), attributes.color || variants.find((variant) => variant.color)?.color],
@@ -185,8 +197,13 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
     "@context": "https://schema.org",
     "@type": "Product",
     inLanguage: localeTag,
+    productID: requestedVariant?.id ?? product.id,
     name: product.name,
-    sku: requestedVariant ? `${product.sku}-${requestedVariant.title}` : product.sku,
+    sku: requestedVariant?.sku ?? product.sku,
+    mpn: requestedVariant?.supplierCode ?? undefined,
+    gtin: gtin ?? undefined,
+    color: requestedVariant?.color ?? attributes.color ?? undefined,
+    size: requestedVariant?.size ?? undefined,
     brand: product.brand ? { "@type": "Brand", name: product.brand } : undefined,
     description: product.shortDescription || product.description,
     image: images.map((image) => image.url),
@@ -194,8 +211,14 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
       "@type": "Offer",
       priceCurrency: product.currency,
       price: ((requestedVariant?.priceCents ?? product.basePriceCents) / 100).toFixed(2),
-      availability: (requestedVariant ? requestedVariant.stockQuantity : totalStock) > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-      url: `https://lcsedit.vercel.app/prodotto/${product.slug}${requestedVariant ? `?variant=${requestedVariant.id}` : ""}`,
+      availability: offerAvailability,
+      itemCondition: "https://schema.org/NewCondition",
+      url: `${SITE_URL}/prodotto/${product.slug}${requestedVariant ? `?variant=${requestedVariant.id}` : ""}`,
+      shippingDetails: {
+        "@type": "OfferShippingDetails",
+        shippingDestination: { "@type": "DefinedRegion", addressCountry: "IT" },
+        shippingRate: { "@type": "MonetaryAmount", value: "0.00", currency: "EUR" },
+      },
     },
   };
 

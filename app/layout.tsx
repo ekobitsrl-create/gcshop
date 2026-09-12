@@ -2,9 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { LocaleProvider } from "@/components/locale-provider";
 import { localeTags, translate } from "@/lib/i18n";
 import { getRequestLocale } from "@/lib/i18n-server";
+import { SITE_URL } from "@/lib/site-url.mjs";
 import "./globals.css";
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://lcsedit.vercel.app";
 
 export const viewport: Viewport = {
   themeColor: "#111210",
@@ -13,7 +12,7 @@ export const viewport: Viewport = {
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
-  const base = new URL(siteUrl);
+  const base = new URL(SITE_URL);
   const socialImage = new URL("/og-lcs.png", base).toString();
 
   return {

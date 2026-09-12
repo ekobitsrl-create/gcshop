@@ -3,8 +3,7 @@ import type { MetadataRoute } from "next";
 import { getDb } from "@/db";
 import { products } from "@/db/schema";
 import { placeholderProducts } from "@/lib/placeholder-products";
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://lcsedit.vercel.app";
+import { SITE_URL } from "@/lib/site-url.mjs";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let catalog: Array<{ slug: string; updatedAt?: string }> = [];
@@ -21,14 +20,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   if (!catalog.length) catalog = placeholderProducts.map(({ slug }) => ({ slug }));
 
   return [
-    { url: siteUrl, changeFrequency: "weekly", priority: 1 },
-    { url: `${siteUrl}/shop`, changeFrequency: "daily", priority: 0.9 },
-    { url: `${siteUrl}/shop?categoria=donna`, changeFrequency: "daily", priority: 0.8 },
-    { url: `${siteUrl}/shop?categoria=uomo`, changeFrequency: "daily", priority: 0.8 },
-    { url: `${siteUrl}/shop?categoria=accessori`, changeFrequency: "daily", priority: 0.8 },
-    { url: `${siteUrl}/informazioni-societarie`, changeFrequency: "yearly", priority: 0.2 },
+    { url: SITE_URL, changeFrequency: "weekly", priority: 1 },
+    { url: `${SITE_URL}/shop`, changeFrequency: "daily", priority: 0.9 },
+    { url: `${SITE_URL}/shop?categoria=donna`, changeFrequency: "daily", priority: 0.8 },
+    { url: `${SITE_URL}/shop?categoria=uomo`, changeFrequency: "daily", priority: 0.8 },
+    { url: `${SITE_URL}/shop?categoria=accessori`, changeFrequency: "daily", priority: 0.8 },
+    { url: `${SITE_URL}/informazioni-societarie`, changeFrequency: "yearly", priority: 0.2 },
     ...catalog.map((product) => ({
-      url: `${siteUrl}/prodotto/${product.slug}`,
+      url: `${SITE_URL}/prodotto/${product.slug}`,
       lastModified: product.updatedAt ? new Date(product.updatedAt) : undefined,
       changeFrequency: "weekly" as const,
       priority: 0.7,

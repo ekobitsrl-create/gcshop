@@ -1,12 +1,11 @@
-import { and, asc, eq, sql } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { categories, productImages, products, productVariants } from "@/db/schema";
-import { buildGoogleMerchantFeed, type GoogleMerchantFeedRow } from "@/lib/google-merchant";
+import { buildGoogleMerchantFeedResult, type GoogleMerchantFeedRow } from "@/lib/google-merchant";
+import { SITE_URL } from "@/lib/site-url.mjs";
 
 export const dynamic = "force-dynamic";
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://lcsedit.vercel.app";
-const canonicalFeedUrl = "https://lcsedit.vercel.app/feeds/google-merchant.xml";
+export const maxDuration = 60;
 
 function streamXml(xml: string) {
   const encoder = new TextEncoder();
@@ -30,68 +29,124 @@ function streamXml(xml: string) {
 }
 
 export async function GET() {
-  if (!process.env.POSTGRES_URL && !process.env.DATABASE_URL) {
-    return Response.redirect(canonicalFeedUrl, 307);
+  const startedAt = Date.now();
+
+  try {
+    const db = getDb();
+    const [productRows, variantRows, imageRows] = await Promise.all([
+      db
+        .select({
+          productId: products.id,
+          productName: products.name,
+          slug: products.slug,
+          productSku: products.sku,
+          description: products.description,
+          shortDescription: products.shortDescription,
+          brand: products.brand,
+          gender: products.gender,
+          currency: products.currency,
+          basePriceCents: products.basePriceCents,
+          productCompareAtPriceCents: products.compareAtPriceCents,
+          catalogSource: products.catalogSource,
+          originCountry: products.originCountry,
+          productWeightGrams: products.weightGrams,
+          metadataJson: products.metadataJson,
+          categoryName: categories.name,
+        })
+        .from(products)
+        .leftJoin(categories, eq(categories.id, products.categoryId))
+        .where(eq(products.status, "active")),
+      db
+        .select({
+          productId: productVariants.productId,
+          variantId: productVariants.id,
+          variantSku: productVariants.sku,
+          variantTitle: productVariants.title,
+          color: productVariants.color,
+          size: productVariants.size,
+          variantPriceCents: productVariants.priceCents,
+          variantCompareAtPriceCents: productVariants.compareAtPriceCents,
+          stockQuantity: productVariants.stockQuantity,
+          backorder: productVariants.backorder,
+          supplierCode: productVariants.supplierCode,
+          barcode: productVariants.barcode,
+          variantWeightGrams: productVariants.weightGrams,
+        })
+        .from(productVariants)
+        .innerJoin(products, eq(products.id, productVariants.productId))
+        .where(and(eq(products.status, "active"), eq(productVariants.isActive, true)))
+        .orderBy(asc(productVariants.productId), asc(productVariants.id)),
+      db
+        .select({ productId: productImages.productId, imageUrl: productImages.url })
+        .from(productImages)
+        .innerJoin(products, eq(products.id, productImages.productId))
+        .where(eq(products.status, "active"))
+        .orderBy(asc(productImages.productId), asc(productImages.sortOrder)),
+    ]);
+
+    const productsById = new Map(productRows.map((product) => [product.productId, product]));
+    const variantCounts = new Map<string, number>();
+    const imagesByProduct = new Map<string, string[]>();
+
+    for (const variant of variantRows) {
+      variantCounts.set(variant.productId, (variantCounts.get(variant.productId) ?? 0) + 1);
+    }
+    for (const image of imageRows) {
+      const urls = imagesByProduct.get(image.productId) ?? [];
+      if (urls.length < 6) urls.push(image.imageUrl);
+      imagesByProduct.set(image.productId, urls);
+    }
+
+    const feedRows = variantRows.flatMap((variant): GoogleMerchantFeedRow[] => {
+      const product = productsById.get(variant.productId);
+      if (!product) return [];
+      return [{
+        ...product,
+        ...variant,
+        variantCount: variantCounts.get(variant.productId) ?? 1,
+        imageUrls: imagesByProduct.get(variant.productId) ?? [],
+      }];
+    });
+
+    const feed = buildGoogleMerchantFeedResult(feedRows, SITE_URL);
+    const warningCount = Object.values(feed.warnings).reduce((sum, value) => sum + value, 0);
+
+    console.info("[google-merchant-feed] generated", {
+      durationMs: Date.now() - startedAt,
+      includedItems: feed.includedItems,
+      excludedItems: feed.excludedItems,
+      warnings: feed.warnings,
+    });
+
+    return new Response(streamXml(feed.xml), {
+      headers: {
+        "Content-Type": "application/xml; charset=utf-8",
+        "Content-Disposition": "inline; filename=\"google-merchant.xml\"",
+        "Content-Language": "it-IT",
+        "Cache-Control": "public, s-maxage=900, stale-while-revalidate=1800",
+        "X-Content-Type-Options": "nosniff",
+        "X-Merchant-Items": String(feed.includedItems),
+        "X-Merchant-Excluded": String(feed.excludedItems),
+        "X-Merchant-Warnings": String(warningCount),
+      },
+    });
+  } catch (error) {
+    const cause = error instanceof Error && error.cause instanceof Error ? error.cause : null;
+    console.error("[google-merchant-feed] generation failed", {
+      durationMs: Date.now() - startedAt,
+      name: error instanceof Error ? error.name : "UnknownError",
+      error: error instanceof Error ? error.message : String(error),
+      cause: cause ? { name: cause.name, message: cause.message } : undefined,
+    });
+
+    return new Response("Feed temporaneamente non disponibile.", {
+      status: 503,
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Cache-Control": "no-store",
+        "Retry-After": "300",
+        "X-Content-Type-Options": "nosniff",
+      },
+    });
   }
-
-  const db = getDb();
-  const rows = await db
-    .select({
-      productId: products.id,
-      productName: products.name,
-      slug: products.slug,
-      productSku: products.sku,
-      description: products.description,
-      shortDescription: products.shortDescription,
-      brand: products.brand,
-      gender: products.gender,
-      currency: products.currency,
-      basePriceCents: products.basePriceCents,
-      productCompareAtPriceCents: products.compareAtPriceCents,
-      catalogSource: products.catalogSource,
-      originCountry: products.originCountry,
-      productWeightGrams: products.weightGrams,
-      metadataJson: products.metadataJson,
-      categoryName: categories.name,
-      variantId: productVariants.id,
-      variantSku: productVariants.sku,
-      variantTitle: productVariants.title,
-      color: productVariants.color,
-      size: productVariants.size,
-      variantPriceCents: productVariants.priceCents,
-      variantCompareAtPriceCents: productVariants.compareAtPriceCents,
-      stockQuantity: productVariants.stockQuantity,
-      backorder: productVariants.backorder,
-      supplierCode: productVariants.supplierCode,
-      barcode: productVariants.barcode,
-      variantWeightGrams: productVariants.weightGrams,
-      variantCount: sql<number>`(
-        select count(*)
-        from ${productVariants} grouped_variant
-        where grouped_variant.product_id = ${products.id}
-          and grouped_variant.is_active = true
-      )`,
-      imageUrls: sql<string[]>`coalesce(array(
-        select ${productImages.url}
-        from ${productImages}
-        where ${productImages.productId} = ${products.id}
-        order by ${productImages.sortOrder} asc
-        limit 11
-      ), array[]::text[])`,
-    })
-    .from(products)
-    .innerJoin(productVariants, eq(productVariants.productId, products.id))
-    .leftJoin(categories, eq(categories.id, products.categoryId))
-    .where(and(eq(products.status, "active"), eq(productVariants.isActive, true)))
-    .orderBy(asc(products.id), asc(productVariants.id));
-
-  const xml = buildGoogleMerchantFeed(rows as GoogleMerchantFeedRow[], siteUrl);
-
-  return new Response(streamXml(xml), {
-    headers: {
-      "Content-Type": "application/xml; charset=utf-8",
-      "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=3600",
-      "X-Content-Type-Options": "nosniff",
-    },
-  });
 }

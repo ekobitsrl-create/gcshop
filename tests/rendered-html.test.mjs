@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { access, readFile, readdir } from "node:fs/promises";
 import test from "node:test";
+import { buildGoogleMerchantFeedResult, normalizeGtin } from "../lib/google-merchant.ts";
 
 const templateRoot = new URL("../", import.meta.url);
 
@@ -130,8 +131,8 @@ test("adds a restrained trust signal and catalog-driven SEO", async () => {
   assert.match(sitemap, /products\.status/);
   assert.match(sitemap, /informazioni-societarie/);
   assert.match(robots, /\/admin\//);
-  assert.match(sitemap, /https:\/\/lcsedit\.vercel\.app/);
-  assert.match(robots, /https:\/\/lcsedit\.vercel\.app/);
+  assert.match(sitemap, /SITE_URL/);
+  assert.match(robots, /SITE_URL/);
 });
 
 test("derives Romanelli selling prices from supplier cost plus 100 percent", async () => {
@@ -203,11 +204,12 @@ test("publishes a variant-level Google Merchant RSS feed", async () => {
   ]);
 
   assert.match(route, /application\/xml; charset=utf-8/);
-  assert.match(route, /s-maxage=1800/);
+  assert.match(route, /s-maxage=900/);
   assert.match(route, /new ReadableStream/);
-  assert.match(route, /Response\.redirect\(canonicalFeedUrl, 307\)/);
+  assert.match(route, /Promise\.all/);
+  assert.match(route, /status: 503/);
   assert.match(feed, /xmlns:g=\"http:\/\/base\.google\.com\/ns\/1\.0\"/);
-  for (const attribute of ["g:id", "g:image_link", "g:availability", "g:condition", "g:price", "g:brand", "g:item_group_id", "g:color", "g:size", "g:gender", "g:age_group", "g:product_type", "g:google_product_category"]) {
+  for (const attribute of ["g:id", "g:title", "g:description", "g:link", "g:image_link", "g:availability", "g:condition", "g:price", "g:shipping", "g:brand", "g:item_group_id", "g:color", "g:size", "g:gender", "g:age_group", "g:product_type", "g:google_product_category"]) {
     assert.match(feed, new RegExp(attribute));
   }
   assert.match(feed, /g:variant_option/);
@@ -215,6 +217,58 @@ test("publishes a variant-level Google Merchant RSS feed", async () => {
   assert.match(product, /searchParams/);
   assert.match(product, /defaultVariantId=\{requestedVariant\?\.id\}/);
   assert.match(purchase, /window\.history\.replaceState/);
+});
+
+test("builds a Merchant-compliant feed without inventing missing attributes", () => {
+  const baseRow = {
+    productId: "product-1",
+    productName: "Shopping bag in pelle & canvas",
+    slug: "shopping-bag-pelle",
+    productSku: "SHOP-1",
+    description: "Borsa realizzata in pelle e canvas.",
+    shortDescription: null,
+    brand: "Maison Test",
+    gender: "Donna",
+    currency: "EUR",
+    basePriceCents: 25000,
+    productCompareAtPriceCents: null,
+    catalogSource: "romanelli",
+    originCountry: "Italia",
+    productWeightGrams: 650,
+    metadataJson: JSON.stringify({ attributes: { category: "Borse", subcategory: "Shopping bag", composition: "Pelle & canvas", season: "Continuativi" } }),
+    categoryName: "Shopping bag",
+    variantSku: "SHOP-1#1",
+    variantTitle: "Nero · UNI",
+    variantPriceCents: 25000,
+    variantCompareAtPriceCents: null,
+    stockQuantity: 2,
+    backorder: false,
+    supplierCode: "SHOP-1-NERO",
+    variantWeightGrams: 650,
+    variantCount: 2,
+    imageUrls: ["https://images.example.com/shop-1.jpg"],
+  };
+  const result = buildGoogleMerchantFeedResult([
+    { ...baseRow, variantId: "variant-1", color: "Nero", size: "UNI", barcode: "3615881331265" },
+    { ...baseRow, variantId: "variant-2", color: null, size: null, barcode: "123" },
+    { ...baseRow, variantId: "variant-3", color: "Nero", size: "UNI", barcode: null, imageUrls: [] },
+  ], "https://www.luxconceptstore.com");
+
+  assert.equal(result.includedItems, 2);
+  assert.equal(result.excludedItems, 1);
+  assert.equal(result.exclusions.missing_image, 1);
+  assert.equal(result.warnings.invalidGtin, 1);
+  assert.equal(result.warnings.missingColor, 1);
+  assert.equal(result.warnings.missingSize, 1);
+  assert.equal((result.xml.match(/<item>/g) ?? []).length, 2);
+  assert.match(result.xml, /<g:gtin>3615881331265<\/g:gtin>/);
+  assert.doesNotMatch(result.xml, /<g:gtin>123<\/g:gtin>/);
+  assert.match(result.xml, /<g:google_product_category>5608<\/g:google_product_category>/);
+  assert.match(result.xml, /<g:country>IT<\/g:country><g:service>Standard<\/g:service><g:price>0\.00 EUR<\/g:price>/);
+  assert.match(result.xml, /https:\/\/www\.luxconceptstore\.com\/prodotto\/shopping-bag-pelle\?variant=variant-1/);
+  assert.match(result.xml, /Pelle &amp; canvas/);
+  assert.doesNotMatch(result.xml, /lcsedit\.vercel\.app|<g:(?:color|size)><\/g:/);
+  assert.equal(normalizeGtin("2000000000008"), null, "restricted GS1 ranges must not be submitted");
 });
 
 test("makes catalogue prices prominent and organizes products by real categories", async () => {
