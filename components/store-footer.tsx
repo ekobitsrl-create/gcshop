@@ -28,7 +28,7 @@ export function StoreFooter() {
           <p>{t("footer.support")}</p>
           <Link href="/#provenienza">{t("footer.origin")}</Link>
           <Link href="/informazioni-societarie">{t("footer.contacts")}</Link>
-          <Link href="/checkout">{t("footer.shippingReturns")}</Link>
+          <Link href="/spedizioni-e-resi">{t("footer.shippingReturns")}</Link>
           <Link href="/checkout">{t("footer.payments")}</Link>
           <Link href="/admin">{t("footer.reserved")}</Link>
         </div>

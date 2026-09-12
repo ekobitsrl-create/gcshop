@@ -13,6 +13,7 @@ type OrderRow = {
   totalCents: number;
   currency: string;
   itemCount: number;
+  returnRequestCount: number;
   createdAt: string;
   shippingAddressJson: string;
   paymentMethodCode: string;
@@ -32,6 +33,7 @@ type OrderDetail = {
   items: Array<{ id: string; productName: string; variantName: string | null; sku: string; quantity: number; unitPriceCents: number; totalCents: number }>;
   shipments: Array<{ id: string; status: string; carrier: string | null; service: string | null; trackingNumber: string | null; trackingUrl: string | null; labelUrl: string | null; note: string | null; shippedAt: string | null; deliveredAt: string | null }>;
   transactions: Array<{ id: string; paymentMethodCode: string; status: string; providerReference: string | null; amountCents: number; createdAt: string }>;
+  returnRequests: Array<{ id: string; receiptCode: string; status: string; itemsDescription: string | null; declarationText: string; submittedAt: string; confirmationSentAt: string | null }>;
 };
 
 const emptyShipment = { status: "preparing", carrier: "", service: "", trackingNumber: "", trackingUrl: "", labelUrl: "", note: "" };
@@ -65,7 +67,6 @@ export function AdminOrders() {
   const [internalNote, setInternalNote] = useState("");
 
   const loadOrders = useCallback(async () => {
-    setLoading(true);
     const response = await fetch("/api/admin/orders", { cache: "no-store" });
     const payload = await response.json();
     if (response.ok) setOrders(payload.orders ?? []);
@@ -73,7 +74,11 @@ export function AdminOrders() {
     setLoading(false);
   }, []);
 
-  useEffect(() => { void loadOrders(); }, [loadOrders]);
+  useEffect(() => {
+    // Sincronizzazione iniziale dello stato remoto del pannello ordini.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void loadOrders();
+  }, [loadOrders]);
 
   async function openDetail(id: string) {
     setDetailLoading(true);
@@ -148,7 +153,7 @@ export function AdminOrders() {
           <div className="admin-table-wrap"><table className="admin-table admin-orders-table">
             <thead><tr><th>Ordine</th><th>Cliente</th><th>Totale</th><th>Ordine</th><th>Pagamento</th><th>Spedizione</th><th /></tr></thead>
             <tbody>{filtered.map((order) => <tr key={order.id}>
-              <td><button className="admin-order-number" onClick={() => void openDetail(order.id)}><strong>{order.orderNumber}</strong><small>{date(order.createdAt)} · {order.itemCount} pz</small></button></td>
+              <td><button className="admin-order-number" onClick={() => void openDetail(order.id)}><strong>{order.orderNumber}</strong><small>{date(order.createdAt)} · {order.itemCount} pz</small>{order.returnRequestCount > 0 ? <em>{order.returnRequestCount} richiesta reso</em> : null}</button></td>
               <td><strong>{order.email}</strong><small>{order.phone ?? "Telefono non indicato"}</small></td>
               <td><strong>{money(order.totalCents, order.currency)}</strong><small>{order.paymentMethodCode}</small></td>
               <td><select className={`admin-status-select is-${order.status}`} value={order.status} onChange={(event) => void update(order.id, { status: event.target.value })}><option value="pending">In attesa</option><option value="processing">In lavorazione</option><option value="completed">Completato</option><option value="cancelled">Annullato</option></select></td>
@@ -176,6 +181,7 @@ export function AdminOrders() {
               <div><p className="admin-eyebrow">Riepilogo</p><dl><div><dt>Subtotale</dt><dd>{money(detail.order.subtotalCents)}</dd></div><div><dt>Sconto</dt><dd>− {money(detail.order.discountCents)}</dd></div><div><dt>Spedizione</dt><dd>{money(detail.order.shippingCents)}</dd></div><div className="is-total"><dt>Totale</dt><dd>{money(detail.order.totalCents)}</dd></div></dl></div>
             </section>
             <section className="admin-order-items"><div className="admin-section-heading"><div><p>Contenuto</p><h3>Articoli ordinati</h3></div></div>{detail.items.map((item) => <article key={item.id}><div><strong>{item.productName}</strong><small>{item.variantName ?? "Standard"} · {item.sku}</small></div><span>{item.quantity} × {money(item.unitPriceCents)}</span><strong>{money(item.totalCents)}</strong></article>)}</section>
+            {detail.returnRequests?.length ? <section className="admin-return-requests"><div className="admin-section-heading"><div><p>Post vendita</p><h3>Richieste di recesso</h3></div><span>{detail.returnRequests.length} registrate</span></div>{detail.returnRequests.map((returnRequest) => <article key={returnRequest.id}><div><strong>{returnRequest.receiptCode}</strong><small>{date(returnRequest.submittedAt)} · {returnRequest.confirmationSentAt ? "Conferma email inviata" : "Ricevuta scaricabile rilasciata"}</small></div><p>{returnRequest.itemsDescription || "Intero ordine"}</p><span>{returnRequest.status}</span></article>)}</section> : null}
             <section className="admin-shipment-form"><div className="admin-section-heading"><div><p>Fulfillment</p><h3>Spedizione e tracking</h3></div><span>Il tracking resta associato all’ordine.</span></div>
               <div className="admin-shipment-grid">
                 <label>Stato<select value={shipment.status} onChange={(event) => setShipment({ ...shipment, status: event.target.value })}><option value="preparing">In preparazione</option><option value="shipped">Spedito</option><option value="delivered">Consegnato</option><option value="exception">Problema</option><option value="returned">Reso</option></select></label>

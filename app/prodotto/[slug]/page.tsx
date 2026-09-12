@@ -1,6 +1,7 @@
 import { and, asc, eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import { getDb } from "@/db";
@@ -247,7 +248,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
             ) : <ProductPurchase variants={variants} defaultVariantId={requestedVariant?.id} basePriceCents={product.basePriceCents} compareAtPriceCents={product.compareAtPriceCents} currency={product.currency} />}
             <div className="product-details-list" id="product-details">
               <details open><summary>{t("product.details")} <span>+</span></summary><dl>{detailRows.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl></details>
-              <details><summary>{t("product.shippingReturns")} <span>+</span></summary><p>{t("product.shippingCopy")}</p></details>
+              <details><summary>{t("product.shippingReturns")} <span>+</span></summary><p>{t("product.shippingCopy")} <Link href="/spedizioni-e-resi">{t("product.shippingDetailsLink")}</Link></p></details>
               <details><summary>{t("product.authenticity")} <span>+</span></summary><p>{t("product.authenticityCopy")}</p></details>
             </div>
           </section>

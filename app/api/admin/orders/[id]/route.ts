@@ -1,6 +1,6 @@
 import { asc, desc, eq, sql } from "drizzle-orm";
 import { getDb } from "@/db";
-import { orderItems, orders, paymentTransactions, shipments } from "@/db/schema";
+import { orderItems, orders, paymentTransactions, shipments, withdrawalRequests } from "@/db/schema";
 import { getAdminApiUser } from "@/lib/admin-auth";
 import { recordAdminAction } from "@/lib/audit";
 
@@ -16,14 +16,15 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
   if (auth.error) return auth.error;
   const { id } = await params;
   const db = getDb();
-  const [order, items, shipmentRows, transactions] = await Promise.all([
+  const [order, items, shipmentRows, transactions, returnRequests] = await Promise.all([
     db.select().from(orders).where(eq(orders.id, id)).limit(1),
     db.select().from(orderItems).where(eq(orderItems.orderId, id)).orderBy(asc(orderItems.createdAt)),
     db.select().from(shipments).where(eq(shipments.orderId, id)).orderBy(desc(shipments.createdAt)),
     db.select().from(paymentTransactions).where(eq(paymentTransactions.orderId, id)).orderBy(desc(paymentTransactions.createdAt)),
+    db.select().from(withdrawalRequests).where(eq(withdrawalRequests.orderId, id)).orderBy(desc(withdrawalRequests.submittedAt)),
   ]);
   if (!order.length) return Response.json({ error: "Ordine non trovato." }, { status: 404 });
-  return Response.json({ order: order[0], items, shipments: shipmentRows, transactions });
+  return Response.json({ order: order[0], items, shipments: shipmentRows, transactions, returnRequests });
 }
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {

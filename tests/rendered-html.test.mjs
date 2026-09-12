@@ -26,7 +26,7 @@ test("keeps the LCS home editorial and moves company details to the legal page",
 
 test("ships the ecommerce schema, placeholder catalog and all critical flows", async () => {
   const migrationFiles = (await readdir(new URL("../drizzle/", import.meta.url))).filter((file) => file.endsWith(".sql"));
-  assert.equal(migrationFiles.length, 5);
+  assert.equal(migrationFiles.length, 6);
   const [schemaMigration, catalogMigration, feedMigration, translationMigration, schema, checkout, coupon, paypal, admin, header, checkoutUi, i18n] = await Promise.all([
     readFile(new URL(`../drizzle/${migrationFiles[0]}`, import.meta.url), "utf8"),
     readFile(new URL(`../drizzle/${migrationFiles[1]}`, import.meta.url), "utf8"),
@@ -217,6 +217,26 @@ test("publishes a variant-level Google Merchant RSS feed", async () => {
   assert.match(product, /searchParams/);
   assert.match(product, /defaultVariantId=\{requestedVariant\?\.id\}/);
   assert.match(purchase, /window\.history\.replaceState/);
+});
+
+test("publishes a traceable and multilingual withdrawal flow", async () => {
+  const [page, form, endpoint, schema, footer, sitemap, policy] = await Promise.all([
+    readFile(new URL("../app/spedizioni-e-resi/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/withdrawal-form.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/api/recesso/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../db/schema.ts", import.meta.url), "utf8"),
+    readFile(new URL("../components/store-footer.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/sitemap.ts", import.meta.url), "utf8"),
+    readFile(new URL("../lib/returns-content.ts", import.meta.url), "utf8"),
+  ]);
+  assert.match(page, /WithdrawalForm/);
+  assert.match(form, /Conferma recesso|content\.submit/);
+  assert.match(endpoint, /receiptCode/);
+  assert.match(schema, /withdrawal_requests/);
+  assert.match(footer, /\/spedizioni-e-resi/);
+  assert.match(sitemap, /\/spedizioni-e-resi/);
+  assert.match(policy, /14 giorni/);
+  assert.match(policy, /14 days/);
 });
 
 test("builds a Merchant-compliant feed without inventing missing attributes", () => {

@@ -296,6 +296,31 @@ export const orders = luxury.table(
   ],
 );
 
+export const withdrawalRequests = luxury.table(
+  "withdrawal_requests",
+  {
+    id: uuid("id").primaryKey(),
+    receiptCode: text("receipt_code").notNull(),
+    orderId: uuid("order_id").references(() => orders.id, { onDelete: "set null" }),
+    orderNumber: text("order_number").notNull(),
+    customerName: text("customer_name").notNull(),
+    email: text("email").notNull(),
+    itemsDescription: text("items_description"),
+    declarationText: text("declaration_text").notNull(),
+    locale: text("locale").notNull().default("it"),
+    status: text("status").notNull().default("submitted"),
+    submittedAt: timestamp("submitted_at", { withTimezone: true, mode: "string" }).notNull().defaultNow(),
+    confirmationSentAt: timestamp("confirmation_sent_at", { withTimezone: true, mode: "string" }),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex("idx_withdrawal_requests_receipt_code").on(table.receiptCode),
+    index("idx_withdrawal_requests_order_created").on(table.orderId, table.createdAt),
+    index("idx_withdrawal_requests_status_created").on(table.status, table.createdAt),
+    index("idx_withdrawal_requests_email_created").on(table.email, table.createdAt),
+  ],
+);
+
 export const shipments = luxury.table(
   "shipments",
   {
@@ -452,5 +477,6 @@ export type Product = typeof products.$inferSelect;
 export type ProductVariant = typeof productVariants.$inferSelect;
 export type ProductTranslation = typeof productTranslations.$inferSelect;
 export type Order = typeof orders.$inferSelect;
+export type WithdrawalRequest = typeof withdrawalRequests.$inferSelect;
 export type PaymentMethod = typeof paymentMethods.$inferSelect;
 export type Shipment = typeof shipments.$inferSelect;
