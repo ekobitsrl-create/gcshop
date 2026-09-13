@@ -33,7 +33,7 @@ function CheckoutFormBody({ methods, cart, countries }: Props) {
   const stripe = useStripe();
   const elements = useElements();
   const available = methods.filter((item) => item.configured);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethodCode>(methods[0]?.code ?? "card");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethodCode>(available[0]?.code ?? methods[0]?.code ?? "card");
   const [paymentReady, setPaymentReady] = useState(false);
   const [paymentLoadError, setPaymentLoadError] = useState(false);
   const [reserved, setReserved] = useState(false);
@@ -166,7 +166,7 @@ function CheckoutFormBody({ methods, cart, countries }: Props) {
       <section className="checkout-payment" aria-labelledby="payment-title">
         <h2 id="payment-title"><span>03</span>{t("checkout.paymentMethod")}</h2>
         <label htmlFor="paymentMethod">{t("checkoutV2.chooseMethod")}<select id="paymentMethod" value={paymentMethod} disabled={busy} onChange={(event) => { setPaymentMethod(event.target.value as PaymentMethodCode); setError(""); }}>
-          {methods.map((method) => <option key={method.code} value={method.code}>{t(method.code === "card" ? "checkoutV2.card" : method.code === "paypal" ? "checkout.paypalName" : "checkout.bankName")}</option>)}
+          {methods.map((method) => <option key={method.code} value={method.code} disabled={!method.configured}>{t(method.code === "card" ? "checkoutV2.card" : method.code === "paypal" ? "checkout.paypalName" : "checkout.bankName")}</option>)}
         </select></label>
         {methods.some((method) => method.code === "card") ? <div className="checkout-card-fields" hidden={paymentMethod !== "card"} aria-busy={!paymentReady}>
           {available.some((method) => method.code === "card") ? <PaymentElement options={{ layout: "tabs", fields: { billingDetails: { name: "never", email: "never", phone: "never", address: "never" } }, wallets: { applePay: "never", googlePay: "never" } }} onReady={() => { setPaymentReady(true); setPaymentLoadError(false); }} onLoadError={() => { setPaymentLoadError(true); setPaymentReady(false); }} /> : null}

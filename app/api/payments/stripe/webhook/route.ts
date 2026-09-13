@@ -5,7 +5,7 @@ import { applyStripeRefund, applyStripeSession } from "@/lib/stripe-orders";
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
-  const secret = process.env.STRIPE_WEBHOOK_SECRET;
+  const secret = process.env.STRIPE_WEBHOOK_SECRET?.trim();
   if (!secret || !process.env.STRIPE_SECRET_KEY) return Response.json({ error: "Webhook non configurato." }, { status: 503 });
   const stripe = getStripe();
   let event: Stripe.Event;

@@ -1,22 +1,19 @@
 import Stripe from "stripe";
 import type { BankInstructions, PaymentMethodCode } from "@/lib/stripe-checkout";
+import { getStripeConfiguration, resolveCheckoutOrigin } from "@/lib/stripe-configuration";
 
 export function getStripe() {
-  const key = process.env.STRIPE_SECRET_KEY;
+  const key = process.env.STRIPE_SECRET_KEY?.trim();
   if (!key) throw new Error("STRIPE_NOT_CONFIGURED");
   return new Stripe(key, { maxNetworkRetries: 2, timeout: 20000 });
 }
 
 export function stripeConfigured() {
-  return Boolean(process.env.STRIPE_SECRET_KEY && process.env.STRIPE_WEBHOOK_SECRET && process.env.NEXT_PUBLIC_SITE_URL && process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+  return getStripeConfiguration().configured;
 }
 
 export function checkoutOrigin() {
-  const url = new URL(process.env.NEXT_PUBLIC_SITE_URL || "");
-  if (url.protocol !== "https:" && !(process.env.NODE_ENV !== "production" && url.hostname === "localhost")) {
-    throw new Error("INVALID_SITE_URL");
-  }
-  return url.origin;
+  return resolveCheckoutOrigin();
 }
 
 export type StripeCheckoutState = {

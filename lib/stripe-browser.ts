@@ -6,8 +6,8 @@ import type { Locale } from "@/lib/i18n";
 
 const clients = new Map<Locale, Promise<Stripe | null>>();
 export function getBrowserStripe(locale: Locale) {
-  const key = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
-  if (!key) return null;
+  const key = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.trim();
+  if (!key || !/^pk_(live|test)_[A-Za-z0-9]+$/.test(key)) return null;
   if (!clients.has(locale)) clients.set(locale, loadStripe(key, { locale }).catch(() => null));
   return clients.get(locale)!;
 }

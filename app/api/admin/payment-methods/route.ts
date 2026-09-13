@@ -4,11 +4,12 @@ import { paymentMethods } from "@/db/schema";
 import { getAdminApiUser } from "@/lib/admin-auth";
 import { recordAdminAction } from "@/lib/audit";
 import { getPaymentMethods } from "@/lib/payment-config";
+import { getStripeConfiguration } from "@/lib/stripe-configuration";
 
 export const dynamic = "force-dynamic";
 export async function GET() {
   const auth = await getAdminApiUser(); if (auth.error) return auth.error;
-  return Response.json({ methods: await getPaymentMethods(true) });
+  return Response.json({ methods: await getPaymentMethods(true), stripe: getStripeConfiguration() }, { headers: { "Cache-Control": "no-store" } });
 }
 
 export async function PUT(request: Request) {

@@ -14,14 +14,14 @@ Configurare sul provider che ospita il sito (e in `.env.local` per le prove):
 
 | Variabile | Valore |
 | --- | --- |
-| `NEXT_PUBLIC_SITE_URL` | URL canonico HTTPS del negozio, senza percorso |
+| `NEXT_PUBLIC_SITE_URL` | Facoltativo: URL canonico HTTPS, senza percorso. Se assente si usa `https://www.luxconceptstore.com`, già definito in `lib/site-url.mjs` |
 | `STRIPE_SECRET_KEY` | Chiave segreta dell’account Stripe, inizialmente di test |
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Chiave pubblicabile `pk_test_...` dello stesso account e ambiente della chiave segreta |
 | `STRIPE_WEBHOOK_SECRET` | Segreto di firma dell’endpoint, con prefisso `whsec_` |
 
 Restano necessarie le variabili database e autenticazione già elencate in `.env.example`. La chiave pubblicabile carica i campi protetti sul browser; la chiave segreta rimane esclusivamente sul server. La conferma usa `redirect: if_required`: le carte restano nel negozio, salvo autenticazione richiesta, mentre PayPal può aprire il proprio flusso di autorizzazione.
 
-Non mettere chiavi segrete nel repository o nelle variabili `NEXT_PUBLIC_`. Usare un database isolato e chiavi Stripe di test per le prove. La presenza delle variabili abilita il pulsante di pagamento nel negozio, ma non certifica che Stripe abbia approvato i metodi richiesti.
+Non mettere chiavi segrete nel repository o nelle variabili `NEXT_PUBLIC_`. Usare un database isolato e chiavi Stripe di test per le prove. Nel pannello amministrativo **Pagamenti**, il controllo configurazione elenca le variabili mancanti, i formati errati e l’eventuale abbinamento di una chiave test con una live, senza mostrare i segreti. La configurazione valida abilita il pulsante di pagamento nel negozio, ma non certifica che Stripe abbia approvato i metodi richiesti. Dopo aver modificato le variabili Vercel, eseguire un nuovo deployment: la chiave pubblicabile viene inclusa nella build del browser.
 
 ## Endpoint delle notifiche
 
