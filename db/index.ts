@@ -1,5 +1,6 @@
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
+import { attachDatabasePool } from "@vercel/functions";
 import * as schema from "./schema";
 
 function createDb() {
@@ -8,13 +9,21 @@ function createDb() {
     throw new Error("POSTGRES_URL non configurato. Collega Supabase al progetto Vercel e sincronizza le variabili d'ambiente.");
   }
 
-  const client = postgres(connectionString, {
+  // Queue queries on each connection: transaction poolers cannot safely
+  // multiplex the pipelined queries used by the previous postgres-js driver.
+  const pool = new Pool({
+    connectionString,
     max: 1,
-    prepare: false,
-    idle_timeout: 20,
-    connect_timeout: 15,
+    idleTimeoutMillis: 5_000,
+    connectionTimeoutMillis: 10_000,
+    maxLifetimeSeconds: 60,
+    statement_timeout: 15_000,
   });
-  return drizzle(client, { schema });
+  pool.on("error", (error) => {
+    console.error("Idle database connection failed", { type: error.name });
+  });
+  attachDatabasePool(pool);
+  return drizzle(pool, { schema });
 }
 
 let database: ReturnType<typeof createDb> | null = null;

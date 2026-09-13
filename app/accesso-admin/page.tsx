@@ -1,3 +1,4 @@
+import Link from "next/link";
 import LoginForm from "./login-form";
 import "./login.css";
 
@@ -18,10 +19,10 @@ export default async function AdminLoginPage({
   return (
     <main className="login-page">
       <section className="login-card">
-        <a className="login-brand" href="/" aria-label="LCS">
+        <Link className="login-brand" href="/" aria-label="LCS">
           <span>LC</span>
           <strong>LCS</strong>
-        </a>
+        </Link>
         <p className="login-kicker">Area riservata Ekobit SRL</p>
         <h1>Accedi al pannello amministrativo.</h1>
         <p className="login-copy">
@@ -29,7 +30,7 @@ export default async function AdminLoginPage({
         </p>
         {params.errore ? <p className="login-error">Il collegamento non è valido o è scaduto.</p> : null}
         <LoginForm returnTo={returnTo} />
-        <a className="login-back" href="/">← Torna al negozio</a>
+        <Link className="login-back" href="/">← Torna al negozio</Link>
       </section>
     </main>
   );
