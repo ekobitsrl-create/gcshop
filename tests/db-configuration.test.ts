@@ -9,9 +9,11 @@ test("Supabase URL SSL options retain the official CA and certificate verificati
   const client = new Client(databasePoolConfig("postgresql://postgres.project:test%40password@aws-0-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require&uselibpqcompat=true"));
   assert.equal(client.host, "aws-0-us-east-1.pooler.supabase.com");
   assert.equal(client.password, "test@password");
-  assert.ok(client.ssl && typeof client.ssl === "object");
-  assert.equal(client.ssl.rejectUnauthorized, true);
-  assert.ok(Array.isArray(client.ssl.ca) && client.ssl.ca.includes(supabaseCa));
+  // pg exposes the parsed TLS options here, although its Client type says boolean.
+  const ssl: unknown = client.ssl;
+  assert.ok(ssl && typeof ssl === "object" && "rejectUnauthorized" in ssl && "ca" in ssl);
+  assert.equal(ssl.rejectUnauthorized, true);
+  assert.ok(Array.isArray(ssl.ca) && ssl.ca.includes(supabaseCa));
 });
 
 test("bundled public Supabase root certificate is authentic and unexpired", () => {
@@ -25,6 +27,7 @@ test("non-Supabase connections keep their own SSL configuration", () => {
   const local = new Client(databasePoolConfig("postgresql://user:password@localhost:5432/store?sslmode=disable"));
   assert.equal(local.ssl, false);
   const other = new Client(databasePoolConfig("postgresql://user:password@db.example.com/store?sslmode=verify-full"));
-  assert.ok(other.ssl);
-  assert.ok(!("ca" in other.ssl));
+  const ssl: unknown = other.ssl;
+  assert.ok(ssl && typeof ssl === "object");
+  assert.ok(!("ca" in ssl));
 });

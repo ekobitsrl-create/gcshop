@@ -9,6 +9,7 @@ import { categories, productImages, products, productTranslations, productVarian
 import { CommerceHeader } from "@/components/commerce-header";
 import { BrandLogo } from "@/components/brand-logo";
 import { ProductPurchase } from "@/components/product-purchase";
+import { CompareButton } from "@/components/comparison-controls";
 import { StoreFooter } from "@/components/store-footer";
 import { findPlaceholderProduct } from "@/lib/placeholder-products";
 import { normalizeGtin } from "@/lib/google-merchant";
@@ -246,6 +247,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
             {isPlaceholder ? (
               <div className="placeholder-purchase"><span>{t("product.preview")}</span><p>{t("product.previewCopy")}</p><strong>{formatMoney(product.basePriceCents, product.currency, localeTag)}</strong></div>
             ) : <ProductPurchase variants={variants} defaultVariantId={requestedVariant?.id} basePriceCents={product.basePriceCents} compareAtPriceCents={product.compareAtPriceCents} currency={product.currency} />}
+            {!isPlaceholder ? <CompareButton product={{ id: product.id, name: product.name }} /> : null}
             <div className="product-details-list" id="product-details">
               <details open><summary>{t("product.details")} <span>+</span></summary><dl>{detailRows.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl></details>
               <details><summary>{t("product.shippingReturns")} <span>+</span></summary><p>{t("product.shippingCopy")} <Link href="/spedizioni-e-resi">{t("product.shippingDetailsLink")}</Link></p></details>

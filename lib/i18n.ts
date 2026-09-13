@@ -1,4 +1,5 @@
 import { cartCopy } from "@/lib/cart-copy";
+import { comparisonCopy } from "@/lib/comparison-copy";
 
 export const locales = ["it", "en", "fr", "es", "de"] as const;
 
@@ -23,6 +24,7 @@ export const localeTags: Record<Locale, string> = {
 
 const it: Messages = {
   ...cartCopy.it,
+  ...comparisonCopy.it,
   "checkoutV2.chooseMethod": "Scegli il metodo di pagamento",
   "checkoutV2.card": "Carta di credito o debito",
   "checkoutV2.pay": "Paga {amount}",
@@ -299,6 +301,7 @@ const it: Messages = {
 const en: Messages = {
   ...it,
   ...cartCopy.en,
+  ...comparisonCopy.en,
   "checkoutV2.chooseMethod": "Choose a payment method",
   "checkoutV2.card": "Credit or debit card",
   "checkoutV2.pay": "Pay {amount}",
@@ -366,6 +369,7 @@ const en: Messages = {
 const fr: Messages = {
   ...en,
   ...cartCopy.fr,
+  ...comparisonCopy.fr,
   "checkoutV2.chooseMethod": "Choisissez un moyen de paiement",
   "checkoutV2.card": "Carte de crédit ou de débit",
   "checkoutV2.pay": "Payer {amount}",
@@ -430,6 +434,7 @@ const fr: Messages = {
 const es: Messages = {
   ...en,
   ...cartCopy.es,
+  ...comparisonCopy.es,
   "checkoutV2.chooseMethod": "Elige el método de pago",
   "checkoutV2.card": "Tarjeta de crédito o débito",
   "checkoutV2.pay": "Pagar {amount}",
@@ -494,6 +499,7 @@ const es: Messages = {
 const de: Messages = {
   ...en,
   ...cartCopy.de,
+  ...comparisonCopy.de,
   "checkoutV2.chooseMethod": "Zahlungsart auswählen",
   "checkoutV2.card": "Kredit- oder Debitkarte",
   "checkoutV2.pay": "{amount} bezahlen",

@@ -6,6 +6,7 @@ import { getDb } from "@/db";
 import { categories, productImages, products, productTranslations, productVariants } from "@/db/schema";
 import { CommerceHeader } from "@/components/commerce-header";
 import { BrandLogo } from "@/components/brand-logo";
+import { CompareButton, ComparisonIcon } from "@/components/comparison-controls";
 import { StoreFooter } from "@/components/store-footer";
 import { placeholderProducts } from "@/lib/placeholder-products";
 import { formatMoney } from "@/lib/store-utils";
@@ -261,6 +262,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
             <div><p className="commerce-kicker">{activeBrand ? t("shop.brands") : activeTypeLabel ?? filters.find((filter) => filter.value === activeFilter)?.label}</p><h2>{selectionTitle}</h2></div>
             <form action="/shop" method="get"><input name="q" defaultValue={query} placeholder={t("shop.searchPlaceholder")} /><input type="hidden" name="categoria" value={activeFilter === "tutto" ? "" : activeFilter} /><input type="hidden" name="tipologia" value={activeType} /><input type="hidden" name="marchio" value={activeBrand} /><button>{t("common.search")}</button></form>
           </div>
+          {rows.length ? <p className="compare-catalog-hint"><ComparisonIcon />{t("compare.hint")}</p> : null}
           {rows.length ? (
             <div className="commerce-product-grid">
               {rows.map((product, index) => (
@@ -277,6 +279,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
                       <div className="product-card-price"><strong>{formatMoney(product.price, product.currency, localeTag)}</strong>{product.compareAtPrice && product.compareAtPrice > product.price ? <del>{formatMoney(product.compareAtPrice, product.currency, localeTag)}</del> : null}</div>
                     </div>
                   </a>
+                  <CompareButton product={{ id: product.id, name: product.name }} />
                 </article>
               ))}
             </div>

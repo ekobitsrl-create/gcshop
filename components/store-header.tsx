@@ -5,6 +5,7 @@ import Link from "next/link";
 import { LanguageSelector } from "@/components/language-selector";
 import { useI18n } from "@/components/locale-provider";
 import { useCart } from "@/components/cart-provider";
+import { ComparisonNav } from "@/components/comparison-controls";
 
 export function StoreHeader() {
   const { t } = useI18n();
@@ -59,6 +60,7 @@ export function StoreHeader() {
         <div className="store-actions">
           <LanguageSelector />
           <Link className="store-search-link" href="/shop">{t("common.search")}</Link>
+          <ComparisonNav />
           <button className="store-bag" type="button" onClick={openCart} aria-label={t("header.cartLabel", { count: cartCount })} aria-haspopup="dialog" aria-controls="store-cart" aria-expanded={open}>
             {t("common.cart")} <span aria-live="polite" aria-atomic="true">{String(cartCount).padStart(2, "0")}</span>
           </button>

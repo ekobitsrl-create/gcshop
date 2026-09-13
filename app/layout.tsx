@@ -1,11 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import { LocaleProvider } from "@/components/locale-provider";
 import { CartProvider } from "@/components/cart-provider";
+import { ComparisonTray } from "@/components/comparison-controls";
 import { localeTags, translate } from "@/lib/i18n";
 import { getRequestLocale } from "@/lib/i18n-server";
 import { SITE_URL } from "@/lib/site-url.mjs";
 import "./globals.css";
 import "./cart.css";
+import "./comparison.css";
 
 export const viewport: Viewport = {
   themeColor: "#111210",
@@ -58,7 +60,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   const locale = await getRequestLocale();
   return (
     <html lang={locale}>
-      <body><LocaleProvider locale={locale}><CartProvider>{children}</CartProvider></LocaleProvider></body>
+      <body><LocaleProvider locale={locale}><CartProvider>{children}<ComparisonTray /></CartProvider></LocaleProvider></body>
     </html>
   );
 }
