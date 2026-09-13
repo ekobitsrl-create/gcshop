@@ -1,6 +1,7 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import { attachDatabasePool } from "@vercel/functions";
+import { databasePoolConfig } from "./config";
 import * as schema from "./schema";
 
 function createDb() {
@@ -11,14 +12,7 @@ function createDb() {
 
   // Queue queries on each connection: transaction poolers cannot safely
   // multiplex the pipelined queries used by the previous postgres-js driver.
-  const pool = new Pool({
-    connectionString,
-    max: 1,
-    idleTimeoutMillis: 5_000,
-    connectionTimeoutMillis: 10_000,
-    maxLifetimeSeconds: 60,
-    statement_timeout: 15_000,
-  });
+  const pool = new Pool(databasePoolConfig(connectionString));
   pool.on("error", (error) => {
     console.error("Idle database connection failed", { type: error.name });
   });
