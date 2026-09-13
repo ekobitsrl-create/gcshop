@@ -1,12 +1,15 @@
 import { cookies } from "next/headers";
-import { CommerceHeader } from "@/components/commerce-header";
+import { redirect } from "next/navigation";
+import { and, eq } from "drizzle-orm";
+import { getDb } from "@/db";
+import { carts, orders } from "@/db/schema";
+import { CheckoutShell } from "@/components/checkout-shell";
 import { CheckoutForm } from "@/components/checkout-form";
-import { StoreFooter } from "@/components/store-footer";
 import { getCartSnapshot } from "@/lib/cart";
 import { getPaymentMethods } from "@/lib/payment-config";
 import { translate } from "@/lib/i18n";
 import { getRequestLocale } from "@/lib/i18n-server";
-import "../commerce.css";
+import { getCountryOptions } from "@/lib/countries";
 
 export const dynamic = "force-dynamic";
 
@@ -14,30 +17,24 @@ export default async function CheckoutPage() {
   const locale = await getRequestLocale();
   const t = (key: string) => translate(locale, key);
   const token = (await cookies()).get("lcs_cart")?.value;
+  if (token && /^[0-9a-f-]{36}$/i.test(token)) {
+    const [pending] = await getDb().select({ number: orders.orderNumber }).from(orders)
+      .innerJoin(carts, eq(carts.id, orders.cartId))
+      .where(and(eq(carts.token, token), eq(carts.status, "checkout"), eq(orders.paymentStatus, "pending"))).limit(1);
+    if (pending) redirect(`/ordine/${encodeURIComponent(pending.number)}`);
+  }
   const cart = await getCartSnapshot(token, locale);
   const methods = cart.items.length ? await getPaymentMethods() : [];
 
   return (
-    <div className="commerce-shell">
-      <CommerceHeader />
-      <main>
-        <header className="checkout-heading">
-          <p className="commerce-kicker">{t("checkout.secureKicker")}</p>
-          <h1>{t("checkout.heroTitle")}<br /><em>{t("checkout.heroEmphasis")}</em></h1>
-          <p>{t("checkout.heroCopy")}</p>
-        </header>
-        <section className="commerce-main checkout-content">
+    <CheckoutShell empty={!cart.items.length}>
           {!cart.items.length ? (
-            <div className="commerce-empty checkout-empty">
-              <div className="empty-number">00</div>
-              <div><p className="commerce-kicker">{t("checkout.empty")}</p><h2>{t("checkout.emptyTitle")}<br /><em>{t("checkout.emptyEmphasis")}</em></h2><a href="/shop">{t("checkout.discover")} <span>↗</span></a></div>
+            <div className="checkout-empty-state">
+              <a href="/shop" className="checkout-pay-button">{t("checkout.discover")} <span aria-hidden="true">↗</span></a>
             </div>
           ) : (
-            <CheckoutForm methods={methods} cart={cart} />
+            <CheckoutForm methods={methods} cart={cart} countries={getCountryOptions(locale)} />
           )}
-        </section>
-      </main>
-      <StoreFooter />
-    </div>
+    </CheckoutShell>
   );
 }

@@ -12,7 +12,7 @@
     "dev:sites": "vinext dev",
     "build:sites": "vinext build",
     "start:sites": "vinext start",
-    "test": "node --test tests/rendered-html.test.mjs",
+    "test": "node --import tsx --test tests/rendered-html.test.mjs tests/stripe-payments.test.ts",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "dotenv -e .env.local -- drizzle-kit generate",
     "db:migrate": "dotenv -e .env.local -- drizzle-kit migrate",
@@ -20,16 +20,20 @@
     "catalog:translate": "dotenv -e .env.local -- node scripts/translate-catalog.mjs"
   },
   "dependencies": {
+    "@stripe/react-stripe-js": "^6.10.0",
+    "@stripe/stripe-js": "^9.16.0",
     "@supabase/ssr": "^0.12.4",
     "@supabase/supabase-js": "^2.111.0",
     "drizzle-orm": "0.45.2",
     "next": "16.2.6",
     "postgres": "^3.4.9",
     "react": "19.2.6",
-    "react-dom": "19.2.6"
+    "react-dom": "19.2.6",
+    "stripe": "^22.6.1"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "1.37.1",
+    "@electric-sql/pglite": "^0.5.8",
     "@tailwindcss/postcss": "4.2.1",
     "@types/node": "22.19.19",
     "@types/react": "19.2.14",
@@ -42,6 +46,7 @@
     "eslint-config-next": "16.2.6",
     "react-server-dom-webpack": "19.2.6",
     "tailwindcss": "4.2.1",
+    "tsx": "^4.23.13",
     "typescript": "5.9.3",
     "vinext": "0.0.50",
     "vite": "8.0.13",

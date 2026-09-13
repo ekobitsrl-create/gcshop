@@ -22,6 +22,7 @@ pnpm build
 node --test tests/rendered-html.test.mjs
 ```
 
-Il progetto utilizza vinext ed è predisposto per il deploy su Cloudflare tramite
-OpenAI Sites. Il contenuto principale è in `app/page.tsx`, lo stile in
+Il flusso principale usa Next.js su Node.js; gli script `*:sites` conservano il precedente percorso vinext.
+Per carte, PayPal e bonifici gestiti da Stripe nel checkout seguire [la configurazione dei pagamenti](docs/stripe-setup.md).
+Il contenuto principale è in `app/page.tsx`, lo stile in
 `app/globals.css` e gli asset del brand in `public/`.

@@ -18,11 +18,10 @@ export async function evaluateCoupon(input: {
   code: string;
   email?: string;
   subtotalCents: number;
-}): Promise<CouponEvaluation> {
+}, db: Pick<ReturnType<typeof getDb>, "select"> = getDb()): Promise<CouponEvaluation> {
   const code = input.code.trim().toUpperCase();
   if (!code) return { ok: false, error: "Inserisci un codice sconto." };
 
-  const db = getDb();
   const matches = await db
     .select()
     .from(coupons)

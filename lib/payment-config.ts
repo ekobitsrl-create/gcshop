@@ -1,10 +1,12 @@
-import { asc, eq } from "drizzle-orm";
+import { asc } from "drizzle-orm";
 import { getDb } from "@/db";
 import { paymentMethods } from "@/db/schema";
 import { getRuntimeEnv } from "@/lib/runtime-env";
+import { stripeConfigured } from "@/lib/stripe";
+import type { PaymentMethodCode } from "@/lib/stripe-checkout";
 
 export type StorePaymentMethod = {
-  code: "paypal" | "bank_transfer";
+  code: PaymentMethodCode;
   name: string;
   provider: string;
   enabled: boolean;
@@ -13,6 +15,7 @@ export type StorePaymentMethod = {
 };
 
 const defaults: StorePaymentMethod[] = [
+  { code: "card", name: "Carta di credito o debito", provider: "stripe", enabled: true, instructions: "Paga con la tua carta in modo sicuro.", configured: false },
   {
     code: "paypal",
     name: "PayPal",
@@ -31,13 +34,11 @@ const defaults: StorePaymentMethod[] = [
   },
 ];
 
-export async function getPaymentMethods(): Promise<StorePaymentMethod[]> {
-  const rows = await getDb()
+export async function getPaymentMethods(includeDisabled = false, db = getDb()): Promise<StorePaymentMethod[]> {
+  const rows = await db
     .select()
     .from(paymentMethods)
-    .where(eq(paymentMethods.isEnabled, true))
     .orderBy(asc(paymentMethods.sortOrder));
-  const runtime = getRuntimeEnv();
   const source = rows.length
     ? rows.map((row) => ({
         code: row.code as StorePaymentMethod["code"],
@@ -49,14 +50,16 @@ export async function getPaymentMethods(): Promise<StorePaymentMethod[]> {
       }))
     : defaults;
 
+  if (rows.length && !source.some((method) => method.code === "card")) {
+    source.unshift({ ...defaults[0], enabled: source.some((method) => method.enabled && ["paypal", "bank_transfer"].includes(method.code)) });
+  }
   return source
-    .filter((method) => method.code === "paypal" || method.code === "bank_transfer")
+    .filter((method) => ["card", "paypal", "bank_transfer"].includes(method.code))
+    .filter((method) => includeDisabled || method.enabled)
     .map((method) => ({
       ...method,
-      configured:
-        method.code === "paypal"
-          ? Boolean(runtime.PAYPAL_CLIENT_ID && runtime.PAYPAL_CLIENT_SECRET)
-          : Boolean(runtime.BANK_ACCOUNT_HOLDER && runtime.BANK_IBAN),
+      provider: "stripe",
+      configured: stripeConfigured(),
     }));
 }
 

@@ -11,7 +11,7 @@ export async function getCartSnapshot(token?: string, locale: Locale = "it") {
   const rows = await db.select({
     id: cartItems.id, productId: products.id, variantId: productVariants.id, name: sql<string>`coalesce(${productTranslations.name}, ${products.name})`,
     slug: products.slug, sku: productVariants.sku, variantName: productVariants.title,
-    quantity: cartItems.quantity, unitPriceCents: cartItems.unitPriceCents,
+    quantity: cartItems.quantity, unitPriceCents: sql<number>`coalesce(${productVariants.priceCents}, ${products.basePriceCents})`,
     stockQuantity: productVariants.stockQuantity, imageUrl: productImages.url,
   }).from(cartItems)
     .innerJoin(products, eq(cartItems.productId, products.id))

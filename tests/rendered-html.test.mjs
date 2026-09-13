@@ -33,7 +33,7 @@ test("ships the ecommerce schema, placeholder catalog and all critical flows", a
     readFile(new URL(`../drizzle/${migrationFiles[2]}`, import.meta.url), "utf8"),
     readFile(new URL(`../drizzle/${migrationFiles[4]}`, import.meta.url), "utf8"),
     readFile(new URL("../db/schema.ts", import.meta.url), "utf8"),
-    readFile(new URL("../app/api/checkout/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../lib/stripe-orders.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/api/checkout/coupon/route.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/api/payments/paypal/capture/route.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/api/admin/products/route.ts", import.meta.url), "utf8"),
@@ -54,7 +54,7 @@ test("ships the ecommerce schema, placeholder catalog and all critical flows", a
   assert.match(schema, /pgSchema\("luxury"\)/);
   assert.match(schema, /firstOrderOnly/);
   assert.match(checkout, /bank_transfer/);
-  assert.match(checkout, /createPayPalOrder/);
+  assert.match(checkout, /startStripeCheckout/);
   assert.match(checkout, /discountCents/);
   assert.match(coupon, /evaluateCoupon/);
   assert.match(paypal, /capturePayPalOrder/);

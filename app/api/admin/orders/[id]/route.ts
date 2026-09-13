@@ -45,6 +45,10 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const db = getDb();
 
   if (body.shipment) {
+    const [stripePayment] = await db.select().from(paymentTransactions).where(eq(paymentTransactions.orderId, id));
+    if (stripePayment?.type === "stripe_checkout" && stripePayment.status !== "completed") {
+      return Response.json({ error: "Attendi la conferma dell’incasso Stripe prima di preparare la spedizione." }, { status: 409 });
+    }
     const shipment = body.shipment;
     const status = shipment.status || "preparing";
     if (!shipmentStatuses.has(status)) return Response.json({ error: "Stato spedizione non valido." }, { status: 400 });
@@ -83,6 +87,10 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const field = Object.keys(allowed).find((key) => body[key] !== undefined);
   const value = field ? String(body[field]) : "";
   if (!field || !allowed[field].has(value)) return Response.json({ error: "Aggiornamento non valido." }, { status: 400 });
+  const [stripePayment] = await db.select().from(paymentTransactions).where(eq(paymentTransactions.orderId, id));
+  if (stripePayment?.type === "stripe_checkout" && (field === "paymentStatus" || (stripePayment.status === "pending" && field !== "fulfillmentStatus") || (stripePayment.status !== "completed" && field === "fulfillmentStatus"))) {
+    return Response.json({ error: "Il pagamento è gestito da Stripe. Per annullare un pagamento o effettuare un rimborso usa il pannello Stripe." }, { status: 409 });
+  }
   await db.update(orders).set({ [field]: value, updatedAt: sql`CURRENT_TIMESTAMP` }).where(eq(orders.id, id));
   await recordAdminAction(auth.user, "update", "order", id, { [field]: value });
   return Response.json({ ok: true });
