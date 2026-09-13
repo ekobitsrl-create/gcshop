@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { formatMoney } from "@/lib/store-utils";
 import { useI18n } from "@/components/locale-provider";
+import { useCart } from "@/components/cart-provider";
 
 type Variant = {
   id: string;
@@ -28,11 +29,11 @@ export function ProductPurchase({
   currency: string;
 }) {
   const { localeTag, t } = useI18n();
+  const { addItem, busy, error } = useCart();
   const firstAvailable = variants.find((variant) => variant.stockQuantity > 0) ?? variants[0];
   const initialVariant = variants.find((variant) => variant.id === defaultVariantId) ?? firstAvailable;
   const [variantId, setVariantId] = useState(initialVariant?.id ?? "");
   const [quantity, setQuantity] = useState(1);
-  const [message, setMessage] = useState("");
   const [busyAction, setBusyAction] = useState<"bag" | "checkout" | null>(null);
   const selected = variants.find((variant) => variant.id === variantId) ?? firstAvailable;
   const price = selected?.priceCents ?? basePriceCents;
@@ -49,26 +50,13 @@ export function ProductPurchase({
   }
 
   async function add(redirectToCheckout = false) {
+    if (busyAction || busy) return;
     setBusyAction(redirectToCheckout ? "checkout" : "bag");
-    setMessage("");
     try {
-      const response = await fetch("/api/cart", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ variantId, quantity }),
-      });
-      const payload = await response.json();
-      if (!response.ok) {
-        setMessage(t("purchase.cartError"));
-        return;
-      }
-      if (redirectToCheckout) {
+      const added = await addItem(variantId, quantity, !redirectToCheckout);
+      if (added && redirectToCheckout) {
         window.location.assign("/checkout");
-        return;
       }
-      setMessage(t("purchase.cartUpdated", { count: payload.itemCount }));
-    } catch {
-      setMessage(t("purchase.connectionError"));
     } finally {
       setBusyAction(null);
     }
@@ -87,7 +75,7 @@ export function ProductPurchase({
           <button
             aria-checked={variant.id === variantId}
             className={variant.id === variantId ? "is-selected" : ""}
-            disabled={!variant.stockQuantity}
+            disabled={busy || !variant.stockQuantity}
             key={variant.id}
             onClick={() => selectVariant(variant.id)}
             role="radio"
@@ -99,21 +87,21 @@ export function ProductPurchase({
       </div>
       <div className="purchase-fields">
         <label htmlFor="product-quantity">{t("purchase.quantity")}
-          <select id="product-quantity" value={quantity} onChange={(event) => setQuantity(Number(event.target.value))}>
+          <select id="product-quantity" value={quantity} disabled={busy} onChange={(event) => setQuantity(Number(event.target.value))}>
             {Array.from({ length: Math.min(10, selected?.stockQuantity ?? 1) }, (_, index) => index + 1).map((value) => <option key={value} value={value}>{value}</option>)}
           </select>
         </label>
         <span className="availability-note"><b />{selected?.stockQuantity ? t("purchase.ready") : t("common.notAvailable")}</span>
       </div>
       <div className="purchase-actions">
-        <button className="purchase-buy-now" type="button" disabled={busyAction !== null || !selected?.stockQuantity} onClick={() => void add(true)}>
+        <button className="purchase-buy-now" type="button" disabled={busy || busyAction !== null || !selected?.stockQuantity} onClick={() => void add(true)}>
           {busyAction === "checkout" ? t("purchase.toCheckout") : selected?.stockQuantity ? t("purchase.buyNow") : t("common.notAvailable")}<span>↗</span>
         </button>
-        <button className="purchase-add-bag" type="button" disabled={busyAction !== null || !selected?.stockQuantity} onClick={() => void add()}>
+        <button className="purchase-add-bag" type="button" disabled={busy || busyAction !== null || !selected?.stockQuantity} onClick={() => void add()}>
           {busyAction === "bag" ? t("purchase.adding") : selected?.stockQuantity ? t("purchase.addCart") : t("common.notAvailable")}<span>+</span>
         </button>
       </div>
-      {message ? <p role="status">{message} <a href="/checkout">{t("purchase.goCheckout")} ↗</a></p> : null}
+      {error ? <p role="alert">{error} <a href="/checkout">{t("purchase.goCheckout")} ↗</a></p> : null}
     </div>
   );
 }

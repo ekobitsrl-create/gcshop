@@ -1,14 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { LanguageSelector } from "@/components/language-selector";
 import { useI18n } from "@/components/locale-provider";
+import { useCart } from "@/components/cart-provider";
 
 export function StoreHeader() {
   const { t } = useI18n();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [cartCount, setCartCount] = useState(0);
+  const { cart, openCart, open } = useCart();
+  const cartCount = cart.itemCount;
   const links = [
     { label: t("common.newIn"), href: "/shop" },
     { label: t("common.woman"), href: "/shop?categoria=donna" },
@@ -16,13 +18,6 @@ export function StoreHeader() {
     { label: t("common.accessories"), href: "/shop?categoria=accessori" },
   ];
   const announcements = [t("header.freeShipping"), t("header.privateAccess")];
-
-  useEffect(() => {
-    void fetch("/api/cart", { cache: "no-store" })
-      .then((response) => response.json())
-      .then((cart) => setCartCount(cart.itemCount ?? 0))
-      .catch(() => setCartCount(0));
-  }, []);
 
   return (
     <>
@@ -64,9 +59,9 @@ export function StoreHeader() {
         <div className="store-actions">
           <LanguageSelector />
           <Link className="store-search-link" href="/shop">{t("common.search")}</Link>
-          <Link className="store-bag" href="/checkout" aria-label={t("header.cartLabel", { count: cartCount })}>
-            {t("common.cart")} <span>{String(cartCount).padStart(2, "0")}</span>
-          </Link>
+          <button className="store-bag" type="button" onClick={openCart} aria-label={t("header.cartLabel", { count: cartCount })} aria-haspopup="dialog" aria-controls="store-cart" aria-expanded={open}>
+            {t("common.cart")} <span aria-live="polite" aria-atomic="true">{String(cartCount).padStart(2, "0")}</span>
+          </button>
         </div>
 
         <nav className={`store-mobile-nav ${menuOpen ? "is-open" : ""}`} aria-label={t("header.mobileMenu")}>
