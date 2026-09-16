@@ -14,8 +14,8 @@ export function StoreHeader() {
   const cartCount = cart.itemCount;
   const links = [
     { label: t("common.newIn"), href: "/shop" },
-    { label: t("common.woman"), href: "/shop?categoria=donna" },
     { label: t("common.man"), href: "/shop?categoria=uomo" },
+    { label: t("common.woman"), href: "/shop?categoria=donna" },
     { label: t("common.accessories"), href: "/shop?categoria=accessori" },
   ];
   const announcements = [t("common.newIn"), t("header.privateAccess")];

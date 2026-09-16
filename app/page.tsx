@@ -16,8 +16,8 @@ export default async function Home() {
   const locale = await getRequestLocale();
   const t = (key: string) => translate(locale, key);
   const categories = [
-    { index: "01", title: t("common.woman"), slug: "donna", note: t("home.womanNote"), image: "/images/home/woman.webp", position: "center" },
-    { index: "02", title: t("common.man"), slug: "uomo", note: t("home.manNote"), image: "/images/home/man.webp", position: "center" },
+    { index: "01", title: t("common.man"), slug: "uomo", note: t("home.manNote"), image: "/images/home/man.webp", position: "center" },
+    { index: "02", title: t("common.woman"), slug: "donna", note: t("home.womanNote"), image: "/images/home/woman.webp", position: "center" },
     { index: "03", title: t("common.accessories"), slug: "accessori", note: t("home.accessoriesNote"), image: "/images/home/accessories.webp", position: "center" },
   ];
   return (
@@ -31,8 +31,8 @@ export default async function Home() {
           <div className="hero-copy-bottom">
             <p>{t("home.heroCopy")}</p>
             <div className="hero-commerce-actions">
-              <a className="hero-shop-link" href="/shop?categoria=donna">{t("home.shopWoman")} <span>↗</span></a>
               <a className="hero-shop-link" href="/shop?categoria=uomo">{t("home.shopMan")} <span>↗</span></a>
+              <a className="hero-shop-link" href="/shop?categoria=donna">{t("home.shopWoman")} <span>↗</span></a>
               <a className="hero-text-link" href="/shop">{t("home.exploreEdit")} <span>→</span></a>
             </div>
           </div>
@@ -48,7 +48,7 @@ export default async function Home() {
       </section>
 
       <section className="ticker" aria-label={t("home.storeValues")}>
-        <div>{t("common.newIn")} <span>✦</span> {t("common.woman")} <span>✦</span> {t("common.man")} <span>✦</span> {t("common.accessories")} <span>✦</span> {t("common.privateList")} <span>✦</span></div>
+        <div>{t("common.newIn")} <span>✦</span> {t("common.man")} <span>✦</span> {t("common.woman")} <span>✦</span> {t("common.accessories")} <span>✦</span> {t("common.privateList")} <span>✦</span></div>
       </section>
 
       <section className="manifesto" id="manifesto">

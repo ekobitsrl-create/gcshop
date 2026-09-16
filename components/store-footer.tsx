@@ -20,8 +20,8 @@ export function StoreFooter() {
         <div className="footer-links">
           <p>Shop</p>
           <Link href="/shop">New in</Link>
-          <Link href="/shop?categoria=donna">{t("common.woman")}</Link>
           <Link href="/shop?categoria=uomo">{t("common.man")}</Link>
+          <Link href="/shop?categoria=donna">{t("common.woman")}</Link>
           <Link href="/shop?categoria=accessori">{t("common.accessories")}</Link>
         </div>
         <div className="footer-links">
