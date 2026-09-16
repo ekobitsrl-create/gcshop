@@ -18,7 +18,7 @@ export function StoreHeader() {
     { label: t("common.man"), href: "/shop?categoria=uomo" },
     { label: t("common.accessories"), href: "/shop?categoria=accessori" },
   ];
-  const announcements = [t("header.freeShipping"), t("header.privateAccess")];
+  const announcements = [t("common.newIn"), t("header.privateAccess")];
 
   return (
     <>

@@ -52,7 +52,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 }
 
 .announcement-track { width: max-content; display: flex; flex: none; animation: announcement-scroll 22s linear infinite; }
-.announcement-sequence { display: flex; align-items: center; flex: none; }
+.announcement-sequence { min-width: 100vw; display: flex; align-items: center; justify-content: space-around; flex: none; }
 .announcement-sequence > span { display: flex; align-items: center; gap: clamp(38px, 5vw, 82px); padding-left: clamp(38px, 5vw, 82px); white-space: nowrap; }
 .announcement-sequence b { color: var(--accent-strong); font-size: 7px; }
 

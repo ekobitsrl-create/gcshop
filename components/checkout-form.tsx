@@ -161,7 +161,7 @@ function CheckoutFormBody({ methods, cart, countries }: Props) {
         </div>
         <label htmlFor="countryCode">{t("checkout.country")}<select id="countryCode" required name="countryCode" defaultValue="IT" autoComplete="country">{countries.map(({ code, name }) => <option key={code} value={code}>{name}</option>)}</select></label>
         <details className="checkout-notes"><summary>{t("checkoutV2.addNote")} <span>{t("checkoutV2.optional")}</span></summary><label htmlFor="customerNote">{t("checkout.orderNotes")}<textarea id="customerNote" name="customerNote" rows={3} maxLength={2000} /></label></details>
-        <div className="checkout-delivery"><CheckoutIcon name="truck" /><div><strong>{t("checkoutV2.deliveryTitle")}</strong><span>{t("checkoutV2.deliveryCopy")}</span></div><b>{t("checkoutV2.free")}</b></div>
+        <div className="checkout-delivery"><CheckoutIcon name="truck" /><div><strong>{t("checkoutV2.deliveryTitle")}</strong><span>{t("checkoutV2.deliveryCopy")}</span></div></div>
       </fieldset>
       <section className="checkout-payment" aria-labelledby="payment-title">
         <h2 id="payment-title"><span>03</span>{t("checkout.paymentMethod")}</h2>

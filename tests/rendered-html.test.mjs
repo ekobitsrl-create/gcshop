@@ -59,7 +59,8 @@ test("ships the ecommerce schema, placeholder catalog and all critical flows", a
   assert.match(coupon, /evaluateCoupon/);
   assert.match(paypal, /capturePayPalOrder/);
   assert.match(admin, /recordAdminAction/);
-  assert.match(i18n, /Spedizione gratuita su tutti gli ordini/);
+  assert.doesNotMatch(i18n, /"header\.freeShipping"/);
+  assert.doesNotMatch(header, /header\.freeShipping/);
   assert.match(i18n, /Accesso alla selezione privata/);
   assert.doesNotMatch(header, /WELCOME10|10% sul primo ordine/);
   assert.match(checkoutUi, /WELCOME10/);
