@@ -439,3 +439,5 @@
   .return-address{width:100%;padding:22px}
   .withdrawal-success dl>div{grid-template-columns:1fr;gap:7px}
 }
+.store-help-policy { max-width: 1100px; margin: 0 auto; padding: 30px clamp(20px, 5vw, 70px) 80px; }
+.store-help-policy a { text-decoration: underline; text-underline-offset: 4px; }

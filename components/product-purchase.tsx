@@ -69,7 +69,7 @@ export function ProductPurchase({
         {comparePrice && comparePrice > price ? <><del>{formatMoney(comparePrice, currency, localeTag)}</del><span>−{discount}%</span></> : null}
       </div>
       {selected?.color ? <p className="selected-color"><span>{t("product.color")}</span><strong>{selected.color}</strong></p> : null}
-      <div className="variant-heading"><span>{t("purchase.selectSize")}</span><a href="#product-details">{t("purchase.sizeGuide")}</a></div>
+      <div className="variant-heading"><span>{t("purchase.selectSize")}</span><a href="/guida-taglie" target="_blank" rel="noopener noreferrer">{t("purchase.sizeGuide")}</a></div>
       <div className="variant-options" role="radiogroup" aria-label={t("purchase.variants")}>
         {sizes.map((variant) => (
           <button

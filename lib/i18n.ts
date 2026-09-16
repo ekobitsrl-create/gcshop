@@ -343,7 +343,7 @@ const en: Messages = {
   "stripe.resume": "Resume payment / bank transfer instructions", "stripe.backToCart": "Back to cart",
   "meta.description": "Contemporary fashion and accessories selected for their material, proportion and character. The Selected Edit by LCS.",
   "meta.socialDescription": "Fashion, edited by instinct. Contemporary fashion and accessories selected by LCS.",
-  "common.woman": "Women", "common.man": "Men", "common.search": "Search", "common.cart": "Cart", "common.available": "Available", "common.soldOut": "Sold out", "common.notAvailable": "Unavailable", "common.total": "Total", "common.language": "Language",
+  "common.woman": "Women", "common.man": "Men", "common.accessories": "Accessories", "common.search": "Search", "common.cart": "Cart", "common.available": "Available", "common.soldOut": "Sold out", "common.notAvailable": "Unavailable", "common.total": "Total", "common.language": "Language",
   "header.privateAccess": "Access to the private selection", "header.announcements": "Store announcements", "header.openMenu": "Open menu", "header.closeMenu": "Close menu", "header.primaryNav": "Main navigation", "header.mobileMenu": "Mobile menu", "header.cartLabel": "Cart, {count} items",
   "home.description": "Contemporary fashion and accessories selected for their material, proportion and character. Discover the new LCS edit.",
   "home.heroTitle": "Selected.", "home.heroEmphasis": "Never overstated.", "home.heroCopy": "Fashion and objects chosen for their material, proportion and character. Everything else can stay outside.", "home.shopWoman": "Shop women", "home.shopMan": "Shop men", "home.exploreEdit": "Explore the full edit", "home.editorialAlt": "LCS selection fashion editorial", "home.storeValues": "Store values",

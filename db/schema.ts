@@ -18,6 +18,15 @@ const timestamps = {
   updatedAt: timestamp("updated_at", { withTimezone: true, mode: "string" }).notNull().defaultNow(),
 };
 
+export const newsletterSubscribers = luxury.table("newsletter_subscribers", {
+  id: uuid("id").primaryKey(),
+  email: text("email").notNull(),
+  locale: text("locale").notNull(),
+  consentVersion: text("consent_version").notNull(),
+  consentText: text("consent_text").notNull(),
+  subscribedAt: timestamp("subscribed_at", { withTimezone: true, mode: "string" }).notNull().defaultNow(),
+}, (table) => [uniqueIndex("idx_newsletter_email").on(table.email)]).enableRLS();
+
 export const categories = luxury.table(
   "categories",
   {

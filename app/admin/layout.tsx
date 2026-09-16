@@ -36,7 +36,8 @@ export default async function AdminLayout({ children }: { children: ReactNode })
           <a href="/admin/prodotti"><span>02</span>Prodotti</a>
           <a href="/admin/ordini"><span>03</span>Ordini</a>
           <a href="/admin/pagamenti"><span>04</span>Pagamenti</a>
-          <a href="/shop"><span>05</span>Vedi negozio</a>
+          <a href="/admin/newsletter"><span>05</span>Newsletter</a>
+          <a href="/shop"><span>06</span>Vedi negozio</a>
         </nav>
         <div className="admin-user">
           <span>{user.displayName.slice(0, 1).toUpperCase()}</span>

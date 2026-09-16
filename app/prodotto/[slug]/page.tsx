@@ -17,6 +17,7 @@ import { SITE_URL } from "@/lib/site-url.mjs";
 import { formatMoney } from "@/lib/store-utils";
 import { localeTags, translate, translateCatalogFallback, type Locale } from "@/lib/i18n";
 import { getRequestLocale } from "@/lib/i18n-server";
+import { catalogTitle } from "@/lib/catalog-titles";
 import "../../commerce.css";
 
 export const dynamic = "force-dynamic";
@@ -141,6 +142,7 @@ const getProductPageData = cache(async (slug: string, locale: Locale): Promise<P
     ...variant,
     color: translation?.color ?? translateCatalogFallback(locale, variant.color),
   }));
+  product.name = catalogTitle(product, locale);
   return { product, categoryName, images, variants, attributes, isPlaceholder };
 });
 

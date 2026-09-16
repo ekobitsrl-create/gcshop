@@ -27,6 +27,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/shop?categoria=accessori`, changeFrequency: "daily", priority: 0.8 },
     { url: `${SITE_URL}/informazioni-societarie`, changeFrequency: "yearly", priority: 0.2 },
     { url: `${SITE_URL}/spedizioni-e-resi`, changeFrequency: "yearly", priority: 0.4 },
+    ...["privacy", "cookie", "termini", "pagamenti", "guida-taglie"].map(path => ({ url: `${SITE_URL}/${path}`, changeFrequency: "yearly" as const, priority: 0.2 })),
     ...catalog.map((product) => ({
       url: `${SITE_URL}/prodotto/${product.slug}`,
       lastModified: product.updatedAt ? new Date(product.updatedAt) : undefined,

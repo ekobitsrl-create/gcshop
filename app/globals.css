@@ -445,6 +445,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .newsletter-form button { padding: 0 0 0 24px; color: var(--ink); font-size: 9px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; }
 .newsletter-form button span { margin-left: 12px; font-size: 16px; }
 .newsletter-form small { display: block; margin-top: 12px; color: rgba(17,18,16,.5); font-size: 8px; }
+.newsletter-form > .newsletter-consent { display: flex; align-items: flex-start; gap: 12px; margin-top: 20px; font-size: 12px; font-weight: 400; line-height: 1.6; letter-spacing: 0; text-transform: none; }
+.newsletter-consent input { flex: 0 0 18px; width: 18px; height: 18px; margin-top: 3px; accent-color: var(--ink); }
+.newsletter-consent a { text-decoration: underline; text-underline-offset: 3px; }
+.newsletter-form input.newsletter-trap { display: none; }
+.newsletter-form button:disabled { opacity: .6; cursor: wait; }
+.newsletter-form [role="alert"] { color: #922d26; font-size: 13px; }
 .newsletter-confirmation { padding: 25px 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); font-family: var(--serif); font-size: 23px; line-height: 1.4; }
 
 .store-footer { background: var(--ink); color: #fff; }
@@ -472,8 +478,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   .store-menu-toggle span { width: 23px; height: 1px; display: block; background: var(--ink); transition: transform 200ms ease; }
   .store-menu-toggle.is-open span:first-child { transform: translateY(4px) rotate(45deg); }
   .store-menu-toggle.is-open span:last-child { transform: translateY(-4px) rotate(-45deg); }
-  .store-mobile-nav { position: absolute; top: 100%; right: 0; left: 0; display: grid; grid-template-columns: repeat(5, 1fr); background: var(--chalk); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); opacity: 0; transform: translateY(-110%); pointer-events: none; transition: opacity 220ms ease, transform 300ms ease; }
-  .store-mobile-nav.is-open { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .store-mobile-nav { position: absolute; top: 100%; right: 0; left: 0; display: grid; grid-template-columns: repeat(5, 1fr); background: var(--chalk); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); opacity: 0; visibility: hidden; transform: translateY(-110%); pointer-events: none; transition: opacity 220ms ease, transform 300ms ease; }
+  .store-mobile-nav.is-open { opacity: 1; visibility: visible; transform: translateY(0); pointer-events: auto; }
   .store-mobile-nav > a { min-height: 130px; display: flex; flex-direction: column; justify-content: space-between; padding: 18px; border-right: 1px solid var(--line); font-family: var(--serif); font-size: 25px; }
   .store-mobile-nav > a span { color: var(--accent-strong); font-family: var(--sans); font-size: 8px; }
   .mobile-nav-index, .mobile-nav-footer { display: none; }
@@ -500,7 +506,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   .language-selector-mobile > span { position: static; width: auto; height: auto; overflow: visible; clip: auto; font-size: 9px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
   .language-selector-mobile select { min-width: 112px; font-size: 11px; }
   .store-bag { font-size: 8px !important; }
-  .store-mobile-nav { position: fixed; top: 100px; bottom: 0; grid-template-columns: 1fr; align-content: start; overflow-y: auto; transform: translateX(-100%); }
+  .store-mobile-nav { position: absolute; top: 100%; height: calc(100dvh - 100px); grid-template-columns: 1fr; align-content: start; overflow-y: auto; overscroll-behavior: contain; transform: translateX(-100%); }
   .store-mobile-nav.is-open { transform: translateX(0); }
   .mobile-nav-index { display: block; padding: 20px; color: var(--accent-strong); font-size: 8px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
   .store-mobile-nav > a { min-height: 74px; flex-direction: row; align-items: center; justify-content: flex-start; gap: 20px; padding: 15px 20px; border-right: 0; border-bottom: 1px solid var(--line); font-size: 28px; }

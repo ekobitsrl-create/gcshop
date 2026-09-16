@@ -2,6 +2,7 @@ import { and, asc, desc, eq, ilike, isNotNull, or, sql, type SQL } from "drizzle
 import { alias } from "drizzle-orm/pg-core";
 import type { Metadata } from "next";
 import Image from "next/image";
+import { redirect } from "next/navigation";
 import { getDb } from "@/db";
 import { categories, productImages, products, productTranslations, productVariants } from "@/db/schema";
 import { CommerceHeader } from "@/components/commerce-header";
@@ -12,6 +13,7 @@ import { placeholderProducts } from "@/lib/placeholder-products";
 import { formatMoney } from "@/lib/store-utils";
 import { localeTags, translate, translateCatalogFallback } from "@/lib/i18n";
 import { getRequestLocale } from "@/lib/i18n-server";
+import { catalogTitle } from "@/lib/catalog-titles";
 import "../commerce.css";
 
 export const dynamic = "force-dynamic";
@@ -65,8 +67,8 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
   const t = (key: string, values?: Record<string, string | number>) => translate(locale, key, values);
   const filters = [
     { label: t("shop.all"), value: "tutto" },
-    { label: t("common.woman"), value: "donna" },
     { label: t("common.man"), value: "uomo" },
+    { label: t("common.woman"), value: "donna" },
     { label: t("shop.clothing"), value: "abbigliamento" },
     { label: t("shop.shoes"), value: "scarpe" },
     { label: t("shop.bags"), value: "borse" },
@@ -77,7 +79,8 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
   const activeType = params.tipologia?.trim().slice(0, 120) ?? "";
   const activeBrand = params.marchio?.trim().slice(0, 120) ?? "";
   const query = params.q?.trim() ?? "";
-  const page = Math.max(1, Number.parseInt(params.pagina ?? "1", 10) || 1);
+  const requestedPage = Number(params.pagina ?? "1");
+  const page = Number.isSafeInteger(requestedPage) && requestedPage > 0 && requestedPage <= 1_000_000 ? requestedPage : 1;
   const db = getDb();
   const parentCategories = alias(categories, "parent_categories");
   let scopeCondition: SQL | undefined;
@@ -125,7 +128,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
         .leftJoin(parentCategories, eq(categories.parentId, parentCategories.id))
         .leftJoin(productTranslations, and(eq(productTranslations.productId, products.id), eq(productTranslations.locale, locale)))
         .where(where)
-        .orderBy(asc(products.brand), asc(sql`coalesce(${productTranslations.name}, ${products.name})`))
+        .orderBy(asc(products.brand), asc(sql`coalesce(${productTranslations.name}, ${products.name})`), asc(products.id))
         .limit(PAGE_SIZE)
         .offset((page - 1) * PAGE_SIZE),
       db.select({ value: sql<number>`count(*)` }).from(products)
@@ -155,7 +158,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
         .groupBy(products.brand)
         .orderBy(asc(sql`lower(${products.brand})`)),
     ]);
-    rows = databaseRows;
+    rows = databaseRows.map(row => ({ ...row, name: catalogTitle(row, locale) }));
     categoryRows = databaseCategories.map((category) => ({ ...category, count: Number(category.count) }));
     brandRows = databaseBrands.flatMap((brand) => brand.name ? [{ name: brand.name, count: Number(brand.count) }] : []);
     total = Number(countRows[0]?.value ?? 0);
@@ -181,6 +184,9 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
   }
 
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  if (params.pagina && (String(page) !== params.pagina || page > pages)) {
+    redirect(shopUrl({ category: activeFilter, type: activeType, brand: activeBrand, query, page: Math.min(page, pages) }));
+  }
   const categoryGroups = Array.from(categoryRows.reduce((groups, category) => {
     const current = groups.get(category.groupName) ?? [];
     current.push(category);

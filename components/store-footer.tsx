@@ -29,7 +29,7 @@ export function StoreFooter() {
           <Link href="/#provenienza">{t("footer.origin")}</Link>
           <Link href="/informazioni-societarie">{t("footer.contacts")}</Link>
           <Link href="/spedizioni-e-resi">{t("footer.shippingReturns")}</Link>
-          <Link href="/checkout">{t("footer.payments")}</Link>
+          <Link href="/pagamenti">{t("footer.payments")}</Link>
           <Link href="/admin">{t("footer.reserved")}</Link>
         </div>
         <div className="footer-links footer-company">
@@ -42,7 +42,7 @@ export function StoreFooter() {
 
       <div className="footer-legal">
         <span>© 2026 LCS</span>
-        <div><Link href="/">{t("footer.privacy")}</Link><Link href="/">{t("footer.cookies")}</Link><Link href="/">{t("footer.terms")}</Link><Link href="/informazioni-societarie">{t("footer.companyShort")}</Link></div>
+        <div><Link href="/privacy">{t("footer.privacy")}</Link><Link href="/cookie">{t("footer.cookies")}</Link><Link href="/termini">{t("footer.terms")}</Link><Link href="/informazioni-societarie">{t("footer.companyShort")}</Link></div>
         <a href="#top">{t("footer.backTop")} ↑</a>
       </div>
     </footer>

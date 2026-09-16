@@ -26,7 +26,7 @@ test("keeps the LCS home editorial and moves company details to the legal page",
 
 test("ships the ecommerce schema, placeholder catalog and all critical flows", async () => {
   const migrationFiles = (await readdir(new URL("../drizzle/", import.meta.url))).filter((file) => file.endsWith(".sql"));
-  assert.equal(migrationFiles.length, 6);
+  assert.equal(migrationFiles.length, 7);
   const [schemaMigration, catalogMigration, feedMigration, translationMigration, schema, checkout, coupon, paypal, admin, header, checkoutUi, i18n] = await Promise.all([
     readFile(new URL(`../drizzle/${migrationFiles[0]}`, import.meta.url), "utf8"),
     readFile(new URL(`../drizzle/${migrationFiles[1]}`, import.meta.url), "utf8"),

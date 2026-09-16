@@ -39,6 +39,7 @@ export function StoreHeader() {
           type="button"
           aria-label={menuOpen ? t("header.closeMenu") : t("header.openMenu")}
           aria-expanded={menuOpen}
+          aria-controls="store-mobile-menu"
           onClick={() => setMenuOpen((open) => !open)}
         >
           <span />
@@ -66,7 +67,7 @@ export function StoreHeader() {
           </button>
         </div>
 
-        <nav className={`store-mobile-nav ${menuOpen ? "is-open" : ""}`} aria-label={t("header.mobileMenu")}>
+        <nav id="store-mobile-menu" className={`store-mobile-nav ${menuOpen ? "is-open" : ""}`} aria-label={t("header.mobileMenu")} onKeyDown={(event) => { if (event.key === "Escape") { setMenuOpen(false); document.querySelector<HTMLButtonElement>(".store-menu-toggle")?.focus(); } }}>
           <div className="mobile-nav-index">{t("common.menu")} / 01—05</div>
           {links.map((link, index) => (
             <Link href={link.href} key={link.label} onClick={() => setMenuOpen(false)}>

@@ -1,5 +1,6 @@
 import { and, asc, eq, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/db";
+import { catalogTitle } from "@/lib/catalog-titles";
 import { categories, productImages, products, productTranslations, productVariants } from "@/db/schema";
 import { translateCatalogFallback, type Locale } from "@/lib/i18n";
 import { comparisonPrice, parseComparisonIds, type ComparisonProduct } from "@/lib/product-comparison";
@@ -41,7 +42,7 @@ export async function getComparisonProducts(requestedIds: string[], locale: Loca
     const attributes = attributesFrom(row.metadataJson);
     const productVariants = variants.filter((variant) => variant.productId === id);
     return [{
-      id: row.id, name: row.name, slug: row.slug, brand: row.brand, currency: row.currency,
+      id: row.id, name: catalogTitle(row, locale), slug: row.slug, brand: row.brand, currency: row.currency,
       imageUrl: row.imageUrl, originCountry: row.originCountry, category: row.category,
       composition: row.composition ?? textAttribute(attributes.composition),
       season: row.season ?? textAttribute(attributes.season),
