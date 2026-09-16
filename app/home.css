@@ -1,0 +1,144 @@
+/* The home editorial keeps the shared storefront palette and typography. */
+.home-page .new-hero {
+  min-height: min(820px, calc(100svh - 116px));
+  grid-template-columns: 46% 54%;
+  background: var(--chalk);
+  color: var(--ink);
+}
+
+.home-page .hero-copy-panel {
+  padding: clamp(40px, 5vw, 80px);
+  justify-content: center;
+}
+
+.home-page .hero-copy-panel > .micro-label { color: #557385; }
+.home-page .hero-copy-panel > .micro-label::before {
+  content: "";
+  display: inline-block;
+  width: 24px;
+  height: 1px;
+  margin: 0 12px 3px 0;
+  background: currentColor;
+}
+.home-page .hero-copy-panel h1 {
+  margin: 42px 0 34px;
+  font-size: clamp(64px, 7.2vw, 116px);
+  line-height: .98;
+  letter-spacing: -.065em;
+  overflow-wrap: anywhere;
+}
+.home-page .hero-copy-panel h1 em { color: #557385; }
+.home-page .hero-copy-bottom > p { color: #575953; font-size: 19px; line-height: 1.6; }
+.home-page .hero-commerce-actions { margin-top: 32px; gap: 10px; }
+.home-page .hero-shop-link { border-color: var(--ink); font-size: 9px; min-height: 54px; }
+.home-page .hero-shop-link:first-child { background: var(--ink); color: var(--chalk); }
+.home-page .hero-shop-link:hover { background: var(--accent); color: var(--ink); border-color: var(--accent); }
+.home-page .hero-shop-link span { font-size: 17px; }
+.home-page .hero-text-link { color: #575953; font-size: 9px; margin-top: 14px; border-color: #8c999d; }
+.home-page .hero-text-link:hover { color: var(--ink); border-color: var(--ink); }
+.home-page .hero-visual { min-height: 690px; }
+.home-page .hero-visual img { object-position: center 55%; }
+.home-page .hero-visual::before { display: none; }
+.home-page .hero-visual-tag {
+  width: 76px;
+  padding: 12px;
+  border: 1px solid rgba(255,255,255,.6);
+  background: rgba(17,18,16,.2);
+  backdrop-filter: blur(10px);
+}
+.home-page .hero-visual-tag strong { font-size: 43px; }
+.home-page .hero-visual > p { font-size: 9px; }
+.home-page .hero-side-note { display: none; }
+.home-page .ticker { height: 48px; border-block: 1px solid rgba(17,18,16,.08); }
+.home-page .ticker div { font-size: 21px; }
+
+.home-page .manifesto { padding-block: clamp(80px, 9vw, 138px); }
+.home-page .manifesto-copy h2 { font-size: clamp(54px, 6.4vw, 100px); line-height: .98; }
+.home-page .manifesto-lead { font-size: clamp(28px, 3vw, 44px); margin-bottom: 44px; }
+.home-page .manifesto-detail { border-top-color: var(--line); }
+.home-page .manifesto-detail p { color: #575953; font-size: 18px; }
+.home-page .category-story { padding-bottom: clamp(80px, 9vw, 138px); }
+.home-page .category-heading { margin-bottom: 42px; }
+.home-page .category-heading h2 { font-size: clamp(48px, 5.4vw, 84px); line-height: 1; }
+.home-page .category-mosaic { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; align-items: start; }
+.home-page .category-tile,
+.home-page .category-tile:nth-child(2),
+.home-page .category-tile:nth-child(3) { min-height: 0; aspect-ratio: 3 / 4; }
+.home-page .category-tile:nth-child(2) { margin-top: 56px; }
+.home-page .category-tile img { filter: none; }
+.home-page .category-tile::after { background: linear-gradient(0deg, rgba(17,18,16,.76), transparent 48%); }
+.home-page .category-index { padding: 8px 10px; border: 1px solid rgba(255,255,255,.65); background: rgba(17,18,16,.26); letter-spacing: .15em; }
+.home-page .category-tile-copy h3 { font-size: clamp(36px, 3.7vw, 60px); }
+.home-page .category-tile-copy > span { position: static; display: flex; justify-content: space-between; align-items: center; padding-top: 18px; font-size: 9px; }
+.home-page .category-tile-copy > span b { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid rgba(255,255,255,.6); border-radius: 50%; font-size: 17px; font-weight: 400; transition: background 180ms, color 180ms; }
+.home-page .category-tile:hover .category-tile-copy b { background: var(--chalk); color: var(--ink); }
+.home-page .category-tile:focus-visible { outline-offset: 5px; }
+
+.home-page .feature-story { min-height: 0; }
+.home-page .feature-image { min-height: 0; aspect-ratio: 4 / 5; }
+.home-page .feature-copy { padding: clamp(36px, 5vw, 80px); }
+.home-page .feature-copy h2 { font-size: clamp(56px, 6.3vw, 100px); line-height: .98; }
+.home-page .feature-image > span { padding: 9px 12px; background: rgba(17,18,16,.55); }
+.home-page .feature-signature { font-size: clamp(160px, 20vw, 300px); }
+.home-page .objects-section { padding-block: clamp(80px, 9vw, 138px); }
+.home-page .objects-intro { grid-template-columns: 8% 1fr minmax(200px, 300px); margin-bottom: 44px; }
+.home-page .objects-intro h2 { font-size: clamp(48px, 5.5vw, 88px); line-height: 1; }
+.home-page .objects-grid { grid-template-columns: 1.2fr 1fr; gap: 30px; }
+.home-page .object-card,
+.home-page .object-card-large { min-height: 0; aspect-ratio: 4 / 5; }
+.home-page .object-card:last-child { aspect-ratio: 1; }
+.home-page .object-card > span { inset: auto 20px 20px; padding: 16px; display: flex; justify-content: space-between; background: rgba(250,249,245,.94); font-size: 10px; }
+.home-page .object-card > span::after { content: "↗"; font-size: 15px; }
+.home-page .trust-story { padding-block: clamp(80px, 9vw, 138px); }
+.home-page .trust-content h2 { font-size: clamp(52px, 6.5vw, 104px); line-height: .98; }
+.home-page .trust-lead { margin-bottom: 50px; }
+.home-page .trust-principles article { min-height: 230px; }
+.home-page .trust-principles h3 { margin-top: 38px; }
+.home-page .newsletter-section { padding-block: clamp(80px, 8vw, 120px); }
+.home-page .newsletter-section h2 { font-size: clamp(48px, 5.8vw, 88px); line-height: .98; }
+.home-page .newsletter-section h2 em { color: #466477; }
+
+@media (min-width: 761px) and (max-width: 1050px) {
+  .home-page .hero-copy-panel { padding: 36px 26px; }
+  .home-page .hero-copy-panel h1 { font-size: 68px; }
+  .home-page .hero-shop-link { padding-inline: 10px; letter-spacing: .08em; }
+  .home-page .category-mosaic { gap: 12px; }
+  .home-page .category-tile-copy { left: 16px; right: 16px; bottom: 18px; }
+  .home-page .objects-intro { grid-template-columns: 1fr 1fr; }
+  .home-page .objects-intro > span { display: none; }
+}
+
+@media (max-width: 760px) {
+  .home-page .new-hero { grid-template-columns: 1fr; min-height: 0; }
+  .home-page .hero-copy-panel { min-height: 0; padding: 42px 24px 38px; }
+  .home-page .hero-copy-panel h1 { margin: 28px 0 22px; font-size: clamp(56px, 16vw, 88px); }
+  .home-page .hero-copy-bottom > p { font-size: 17px; max-width: 440px; }
+  .home-page .hero-commerce-actions { margin-top: 24px; }
+  .home-page .hero-visual { min-height: 0; aspect-ratio: 4 / 5; }
+  .home-page .hero-visual-tag { width: 64px; padding: 9px; }
+  .home-page .hero-visual-tag strong { font-size: 34px; }
+  .home-page .manifesto { gap: 30px; padding: 70px 24px; }
+  .home-page .manifesto-copy h2 { font-size: clamp(42px, 12vw, 72px); }
+  .home-page .manifesto-lead { font-size: 28px; margin-bottom: 32px; }
+  .home-page .manifesto-detail p { font-size: 17px; }
+  .home-page .category-story { padding: 0 16px 72px; }
+  .home-page .category-heading { gap: 24px; margin-bottom: 28px; }
+  .home-page .category-heading h2 { font-size: clamp(40px, 11vw, 64px); }
+  .home-page .category-mosaic { grid-template-columns: 1fr; gap: 16px; }
+  .home-page .category-tile:nth-child(2) { margin-top: 0; }
+  .home-page .category-tile-copy h3 { font-size: 52px; }
+  .home-page .feature-copy { min-height: 0; padding: 56px 24px 72px; }
+  .home-page .feature-copy h2 { font-size: clamp(52px, 15vw, 80px); }
+  .home-page .feature-copy > p:not(.micro-label) { font-size: 18px; }
+  .home-page .objects-section { padding: 72px 16px; }
+  .home-page .objects-intro { grid-template-columns: 1fr; gap: 24px; }
+  .home-page .objects-intro h2 { font-size: clamp(46px, 12vw, 68px); }
+  .home-page .objects-grid { grid-template-columns: 1fr; gap: 16px; }
+  .home-page .trust-story { padding: 72px 24px; gap: 32px; }
+  .home-page .trust-content h2 { font-size: clamp(44px, 12vw, 72px); }
+  .home-page .trust-principles article { min-height: 0; padding-block: 24px; }
+  .home-page .trust-principles h3 { margin-top: 24px; }
+  .home-page .newsletter-section { padding: 72px 24px; gap: 36px; }
+  .home-page .newsletter-section h2 { font-size: clamp(44px, 12vw, 68px); }
+  .home-page .newsletter-copy > p { margin-bottom: 30px; }
+}

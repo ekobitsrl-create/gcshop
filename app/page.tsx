@@ -5,6 +5,7 @@ import { StoreFooter } from "@/components/store-footer";
 import { StoreHeader } from "@/components/store-header";
 import { translate } from "@/lib/i18n";
 import { getRequestLocale } from "@/lib/i18n-server";
+import "./home.css";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
@@ -15,18 +16,18 @@ export default async function Home() {
   const locale = await getRequestLocale();
   const t = (key: string) => translate(locale, key);
   const categories = [
-    { index: "01", title: t("common.woman"), slug: "donna", note: t("home.womanNote"), image: "/images/category-woman.jpg", position: "center" },
-    { index: "02", title: t("common.man"), slug: "uomo", note: t("home.manNote"), image: "/images/category-man.jpg", position: "center" },
-    { index: "03", title: t("common.accessories"), slug: "accessori", note: t("home.accessoriesNote"), image: "/images/category-accessories.jpg", position: "center" },
+    { index: "01", title: t("common.woman"), slug: "donna", note: t("home.womanNote"), image: "/images/home/woman.webp", position: "center" },
+    { index: "02", title: t("common.man"), slug: "uomo", note: t("home.manNote"), image: "/images/home/man.webp", position: "center" },
+    { index: "03", title: t("common.accessories"), slug: "accessori", note: t("home.accessoriesNote"), image: "/images/home/accessories.webp", position: "center" },
   ];
   return (
     <main id="top" className="home-page">
       <StoreHeader />
 
-      <section className="new-hero">
+      <section className="new-hero" aria-labelledby="home-title">
         <div className="hero-copy-panel">
           <p className="micro-label">LCS / Edit 01</p>
-          <h1>{t("home.heroTitle")}<br /><em>{t("home.heroEmphasis")}</em></h1>
+          <h1 id="home-title">{t("home.heroTitle")}<br /><em>{t("home.heroEmphasis")}</em></h1>
           <div className="hero-copy-bottom">
             <p>{t("home.heroCopy")}</p>
             <div className="hero-commerce-actions">
@@ -38,7 +39,7 @@ export default async function Home() {
         </div>
 
         <div className="hero-visual">
-          <Image src="/images/editorial.jpg" alt={t("home.editorialAlt")} fill priority sizes="(max-width: 820px) 100vw, 58vw" />
+          <Image src="/images/home/hero.webp" alt={t("home.editorialAlt")} fill priority sizes="(max-width: 760px) 100vw, 54vw" />
           <div className="hero-visual-tag"><span>The edit</span><strong>01</strong></div>
           <p>{t("home.formMatterCharacter")}</p>
         </div>
@@ -63,7 +64,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="category-story" aria-labelledby="category-title">
+      <section className="category-story" id="selezione" aria-labelledby="category-title">
         <div className="category-heading">
           <div><span>02</span><p>{t("home.attitude")}</p></div>
           <h2 id="category-title">{t("home.perspectives")}<br /><em>{t("home.oneInstinct")}</em></h2>
@@ -72,11 +73,11 @@ export default async function Home() {
           {categories.map((category) => (
             <a href={`/shop?categoria=${category.slug}`} className="category-tile" key={category.slug}>
               <Image src={category.image} alt={category.note} fill sizes="(max-width: 760px) 100vw, 34vw" style={{ objectPosition: category.position }} />
-              <span className="category-index">{category.index}</span>
+              <span className="category-index">{category.index} / LCS</span>
               <div className="category-tile-copy">
                 <p>{category.note}</p>
                 <h3>{category.title}</h3>
-                <span>{t("home.enter")} ↗</span>
+                <span>{t("home.enter")} <b aria-hidden="true">↗</b></span>
               </div>
             </a>
           ))}
@@ -85,7 +86,7 @@ export default async function Home() {
 
       <section className="feature-story">
         <div className="feature-image">
-          <Image src="/images/product-2.jpg" alt={t("home.graphicLooksAlt")} fill sizes="(max-width: 800px) 100vw, 50vw" />
+          <Image src="/images/home/feature.webp" alt={t("home.graphicLooksAlt")} fill sizes="(max-width: 760px) 100vw, 50vw" />
           <span>{t("home.newForms")}</span>
         </div>
         <div className="feature-copy">
@@ -105,11 +106,11 @@ export default async function Home() {
         </div>
         <div className="objects-grid">
           <a href="/shop?categoria=accessori" className="object-card object-card-large">
-            <Image src="/images/product-3.jpg" alt={t("home.floralBagAlt")} fill sizes="(max-width: 760px) 100vw, 54vw" />
+            <Image src="/images/home/bag.webp" alt={t("home.wovenBagAlt")} fill sizes="(max-width: 760px) 100vw, 54vw" />
             <span>01 / {t("home.bags")}</span>
           </a>
           <a href="/shop?categoria=accessori" className="object-card">
-            <Image src="/images/category-accessories.jpg" alt={t("home.redBagAlt")} fill sizes="(max-width: 760px) 100vw, 35vw" />
+            <Image src="/images/home/objects.webp" alt={t("home.objectsAlt")} fill sizes="(max-width: 760px) 100vw, 35vw" />
             <span>02 / Icons</span>
           </a>
         </div>

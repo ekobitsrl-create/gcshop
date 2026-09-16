@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <title>LCS</title>
+  <rect width="64" height="64" rx="10" fill="#b8cfda"/>
+  <text x="32" y="40" text-anchor="middle" fill="#111210" font-family="'Palatino Linotype', 'Book Antiqua', Georgia, serif" font-size="28" font-weight="400" letter-spacing="1">LCS</text>
+  <path d="M22 47h20" stroke="#557385" stroke-width="1"/>
+</svg>

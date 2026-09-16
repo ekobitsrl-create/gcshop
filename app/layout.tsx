@@ -27,6 +27,14 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     description: translate(locale, "meta.description"),
     applicationName: "LCS",
+    icons: {
+      icon: [
+        { url: "/favicon.ico", sizes: "16x16 32x32 48x48" },
+        { url: "/favicon.svg", type: "image/svg+xml", sizes: "any" },
+        { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
+      ],
+      apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+    },
     creator: "LCS",
     publisher: "LCS",
     category: "fashion",
