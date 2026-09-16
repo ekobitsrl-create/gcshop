@@ -441,3 +441,5 @@
 }
 .store-help-policy { max-width: 1100px; margin: 0 auto; padding: 30px clamp(20px, 5vw, 70px) 80px; }
 .store-help-policy a { text-decoration: underline; text-underline-offset: 4px; }
+.store-help-hero > * { min-width: 0; }
+.store-help-hero h1 { font-size: clamp(44px, 8vw, 104px); overflow-wrap: anywhere; }
