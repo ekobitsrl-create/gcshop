@@ -67,7 +67,7 @@ export function ComparisonPanel() {
               {selection ? <>
                 <div className="compare-product-top"><span aria-hidden="true">0{index + 1}</span><button type="button" onClick={() => removeComparedProduct(selection.id)} aria-label={t("compare.removeLabel", { name: product?.name ?? selection.name })}>{t("compare.remove")} ×</button></div>
                 {product ? <>
-                  <a href={productHref(product)} className="compare-product-image" tabIndex={-1} aria-hidden="true">{product.imageUrl ? <Image src={product.imageUrl} alt="" fill unoptimized sizes="(max-width: 600px) 44vw, 32vw" /> : <span>LCS</span>}</a>
+                  <a href={productHref(product)} className="compare-product-image" tabIndex={-1} aria-hidden="true">{product.imageUrl ? <Image src={product.imageUrl} alt="" fill sizes="(max-width: 600px) 44vw, 32vw" /> : <span>LCS</span>}</a>
                   <div className="compare-product-copy"><p>{product.brand ?? "LCS"}</p><h2><a href={productHref(product)}>{product.name}</a></h2></div>
                 </> : <div className="compare-missing"><h2>{selection.name}</h2><p>{t("compare.unavailable")}</p></div>}
               </> : <a className="compare-add-slot" href="/shop"><span aria-hidden="true">+</span>{t("compare.chooseSecond")}</a>}

@@ -37,7 +37,7 @@ export function CartDrawer() {
       {notice ? <p className="cart-added" role="status"><span aria-hidden="true">✓</span>{notice}</p> : null}
       <div className="cart-drawer-body" aria-busy={busy || loading}>
         {loading && !cart.items.length ? <p role="status">{t("cart.loading")}</p> : cart.items.length ? <ul className="cart-drawer-items">{cart.items.map((item) => <li key={item.id}>
-          <a className="cart-item-image" aria-label={item.name} href={`/prodotto/${encodeURIComponent(item.slug)}?variant=${encodeURIComponent(item.variantId)}`}>{item.imageUrl ? <Image src={item.imageUrl} width={92} height={116} alt="" unoptimized /> : <span aria-hidden="true">LCS</span>}</a>
+          <a className="cart-item-image" aria-label={item.name} href={`/prodotto/${encodeURIComponent(item.slug)}?variant=${encodeURIComponent(item.variantId)}`}>{item.imageUrl ? <Image src={item.imageUrl} width={92} height={116} sizes="92px" alt="" /> : <span aria-hidden="true">LCS</span>}</a>
           <div className="cart-item-detail"><a className="cart-item-name" href={`/prodotto/${encodeURIComponent(item.slug)}?variant=${encodeURIComponent(item.variantId)}`}>{item.name}</a><p>{item.variantName !== "Standard" ? item.variantName : ""}</p><strong>{formatMoney(item.lineTotalCents, cart.currency, localeTag)}</strong>
             <div className="cart-item-controls"><div className="cart-stepper" role="group" aria-label={t("cart.quantityFor", { name: item.name })}>
               <button type="button" disabled={busy || loading || item.quantity <= 1} onClick={() => void setQuantity(item.id, item.quantity - 1)} aria-label={t("cart.decrease", { name: item.name })}>−</button>

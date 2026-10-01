@@ -235,7 +235,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
           <div className="product-gallery">
             {images.length ? images.map((image, index) => (
               <figure className={index === 0 ? "is-primary" : ""} key={image.id}>
-                <Image src={image.url} alt={product.name} fill unoptimized priority={index === 0} sizes="(max-width: 760px) 100vw, 38vw" />
+                <Image src={image.url} alt={product.name} fill priority={index === 0} sizes={index === 0 ? "(max-width: 760px) 100vw, 55vw" : "(max-width: 430px) 100vw, (max-width: 760px) 50vw, (max-width: 1100px) 55vw, 28vw"} />
                 <figcaption>{String(index + 1).padStart(2, "0")} / {String(images.length).padStart(2, "0")}</figcaption>
               </figure>
             )) : <div className="product-placeholder"><span>LCS</span><small>{t("product.imageSoon")}</small></div>}

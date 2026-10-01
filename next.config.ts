@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
     root: process.cwd(),
   },
   images: {
+    minimumCacheTTL: 604800,
     remotePatterns: [
       { protocol: "https", hostname: "**" },
       { protocol: "http", hostname: "**" },

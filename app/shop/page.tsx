@@ -275,7 +275,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
                 <article className="commerce-product-card" key={product.id}>
                   <a className="product-card-link" href={`/prodotto/${product.slug}`}>
                     <div className="product-card-media">
-                      {product.imageUrl ? <Image src={product.imageUrl} alt={`${product.brand ?? "LCS"} ${product.name}`} fill unoptimized sizes="(max-width: 430px) 100vw, (max-width: 760px) 50vw, 25vw" /> : <span>LCS</span>}
+                      {product.imageUrl ? <Image src={product.imageUrl} alt={`${product.brand ?? "LCS"} ${product.name}`} fill sizes="(max-width: 430px) 100vw, (max-width: 760px) 50vw, (max-width: 1100px) 33vw, 25vw" /> : <span>LCS</span>}
                       <small>{String((page - 1) * PAGE_SIZE + index + 1).padStart(2, "0")}</small>
                       {product.stockQuantity <= 2 && product.stockQuantity > 0 ? <em>{t("shop.lastPieces")}</em> : null}
                     </div>

@@ -4,7 +4,6 @@ import Image from "next/image";
 import { useState } from "react";
 
 const BRAND_DOMAINS: Record<string, string> = {
-  "alpha studio": "alphastudio.it",
   "amiri": "amiri.com",
   "aquascutum": "aquascutum.com",
   "armani": "armani.com",
@@ -108,7 +107,7 @@ export function BrandLogo({ brand, className = "" }: { brand: string | null | un
         alt=""
         width={200}
         height={50}
-        unoptimized
+        sizes="200px"
         onError={() => setFailedLogoUrl(logoUrl)}
       />
     </span>

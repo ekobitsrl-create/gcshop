@@ -180,7 +180,7 @@ function CheckoutFormBody({ methods, cart, countries }: Props) {
     <aside className="checkout-summary" aria-labelledby="summary-title">
       <div className="checkout-summary-heading"><h2 id="summary-title">{t("checkout.yourOrder")}</h2><span>{String(cart.itemCount).padStart(2, "0")}</span></div>
       <ul className="checkout-products">{cart.items.map((item) => <li key={item.id}>
-        <div className="checkout-product-image">{item.imageUrl ? <Image src={item.imageUrl} alt="" width={72} height={90} unoptimized /> : <CheckoutIcon name="bag" />}</div>
+        <div className="checkout-product-image">{item.imageUrl ? <Image src={item.imageUrl} alt="" width={72} height={90} sizes="72px" /> : <CheckoutIcon name="bag" />}</div>
         <div className="checkout-product-info"><strong>{item.name}</strong>{item.variantName && item.variantName !== "Standard" ? <span>{item.variantName}</span> : null}<small>{t("checkoutV2.quantity", { count: item.quantity })}</small></div>
         <b>{formatMoney(item.lineTotalCents, cart.currency, localeTag)}</b>
       </li>)}</ul>
